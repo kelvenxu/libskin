@@ -1,0 +1,54 @@
+<!-- ##### SECTION Title ##### -->
+SexyTreeView
+
+<!-- ##### SECTION Short_Description ##### -->
+A GtkTreeView which supports tooltips on individual cells.
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+SexyTreeView is a GtkTreeView which supports tooltips on individual cells.
+These tooltips can be either text (stored in a column of the tree model) or
+widgets, created through a signal handler.
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT SexyTreeView ##### -->
+<para>
+The #SexyTreeView struct contains private data only, and should be manipulated using the functions below.
+</para>
+
+
+<!-- ##### SIGNAL SexyTreeView::get-tooltip ##### -->
+<para>
+
+</para>
+
+@sexytreeview: the object which received the signal.
+@arg1: 
+@arg2: 
+@Returns: 
+
+<!-- ##### FUNCTION sexy_tree_view_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION sexy_tree_view_set_tooltip_label_column ##### -->
+<para>
+
+</para>
+
+@treeview: 
+@column: 
+
+

@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>SexyTreeView</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+<link rel="start" href="index.html" title="libsexy Reference Manual">
+<link rel="up" href="ch01.html" title="libsexy">
+<link rel="prev" href="SexyUrlLabel.html" title="SexyUrlLabel">
+<link rel="next" href="SexyIconEntry.html" title="SexyIconEntry">
+<meta name="generator" content="GTK-Doc V1.7 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="libsexy">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="SexyUrlLabel.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">libsexy Reference Manual</th>
+<td><a accesskey="n" href="SexyIconEntry.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts"><nobr><a href="#id2534813" class="shortcut">Top</a>
+                  &#160;|&#160;
+                  <a href="#id2547002" class="shortcut">Description</a>
+                  &#160;|&#160;
+                  <a href="#id2550041" class="shortcut">Object Hierarchy</a>
+                  &#160;|&#160;
+                  <a href="#id2550096" class="shortcut">Implemented Interfaces</a>
+                  &#160;|&#160;
+                  <a href="#id2550117" class="shortcut">Signals</a></nobr></td></tr>
+</table>
+<div class="refentry" lang="en">
+<a name="SexyTreeView"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2>
+<a name="id2534813"></a><span class="refentrytitle">SexyTreeView</span>
+</h2>
+<p>SexyTreeView &#8212; A GtkTreeView which supports tooltips on individual cells.</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<pre class="synopsis">
+
+
+
+            <a href="SexyTreeView.html#SexyTreeView-struct">SexyTreeView</a>;
+GtkWidget*  <a href="SexyTreeView.html#sexy-tree-view-new">sexy_tree_view_new</a>              (void);
+void        <a href="SexyTreeView.html#sexy-tree-view-set-tooltip-label-column">sexy_tree_view_set_tooltip_label_column</a>
+                                            (<a href="SexyTreeView.html" title="SexyTreeView">SexyTreeView</a> *treeview,
+                                             guint column);
+
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="id2550041"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+
+  GObject
+   +----GInitiallyUnowned
+         +----GtkObject
+               +----GtkWidget
+                     +----GtkContainer
+                           +----GtkTreeView
+                                 +----SexyTreeView
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="id2550096"></a><h2>Implemented Interfaces</h2>
+<p>
+SexyTreeView implements
+ AtkImplementorIface.</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id2550117"></a><h2>Signals</h2>
+<pre class="synopsis">
+
+"<a href="SexyTreeView.html#SexyTreeView-get-tooltip">get-tooltip</a>"
+            GtkWidget*  user_function      (<a href="SexyTreeView.html" title="SexyTreeView">SexyTreeView</a>      *treeview,
+                                            GtkTreePath       *path,
+                                            GtkTreeViewColumn *column,
+                                            gpointer           user_data)      : Run last
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="id2547002"></a><h2>Description</h2>
+<p>
+SexyTreeView is a GtkTreeView which supports tooltips on individual cells.
+These tooltips can be either text (stored in a column of the tree model) or
+widgets, created through a signal handler.
+</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id2547020"></a><h2>Details</h2>
+<div class="refsect2" lang="en">
+<a name="id2547031"></a><h3>
+<a name="SexyTreeView-struct"></a>SexyTreeView</h3>
+<a class="indexterm" name="id2547044"></a><pre class="programlisting">typedef struct _SexyTreeView SexyTreeView;</pre>
+<p>
+The <a href="SexyTreeView.html" title="SexyTreeView"><span class="type">SexyTreeView</span></a> struct contains private data only, and should be manipulated using the functions below.
+</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id2547068"></a><h3>
+<a name="sexy-tree-view-new"></a>sexy_tree_view_new ()</h3>
+<a class="indexterm" name="id2547080"></a><pre class="programlisting">GtkWidget*  sexy_tree_view_new              (void);</pre>
+<p>
+Creates a new SexyTreeView widget</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td>
+<span class="term"><span class="emphasis"><em>Returns</em></span>&#160;:</span></td>
+<td> a new <a href="SexyTreeView.html" title="SexyTreeView"><span class="type">SexyTreeView</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id2547127"></a><h3>
+<a name="sexy-tree-view-set-tooltip-label-column"></a>sexy_tree_view_set_tooltip_label_column ()</h3>
+<a class="indexterm" name="id2547140"></a><pre class="programlisting">void        sexy_tree_view_set_tooltip_label_column
+                                            (<a href="SexyTreeView.html" title="SexyTreeView">SexyTreeView</a> *treeview,
+                                             guint column);</pre>
+<p>
+Sets a column of the view's model to be used for the text in tooltips.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td>
+<span class="term"><em class="parameter"><code>treeview</code></em>&#160;:</span></td>
+<td> A <a href="SexyTreeView.html" title="SexyTreeView"><span class="type">SexyTreeView</span></a>
+</td>
+</tr>
+<tr>
+<td>
+<span class="term"><em class="parameter"><code>column</code></em>&#160;:</span></td>
+<td> The column of the tree model to use for tooltip text.
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1" lang="en">
+<a name="id2525972"></a><h2>Signal Details</h2>
+<div class="refsect2" lang="en">
+<a name="id2525983"></a><h3>
+<a name="SexyTreeView-get-tooltip"></a>The "get-tooltip" signal</h3>
+<a class="indexterm" name="id2525990"></a><pre class="programlisting">GtkWidget*  user_function                  (<a href="SexyTreeView.html" title="SexyTreeView">SexyTreeView</a>      *treeview,
+                                            GtkTreePath       *path,
+                                            GtkTreeViewColumn *column,
+                                            gpointer           user_data)      : Run last</pre>
+<p>
+The ::get-tooltip signal is emitted when the user's mouse hovers
+over a cell in the tree for longer than 500ms.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td>
+<span class="term"><em class="parameter"><code>treeview</code></em>&#160;:</span></td>
+<td> The treeview on which the signal is emitted.
+</td>
+</tr>
+<tr>
+<td>
+<span class="term"><em class="parameter"><code>path</code></em>&#160;:</span></td>
+<td> The path of the row on which the user is hovering.
+</td>
+</tr>
+<tr>
+<td>
+<span class="term"><em class="parameter"><code>column</code></em>&#160;:</span></td>
+<td> The column on which the user is hovering.
+</td>
+</tr>
+<tr>
+<td>
+<span class="term"><em class="parameter"><code>user_data</code></em>&#160;:</span></td>
+<td>user data set when the signal handler was connected.</td>
+</tr>
+<tr>
+<td>
+<span class="term"><span class="emphasis"><em>Returns</em></span>&#160;:</span></td>
+<td> a <span class="type">GtkWidget</span> to put in the tooltip window.  If NULL is
+returned, no tooltip will be shown.
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+</body>
+</html>

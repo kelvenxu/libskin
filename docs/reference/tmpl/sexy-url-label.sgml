@@ -1,0 +1,54 @@
+<!-- ##### SECTION Title ##### -->
+SexyUrlLabel
+
+<!-- ##### SECTION Short_Description ##### -->
+A GtkLabel with support for embedded hyperlinks.
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+SexyUrlLabel is a GtkLabel with support for embedded hyperlinks. It uses a
+modified form of the Pango markup format that supports the
+&lt;a href="..."&gt;...&lt;/a&gt; tag. The hyperlink will appear in blue and
+can be activated by clicking it. Right-clicking the hyperlink displays a menu
+offering the ability to activate it or to copy the URL.
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT SexyUrlLabel ##### -->
+<para>
+The #SexyUrlLabel struct contains private data only, and should be manipulated using the functions below.
+</para>
+
+
+<!-- ##### SIGNAL SexyUrlLabel::url-activated ##### -->
+<para>
+
+</para>
+
+@sexyurllabel: the object which received the signal.
+@arg1: 
+
+<!-- ##### FUNCTION sexy_url_label_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION sexy_url_label_set_markup ##### -->
+<para>
+
+</para>
+
+@url_label: 
+@markup: 
+
+

@@ -1,0 +1,287 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="SexyIconEntry">
+<refmeta>
+<refentrytitle role="top_of_page">SexyIconEntry</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>LIBSEXY Library</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>SexyIconEntry</refname>
+<refpurpose>A GtkEntry with support for inline icons.</refpurpose>
+<!--[<xref linkend="desc" endterm="desc.title"/>]-->
+</refnamediv>
+
+<refsynopsisdiv role="synopsis">
+<title role="synopsis.title">Synopsis</title>
+
+<synopsis>
+
+
+
+            <link linkend="SexyIconEntry-struct">SexyIconEntry</link>;
+enum        <link linkend="SexyIconEntryPosition">SexyIconEntryPosition</link>;
+<link linkend="GtkWidget">GtkWidget</link>*  <link linkend="sexy-icon-entry-new">sexy_icon_entry_new</link>             (void);
+<link linkend="void">void</link>        <link linkend="sexy-icon-entry-set-icon">sexy_icon_entry_set_icon</link>        (<link linkend="SexyIconEntry">SexyIconEntry</link> *entry,
+                                             <link linkend="SexyIconEntryPosition">SexyIconEntryPosition</link> position,
+                                             <link linkend="GtkImage">GtkImage</link> *icon);
+<link linkend="void">void</link>        <link linkend="sexy-icon-entry-set-icon-highlight">sexy_icon_entry_set_icon_highlight</link>
+                                            (<link linkend="SexyIconEntry">SexyIconEntry</link> *entry,
+                                             <link linkend="SexyIconEntryPosition">SexyIconEntryPosition</link> position,
+                                             <link linkend="gboolean">gboolean</link> highlight);
+<link linkend="GtkImage">GtkImage</link>*   <link linkend="sexy-icon-entry-get-icon">sexy_icon_entry_get_icon</link>        (const <link linkend="SexyIconEntry">SexyIconEntry</link> *entry,
+                                             <link linkend="SexyIconEntryPosition">SexyIconEntryPosition</link> position);
+<link linkend="gboolean">gboolean</link>    <link linkend="sexy-icon-entry-get-icon-highlight">sexy_icon_entry_get_icon_highlight</link>
+                                            (const <link linkend="SexyIconEntry">SexyIconEntry</link> *entry,
+                                             <link linkend="SexyIconEntryPosition">SexyIconEntryPosition</link> position);
+<link linkend="void">void</link>        <link linkend="sexy-icon-entry-add-clear-button">sexy_icon_entry_add_clear_button</link>
+                                            (<link linkend="SexyIconEntry">SexyIconEntry</link> *icon_entry);
+
+</synopsis>
+</refsynopsisdiv>
+
+<refsect1 role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<synopsis>
+
+  <link linkend="GObject">GObject</link>
+   +----<link linkend="GInitiallyUnowned">GInitiallyUnowned</link>
+         +----<link linkend="GtkObject">GtkObject</link>
+               +----<link linkend="GtkWidget">GtkWidget</link>
+                     +----<link linkend="GtkEntry">GtkEntry</link>
+                           +----SexyIconEntry
+</synopsis>
+
+</refsect1>
+
+
+
+<refsect1 role="impl_interfaces">
+<title role="impl_interfaces.title">Implemented Interfaces</title>
+<para>
+SexyIconEntry implements
+ <link linkend="GtkEditable">GtkEditable</link>,  <link linkend="AtkImplementorIface">AtkImplementorIface</link> and  <link linkend="GtkCellEditable">GtkCellEditable</link>.</para>
+
+</refsect1>
+
+
+
+<refsect1 role="signal_proto">
+<title role="signal_proto.title">Signals</title>
+<synopsis>
+
+&quot;<link linkend="SexyIconEntry-icon-pressed">icon-pressed</link>&quot;
+            <link linkend="void">void</link>        user_function      (<link linkend="SexyIconEntry">SexyIconEntry</link> *entry,
+                                            <link linkend="gint">gint</link>           icon_pos,
+                                            <link linkend="gint">gint</link>           button,
+                                            <link linkend="gpointer">gpointer</link>       user_data)      : Run last / Action
+&quot;<link linkend="SexyIconEntry-icon-released">icon-released</link>&quot;
+            <link linkend="void">void</link>        user_function      (<link linkend="SexyIconEntry">SexyIconEntry</link> *entry,
+                                            <link linkend="gint">gint</link>           icon_pos,
+                                            <link linkend="gint">gint</link>           button,
+                                            <link linkend="gpointer">gpointer</link>       user_data)      : Run last / Action
+</synopsis>
+</refsect1>
+
+
+<refsect1 role="desc">
+<title role="desc.title">Description</title>
+<para>
+SexyIconEntry is a GtkEntry with support for inline icons. They can appear on
+either side of the entry or on both sides. There's also built-in support for
+adding a clear button for clearing the entry. This widget is particularly
+useful as search fields.
+</para>
+</refsect1>
+
+<refsect1 role="details">
+<title role="details.title">Details</title>
+<refsect2>
+<title><anchor id="SexyIconEntry-struct" role="struct"/>SexyIconEntry</title>
+<indexterm><primary>SexyIconEntry</primary></indexterm><programlisting>typedef struct _SexyIconEntry SexyIconEntry;</programlisting>
+<para>
+The <link linkend="SexyIconEntry"><type>SexyIconEntry</type></link> struct contains private data only, and should be manipulated using the functions below.
+</para></refsect2>
+<refsect2>
+<title><anchor id="SexyIconEntryPosition" role="enum"/>enum SexyIconEntryPosition</title>
+<indexterm><primary>SexyIconEntryPosition</primary></indexterm><programlisting>typedef enum
+{
+	SEXY_ICON_ENTRY_PRIMARY,
+	SEXY_ICON_ENTRY_SECONDARY
+
+} SexyIconEntryPosition;
+</programlisting>
+<para>
+The position used when setting or retrieving an icon.
+</para><variablelist role="enum">
+<varlistentry>
+<term><anchor id="SEXY-ICON-ENTRY-PRIMARY:CAPS" role="constant"/><literal>SEXY_ICON_ENTRY_PRIMARY</literal></term>
+<listitem><simpara>Icon at the beginning of the entry (left for LTR languages, right for RTL).
+</simpara></listitem>
+</varlistentry>
+<varlistentry>
+<term><anchor id="SEXY-ICON-ENTRY-SECONDARY:CAPS" role="constant"/><literal>SEXY_ICON_ENTRY_SECONDARY</literal></term>
+<listitem><simpara>Icon at the end of the entry.
+
+</simpara></listitem>
+</varlistentry>
+</variablelist></refsect2>
+<refsect2>
+<title><anchor id="sexy-icon-entry-new" role="function"/>sexy_icon_entry_new ()</title>
+<indexterm><primary>sexy_icon_entry_new</primary></indexterm><programlisting><link linkend="GtkWidget">GtkWidget</link>*  sexy_icon_entry_new             (void);</programlisting>
+<para>
+Creates a new SexyIconEntry widget.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara>a new <link linkend="SexyIconEntry"><type>SexyIconEntry</type></link>.
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2>
+<title><anchor id="sexy-icon-entry-set-icon" role="function"/>sexy_icon_entry_set_icon ()</title>
+<indexterm><primary>sexy_icon_entry_set_icon</primary></indexterm><programlisting><link linkend="void">void</link>        sexy_icon_entry_set_icon        (<link linkend="SexyIconEntry">SexyIconEntry</link> *entry,
+                                             <link linkend="SexyIconEntryPosition">SexyIconEntryPosition</link> position,
+                                             <link linkend="GtkImage">GtkImage</link> *icon);</programlisting>
+<para>
+Sets the icon shown in the entry</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>entry</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="SexyIconEntry"><type>SexyIconEntry</type></link>.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>position</parameter>&nbsp;:</term>
+<listitem><simpara> Icon position.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>icon</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkImage"><type>GtkImage</type></link> to set as the icon.
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2>
+<title><anchor id="sexy-icon-entry-set-icon-highlight" role="function"/>sexy_icon_entry_set_icon_highlight ()</title>
+<indexterm><primary>sexy_icon_entry_set_icon_highlight</primary></indexterm><programlisting><link linkend="void">void</link>        sexy_icon_entry_set_icon_highlight
+                                            (<link linkend="SexyIconEntry">SexyIconEntry</link> *entry,
+                                             <link linkend="SexyIconEntryPosition">SexyIconEntryPosition</link> position,
+                                             <link linkend="gboolean">gboolean</link> highlight);</programlisting>
+<para>
+Determines whether the icon will highlight on mouse-over.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>entry</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="SexyIconEntry"><type>SexyIconEntry</type></link>;
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>position</parameter>&nbsp;:</term>
+<listitem><simpara> Icon position.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>highlight</parameter>&nbsp;:</term>
+<listitem><simpara> TRUE if the icon should highlight on mouse-over
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2>
+<title><anchor id="sexy-icon-entry-get-icon" role="function"/>sexy_icon_entry_get_icon ()</title>
+<indexterm><primary>sexy_icon_entry_get_icon</primary></indexterm><programlisting><link linkend="GtkImage">GtkImage</link>*   sexy_icon_entry_get_icon        (const <link linkend="SexyIconEntry">SexyIconEntry</link> *entry,
+                                             <link linkend="SexyIconEntryPosition">SexyIconEntryPosition</link> position);</programlisting>
+<para>
+Retrieves the image used for the icon</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>entry</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="SexyIconEntry"><type>SexyIconEntry</type></link>.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>position</parameter>&nbsp;:</term>
+<listitem><simpara> Icon position.
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> A <link linkend="GtkImage"><type>GtkImage</type></link>.
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2>
+<title><anchor id="sexy-icon-entry-get-icon-highlight" role="function"/>sexy_icon_entry_get_icon_highlight ()</title>
+<indexterm><primary>sexy_icon_entry_get_icon_highlight</primary></indexterm><programlisting><link linkend="gboolean">gboolean</link>    sexy_icon_entry_get_icon_highlight
+                                            (const <link linkend="SexyIconEntry">SexyIconEntry</link> *entry,
+                                             <link linkend="SexyIconEntryPosition">SexyIconEntryPosition</link> position);</programlisting>
+<para>
+Retrieves whether entry will highlight the icon on mouseover.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>entry</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="SexyIconEntry"><type>SexyIconEntry</type></link>.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>position</parameter>&nbsp;:</term>
+<listitem><simpara> Icon position.
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> TRUE if icon highlights.
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2>
+<title><anchor id="sexy-icon-entry-add-clear-button" role="function"/>sexy_icon_entry_add_clear_button ()</title>
+<indexterm><primary>sexy_icon_entry_add_clear_button</primary></indexterm><programlisting><link linkend="void">void</link>        sexy_icon_entry_add_clear_button
+                                            (<link linkend="SexyIconEntry">SexyIconEntry</link> *icon_entry);</programlisting>
+<para>
+A convenience function to add a clear button to the end of the entry.
+This is useful for search boxes.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>icon_entry</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="SexyIconEntry"><type>SexyIconEntry</type></link>.
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+
+</refsect1>
+
+<refsect1 role="signals">
+<title role="signals.title">Signal Details</title>
+<refsect2><title><anchor id="SexyIconEntry-icon-pressed"/>The &quot;icon-pressed&quot; signal</title>
+<indexterm><primary>SexyIconEntry::icon-pressed</primary></indexterm><programlisting><link linkend="void">void</link>        user_function                  (<link linkend="SexyIconEntry">SexyIconEntry</link> *entry,
+                                            <link linkend="gint">gint</link>           icon_pos,
+                                            <link linkend="gint">gint</link>           button,
+                                            <link linkend="gpointer">gpointer</link>       user_data)      : Run last / Action</programlisting>
+<para>
+The ::icon-pressed signal is emitted when an icon is clicked.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>entry</parameter>&nbsp;:</term>
+<listitem><simpara> The entry on which the signal is emitted.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>icon_pos</parameter>&nbsp;:</term>
+<listitem><simpara> The position of the clicked icon.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>button</parameter>&nbsp;:</term>
+<listitem><simpara> The mouse button clicked.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>user_data</parameter>&nbsp;:</term>
+<listitem><simpara>user data set when the signal handler was connected.</simpara></listitem></varlistentry>
+</variablelist></refsect2><refsect2><title><anchor id="SexyIconEntry-icon-released"/>The &quot;icon-released&quot; signal</title>
+<indexterm><primary>SexyIconEntry::icon-released</primary></indexterm><programlisting><link linkend="void">void</link>        user_function                  (<link linkend="SexyIconEntry">SexyIconEntry</link> *entry,
+                                            <link linkend="gint">gint</link>           icon_pos,
+                                            <link linkend="gint">gint</link>           button,
+                                            <link linkend="gpointer">gpointer</link>       user_data)      : Run last / Action</programlisting>
+<para>
+The ::icon-released signal is emitted on the button release from a
+mouse click.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>entry</parameter>&nbsp;:</term>
+<listitem><simpara> The entry on which the signal is emitted.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>icon_pos</parameter>&nbsp;:</term>
+<listitem><simpara> The position of the clicked icon.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>button</parameter>&nbsp;:</term>
+<listitem><simpara> The mouse button clicked.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>user_data</parameter>&nbsp;:</term>
+<listitem><simpara>user data set when the signal handler was connected.</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+</refsect1>
+
+
+
+</refentry>

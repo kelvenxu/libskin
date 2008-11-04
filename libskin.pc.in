@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libsexy
+Description: Doing naughty things to good widgets
+Version: @VERSION@
+Libs: -L${libdir} -lsexy @PACKAGE_LIBS@
+Cflags: -I${includedir} @PACKAGE_CFLAGS@
+
+

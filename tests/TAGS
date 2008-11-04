@@ -1,0 +1,17 @@
+
+test-skin-window.c,585
+gboolean cb_skin_window_right_button_press(SkinWindow* skin_window, cb_skin_window_right_button_press34,1093
+gboolean cb_destroy_event()cb_destroy_event44,1412
+gboolean cb_clicked_event(SkinButton* button, SkinDigitalTime *time)cb_clicked_event51,1513
+void cb_skin_window_move_event()cb_skin_window_move_event68,1799
+void create_player_window()create_player_window74,1871
+void create_playlist_window()create_playlist_window78,1904
+void create_lyric_window()create_lyric_window82,1939
+void create_equalizer_window()create_equalizer_window86,1971
+int main()main90,2007
+
+test-skin-archive.c,23
+int main()main28,907
+
+test-skin-builder.c,46
+int main(int argc, char *argv[])main35,1118

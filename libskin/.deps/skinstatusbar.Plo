@@ -1,0 +1,3 @@
+skinstatusbar.lo skinstatusbar.o: skinstatusbar.c skinstatusbar.h
+
+skinstatusbar.h:

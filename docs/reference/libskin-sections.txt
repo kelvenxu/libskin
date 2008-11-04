@@ -1,0 +1,15 @@
+<SECTION>
+<FILE>skinwindow</FILE>
+<TITLE>SkinWindow</TITLE>
+SkinWindow
+skin_window_new
+<SUBSECTION Standard>
+SKIN_WINDOW
+SKIN_IS_WINDOW
+SKIN_TYPE_WINDOW
+skin_window_get_type
+SKIN_WINDOW_CLASS
+SKIN_IS_WINDOW_CLASS
+SKIN_WINDOW_GET_CLASS
+</SECTION>
+

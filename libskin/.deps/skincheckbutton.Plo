@@ -1,0 +1,3 @@
+skincheckbutton.lo skincheckbutton.o: skincheckbutton.c skincheckbutton.h
+
+skincheckbutton.h:

@@ -1,0 +1,3 @@
+skinprocessbar.lo skinprocessbar.o: skinprocessbar.c skinprocessbar.h
+
+skinprocessbar.h:
