@@ -195,7 +195,7 @@ delete_temp_dir(const gchar *dir)
 {
 	gchar cmd[512];
 	sprintf(cmd, "rm -rf %s", dir);
-	system(cmd);
+	system(cmd); //FIXME: return value
 }
 
 static char *
@@ -333,10 +333,14 @@ read_item_with_xpath(xmlDocPtr doc,
 	else 
 		item->vertical = 0;
 
-	g_print("color\n");
 	value = (gchar *)xmlGetProp(cur, (const xmlChar *)"color");
 	if(value && (strlen(value) > 0))
+	{
 		gdk_color_parse(value, &(item->color));
+		g_print("color: %s, r: %d, g: %d, b: %d\n", value, item->color.red, item->color.green, item->color.blue);
+		xmlFree(value);
+	}
+
 
 	g_print("font\n");
 	value = (gchar *)xmlGetProp(cur, (const xmlChar *)"font");
@@ -348,7 +352,10 @@ read_item_with_xpath(xmlDocPtr doc,
 	g_print("font_size\n");
 	value = (gchar *)xmlGetProp(cur, (const xmlChar *)"font_size");
 	if(value && (strlen(value) > 0))
+	{
 		item->font_size = atoi(value);
+		xmlFree(value);
+	}
 	else
 		item->font_size = 10;
 
@@ -483,27 +490,16 @@ load_player_archive( xmlDocPtr doc, PlayerArchive* pa, const gchar* path)
 	g_return_if_fail(pa != NULL);
 	g_return_if_fail(path != NULL);
 
-	g_print("window\n");
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW, &(pa->window), path); 
-	g_print("window\n");
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_PLAY, &(pa->play), path);
-	g_print("window\n");
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_PAUSE, &(pa->pause), path);
-	g_print("window\n");
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_PREV, &(pa->prev), path);
-	g_print("window\n");
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_NEXT, &(pa->next), path);
-	g_print("window\n");
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_STOP, &(pa->stop), path);
-	g_print("window\n");
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_MUTE, &(pa->mute), path);
-	g_print("window\n");
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_OPEN, &(pa->open), path);
-	g_print("window\n");
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_LYRIC, &(pa->lyric), path); 
-	g_print("window\n");
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_EQUALIZER, &(pa->equalizer), path);
-	g_print("window\n");
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_PLAYLIST, &(pa->playlist), path); 
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_MINIMIZE, &(pa->minimize), path);
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_MINIMODE, &(pa->minimode), path);
@@ -515,7 +511,6 @@ load_player_archive( xmlDocPtr doc, PlayerArchive* pa, const gchar* path)
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_STATUS, &(pa->status), path);
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_LED, &(pa->led), path);
 	read_item_with_xpath(doc, XP_PLAYER_WINDOW_VISUAL, &(pa->visual), path);
-	g_print("window\n");
 }
 
 static void 

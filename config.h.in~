@@ -39,17 +39,17 @@
 /* ISO codes prefix */
 #undef ISO_CODES_PREFIX
 
-/* libsexy major version. */
-#undef LIBSEXY_MAJOR_VERSION
+/* libskin major version. */
+#undef LIBSKIN_MAJOR_VERSION
 
-/* libsexy micro version. */
-#undef LIBSEXY_MICRO_VERSION
+/* libskin micro version. */
+#undef LIBSKIN_MICRO_VERSION
 
-/* libsexy minor version. */
-#undef LIBSEXY_MINOR_VERSION
+/* libskin minor version. */
+#undef LIBSKIN_MINOR_VERSION
 
-/* libsexy version. */
-#undef LIBSEXY_VERSION
+/* libskin version. */
+#undef LIBSKIN_VERSION
 
 /* Name of package */
 #undef PACKAGE

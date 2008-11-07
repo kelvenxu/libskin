@@ -2,7 +2,7 @@
 /*
  * skinbuilder.c
  *
- * This file is part of ________.
+ * This file is part of libskin.
  *
  * Copyright (C) 2008 - kelvenxu <kelvenxu@gmail.com>.
  *
@@ -34,6 +34,7 @@
 #include "skinwindow.h"
 #include "skinbutton.h"
 #include "skinvolumebutton.h"
+#include "skindynamictext.h"
 
 
 G_DEFINE_TYPE (SkinBuilder, skin_builder, G_TYPE_OBJECT);
@@ -107,10 +108,63 @@ create_player_window(SkinBuilder *builder)
 	add_object(builder, G_OBJECT(window), "player-window");
 
 	GnomeCanvasGroup *root = window->canvas_root;
+
+	SkinButton *pause = skin_button_new(root, 
+			player->pause.img, 
+			player->pause.x1, player->pause.y1);
+	add_object(builder, G_OBJECT(pause), "player-pause-button");
+
 	SkinButton *play = skin_button_new(root, 
 			player->play.img, 
 			player->play.x1, player->play.y1);
 	add_object(builder, G_OBJECT(play), "player-play-button");
+
+	SkinButton *stop = skin_button_new(root, 
+			player->stop.img, 
+			player->stop.x1, player->stop.y1);
+	add_object(builder, G_OBJECT(stop), "player-stop-button");
+
+	SkinButton *prev = skin_button_new(root, 
+			player->prev.img, 
+			player->prev.x1, player->prev.y1);
+	add_object(builder, G_OBJECT(prev), "player-prev-button");
+
+	SkinButton *next = skin_button_new(root, 
+			player->next.img, 
+			player->next.x1, player->next.y1);
+	add_object(builder, G_OBJECT(next), "player-next-button");
+
+	SkinButton *exit = skin_button_new(root, 
+			player->exit.img, 
+			player->exit.x1, player->exit.y1);
+	add_object(builder, G_OBJECT(exit), "player-exit-button");
+
+	SkinButton *minimize = skin_button_new(root, 
+			player->minimize.img, 
+			player->minimize.x1, player->minimize.y1);
+	add_object(builder, G_OBJECT(minimize), "player-minimize-button");
+
+	SkinButton *minimode = skin_button_new(root, 
+			player->minimode.img, 
+			player->minimode.x1, player->minimode.y1);
+	add_object(builder, G_OBJECT(minimode), "player-minimode-button");
+
+	SkinButton *open = skin_button_new(root, 
+			player->open.img, 
+			player->open.x1, player->open.y1);
+	add_object(builder, G_OBJECT(open), "player-open-button");
+	
+	SkinDynamicText *info = skin_dynamic_text_new(root, 
+			"x1", (gdouble)(player->info.x1),
+			"y1", (gdouble)(player->info.y1),
+			"x2", (gdouble)(player->info.x2),
+			"y2", (gdouble)(player->info.y2),
+			"color", "#00ff00",//&(player->info.color),
+			"title", "title --",
+			"artist", "artist --",
+			"album", "album ==",
+			"format", "format --",
+			NULL);
 
 	/*
 	SkinVolumeButton *volume = skin_volume_button_new(root, 

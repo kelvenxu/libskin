@@ -52,6 +52,10 @@
 /* libskin version. */
 #define LIBSKIN_VERSION "0.1.0"
 
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#define LT_OBJDIR ".libs/"
+
 /* Name of package */
 #define PACKAGE "libskin"
 
