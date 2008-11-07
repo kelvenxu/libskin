@@ -228,10 +228,22 @@ void skin_window_hide(SkinWindow* skin_window)skin_window_hide366,9191
 void skin_window_move(SkinWindow* skin_window,skin_window_move372,9334
 void skin_window_set_image(SkinWindow* skin_window,skin_window_set_image379,9513
 
-skinstatusbar.h,56
+skinstatusbar.h,719
 #define __SKINSTATUSBAR_H__ __SKINSTATUSBAR_H__26,896
+#define SKIN_TYPE_STATUS_BAR SKIN_TYPE_STATUS_BAR33,1012
+#define SKIN_STATUS_BAR(SKIN_STATUS_BAR34,1071
+#define SKIN_STATUS_BAR_CLASS(SKIN_STATUS_BAR_CLASS35,1174
+#define SKIN_IS_STATUS_BAR(SKIN_IS_STATUS_BAR36,1289
+#define SKIN_IS_STATUS_BAR_CLASS(SKIN_IS_STATUS_BAR_CLASS37,1380
+#define SKIN_STATUS_BAR_GET_CLASS(SKIN_STATUS_BAR_GET_CLASS38,1478
+typedef struct _SkinStatusBarPrivate SkinStatusBarPrivate;SkinStatusBarPrivate40,1596
+	GnomeCanvasText parent;parent44,1674
+	SkinStatusBarPrivate *priv;priv46,1700
+} SkinStatusBar;SkinStatusBar47,1729
+	GnomeCanvasTextClass parent;parent51,1764
+} SkinStatusBarClass;SkinStatusBarClass52,1794
 
-skindynamictext.h,763
+skindynamictext.h,823
 #define __SKINDYNAMICTEXT_H__ __SKINDYNAMICTEXT_H__26,899
 #define SKIN_TYPE_DYNAMIC_TEXT SKIN_TYPE_DYNAMIC_TEXT34,1035
 #define SKIN_DYNAMIC_TEXT(SKIN_DYNAMIC_TEXT35,1098
@@ -240,11 +252,12 @@ skindynamictext.h,763
 #define SKIN_IS_DYNAMIC_TEXT_CLASS(SKIN_IS_DYNAMIC_TEXT_CLASS38,1423
 #define SKIN_DYNAMIC_TEXT_GET_CLASS(SKIN_DYNAMIC_TEXT_GET_CLASS39,1525
 typedef struct _SkinDynamicTextPrivate SkinDynamicTextPrivate;SkinDynamicTextPrivate41,1649
-	GnomeCanvasRect parent;parent45,1731
+	GnomeCanvasText parent;parent45,1731
 	SkinDynamicTextPrivate *priv;priv47,1757
 } SkinDynamicText;SkinDynamicText48,1788
-	GnomeCanvasRectClass parent;parent52,1826
-} SkinDynamicTextClass;SkinDynamicTextClass53,1856
+	GnomeCanvasTextClass parent;parent52,1826
+	void (*clicked) (SkinDynamicText *dtext); clicked53,1856
+} SkinDynamicTextClass;SkinDynamicTextClass54,1900
 
 skinbuilder.c,935
 #define SKIN_BUILDER_GET_PRIVATE(SKIN_BUILDER_GET_PRIVATE42,1362
@@ -505,26 +518,54 @@ skin_archive_get_property (GObject      *object,skin_archive_get_property130,4
 SkinArchive *skin_archive_new()skin_archive_new148,4679
 skin_archive_load(SkinArchive *ar, const char* filename)skin_archive_load156,4806
 delete_temp_dir(const gchar *dir)delete_temp_dir194,5802
-uncompress_skin_archive(const gchar *zipfilename)uncompress_skin_archive202,5919
-xml_nodeset_get_from_xpath(xmlDocPtr doc, const xmlChar * xpath)xml_nodeset_get_from_xpath235,6472
-position_parse(const gchar *str, int *x1, int *y1, int *x2, int *y2)position_parse259,6971
-read_item_with_xpath(xmlDocPtr doc, read_item_with_xpath280,7429
-read_info(xmlDocPtr doc, SkinArchiveInfo *info)read_info439,11494
-load_player_archive( xmlDocPtr doc, PlayerArchive* pa, const gchar* path)load_player_archive487,12464
-load_lyric_archive( xmlDocPtr doc, LyricArchive* la, const gchar* path)load_lyric_archive517,14179
-load_equalizer_archive( xmlDocPtr doc, EqualizerArchive* eqa, const gchar* path)load_equalizer_archive526,14548
-load_playlist_archive( xmlDocPtr doc, PlaylistArchive* pla, const gchar* path)load_playlist_archive540,15352
-load_mini_archive(xmlDocPtr doc, MiniArchive* ma, const gchar* path)load_mini_archive550,15837
-load_playlist_attr(const gchar* filename, PlaylistAttr* attr)load_playlist_attr567,16761
-load_lyric_attr( const gchar* filename, LyricAttr* attr)load_lyric_attr632,18426
-load_visual_attr(const gchar* filename, VisualAttr* attr)load_visual_attr681,19563
-do_load(SkinArchive *ar, const char *filename)do_load741,21119
+uncompress_skin_archive(const gchar *zipfilename)uncompress_skin_archive202,5941
+xml_nodeset_get_from_xpath(xmlDocPtr doc, const xmlChar * xpath)xml_nodeset_get_from_xpath235,6494
+position_parse(const gchar *str, int *x1, int *y1, int *x2, int *y2)position_parse259,6993
+read_item_with_xpath(xmlDocPtr doc, read_item_with_xpath280,7451
+read_info(xmlDocPtr doc, SkinArchiveInfo *info)read_info439,11516
+load_player_archive( xmlDocPtr doc, PlayerArchive* pa, const gchar* path)load_player_archive487,12486
+load_lyric_archive( xmlDocPtr doc, LyricArchive* la, const gchar* path)load_lyric_archive517,14201
+load_equalizer_archive( xmlDocPtr doc, EqualizerArchive* eqa, const gchar* path)load_equalizer_archive526,14570
+load_playlist_archive( xmlDocPtr doc, PlaylistArchive* pla, const gchar* path)load_playlist_archive540,15374
+load_mini_archive(xmlDocPtr doc, MiniArchive* ma, const gchar* path)load_mini_archive550,15859
+load_playlist_attr(const gchar* filename, PlaylistAttr* attr)load_playlist_attr567,16783
+load_lyric_attr( const gchar* filename, LyricAttr* attr)load_lyric_attr632,18448
+load_visual_attr(const gchar* filename, VisualAttr* attr)load_visual_attr681,19585
+do_load(SkinArchive *ar, const char *filename)do_load741,21141
 
 skincheckbutton.c,0
 
-skinstatusbar.c,0
+skinstatusbar.c,1450
+#define SKIN_STATUS_BAR_GET_PRIVATE(SKIN_STATUS_BAR_GET_PRIVATE30,992
+struct _SkinStatusBarPrivate _SkinStatusBarPrivate33,1114
+	gdouble x1;x135,1146
+	gdouble y1;y136,1159
+	gdouble x2;x237,1172
+	gdouble y2;y238,1185
+	gchar *text;text40,1199
+	gchar *color;color41,1213
+	gint align;align42,1228
+	GnomeCanvasGroup *root;root43,1241
+	PROP_0,PROP_049,1304
+	PROP_X1,PROP_X150,1313
+	PROP_Y1,PROP_Y151,1323
+	PROP_X2,PROP_X252,1333
+	PROP_Y2,PROP_Y253,1343
+	PROP_ALIGN,PROP_ALIGN54,1353
+	PROP_COLOR,PROP_COLOR55,1366
+	PROP_TEXTPROP_TEXT56,1379
+skin_status_bar_dispose (SkinStatusBar *self)skin_status_bar_dispose60,1406
+skin_status_bar_finalize (SkinStatusBar *self)skin_status_bar_finalize65,1469
+skin_status_bar_init (SkinStatusBar *self)skin_status_bar_init70,1533
+skin_status_bar_class_init (SkinStatusBarClass *self_class)skin_status_bar_class_init78,1683
+skin_status_bar_set_property (GObject      *object,skin_status_bar_set_property115,3357
+skin_status_text_get_property (GObject      *object,skin_status_text_get_property166,4639
+skin_status_bar_update(SkinStatusBar *status_bar)skin_status_bar_update210,5686
+skin_status_bar_construct(SkinStatusBar *dtext, skin_status_bar_construct254,6596
+skin_status_bar_new(GnomeCanvasGroup *root, const gchar *first_arg_name, ...)skin_status_bar_new269,6972
+skin_status_bar_set_text(SkinStatusBar *dtext, const gchar *text)skin_status_bar_set_text295,7550
 
-skindynamictext.c,1921
+skindynamictext.c,2010
 #define SKIN_DYNAMIC_TEXT_GET_PRIVATE(SKIN_DYNAMIC_TEXT_GET_PRIVATE30,999
 struct _SkinDynamicTextPrivate _SkinDynamicTextPrivate33,1127
 	gdouble x1;x135,1161
@@ -536,31 +577,35 @@ struct _SkinDynamicTextPrivate _SkinDynamicTextPrivate33,1127
 	gchar *artist;artist42,1246
 	gchar *album;album43,1262
 	gchar *format;format44,1277
-	gchar *color;color46,1294
-	GnomeCanvasGroup *root;root48,1310
-	gboolean xy_changed;xy_changed50,1336
-	gboolean color_changed;color_changed51,1358
-	gboolean title_changed;title_changed52,1383
-	gboolean artist_changed;artist_changed53,1408
-	gboolean album_changed;album_changed54,1434
-	gboolean format_changed;format_changed55,1459
-	PROP_0,PROP_060,1522
-	PROP_COLOR,PROP_COLOR61,1531
-	PROP_TITLE,PROP_TITLE62,1544
-	PROP_ARTIST,PROP_ARTIST63,1557
-	PROP_ALBUM,PROP_ALBUM64,1571
-	PROP_FORMATPROP_FORMAT65,1584
-skin_dynamic_text_dispose (SkinDynamicText *self)skin_dynamic_text_dispose89,2457
-skin_dynamic_text_finalize (SkinDynamicText *self)skin_dynamic_text_finalize94,2524
-skin_dynamic_text_init (SkinDynamicText *self)skin_dynamic_text_init99,2592
-skin_dynamic_text_class_init (SkinDynamicTextClass *self_class)skin_dynamic_text_class_init108,2751
-skin_dynamic_text_set_property (GObject      *object,skin_dynamic_text_set_property136,4162
-skin_dynamic_text_get_property (GObject      *object,skin_dynamic_text_get_property184,5425
-skin_dynamic_text_update(SkinDynamicText *dtext)skin_dynamic_text_update222,6353
-static gboolean update_text(SkinDynamicText *dtext)update_text269,7154
-skin_dynamic_text_construct(SkinDynamicText *dtext, skin_dynamic_text_construct294,7584
-skin_dynamic_text_new(GnomeCanvasGroup *root, const gchar *first_arg_name, ...)skin_dynamic_text_new311,8025
-skin_dynamic_text_set_text(SkinDynamicText *dtext, const gchar *text)skin_dynamic_text_set_text337,8595
+	gchar *color;color45,1293
+	gint align;align46,1308
+	GnomeCanvasGroup *root;root47,1321
+	CLICKED,CLICKED51,1357
+    LAST_SIGNALLAST_SIGNAL52,1367
+	PROP_0,PROP_056,1419
+	PROP_X1,PROP_X157,1428
+	PROP_Y1,PROP_Y158,1438
+	PROP_X2,PROP_X259,1448
+	PROP_Y2,PROP_Y260,1458
+	PROP_ALIGN,PROP_ALIGN61,1468
+	PROP_COLOR,PROP_COLOR62,1481
+	PROP_TITLE,PROP_TITLE63,1494
+	PROP_ARTIST,PROP_ARTIST64,1507
+	PROP_ALBUM,PROP_ALBUM65,1521
+	PROP_FORMATPROP_FORMAT66,1534
+static int signals[LAST_SIGNAL];signals69,1551
+skin_dynamic_text_dispose (SkinDynamicText *self)skin_dynamic_text_dispose93,2528
+skin_dynamic_text_finalize (SkinDynamicText *self)skin_dynamic_text_finalize98,2595
+skin_dynamic_text_init (SkinDynamicText *self)skin_dynamic_text_init103,2663
+skin_dynamic_text_class_init (SkinDynamicTextClass *self_class)skin_dynamic_text_class_init112,2822
+skin_dynamic_text_set_property (GObject      *object,skin_dynamic_text_set_property171,5411
+skin_dynamic_text_get_property (GObject      *object,skin_dynamic_text_get_property234,7035
+cb_event(GnomeCanvasItem *item, GdkEvent *event, SkinDynamicText* dtext)cb_event287,8300
+skin_dynamic_text_update(SkinDynamicText *dtext)skin_dynamic_text_update311,8725
+static gboolean update_text(SkinDynamicText *dtext)update_text359,9739
+skin_dynamic_text_construct(SkinDynamicText *dtext, skin_dynamic_text_construct375,10062
+skin_dynamic_text_new(GnomeCanvasGroup *root, const gchar *first_arg_name, ...)skin_dynamic_text_new392,10504
+skin_dynamic_text_set_text(SkinDynamicText *dtext, const gchar *text)skin_dynamic_text_set_text420,11148
 
 skinprocessbar.h,58
 #define __SKINPROCESSBAR_H__ __SKINPROCESSBAR_H__26,898

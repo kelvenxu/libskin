@@ -50,6 +50,7 @@ typedef struct
 typedef struct 
 {
 	GnomeCanvasTextClass parent;
+	void (*clicked) (SkinDynamicText *dtext); 
 } SkinDynamicTextClass;
 
 

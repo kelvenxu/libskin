@@ -47,6 +47,10 @@ struct _SkinDynamicTextPrivate
 	GnomeCanvasGroup *root;
 };
 
+enum {
+	CLICKED,
+    LAST_SIGNAL
+};
 /* Object argument IDs */
 enum {
 	PROP_0,
@@ -62,6 +66,8 @@ enum {
 	PROP_FORMAT
 };
 
+static int signals[LAST_SIGNAL];
+
 static void skin_dynamic_text_dispose (SkinDynamicText *self);
 static void skin_dynamic_text_finalize (SkinDynamicText *self);
 static void skin_dynamic_text_init (SkinDynamicText *self);
@@ -76,6 +82,7 @@ static void skin_dynamic_text_get_property (GObject            *object,
 				  GValue             *value,
 				  GParamSpec         *pspec);
 
+static gint cb_event (GnomeCanvasItem *item, GdkEvent *event, SkinDynamicText* dtext);
 static void skin_dynamic_text_update(SkinDynamicText *dtext);
 static void skin_dynamic_text_construct(SkinDynamicText *dtext, 
 										GnomeCanvasGroup *root, 
@@ -111,6 +118,17 @@ skin_dynamic_text_class_init (SkinDynamicTextClass *self_class)
 	object_class->finalize = (void (*) (GObject *object)) skin_dynamic_text_finalize;
 	object_class->set_property = skin_dynamic_text_set_property;
 	object_class->get_property = skin_dynamic_text_get_property;
+
+	signals[CLICKED] = g_signal_new("clicked", 
+			G_TYPE_FROM_CLASS(object_class),
+			G_SIGNAL_RUN_LAST,
+			G_STRUCT_OFFSET(SkinDynamicTextClass, clicked),
+			NULL, 
+			NULL,
+			g_cclosure_marshal_VOID__VOID,
+			G_TYPE_NONE, 
+			0, 
+			NULL);
 
 	g_object_class_install_property(object_class, PROP_X1,
 			 g_param_spec_double ("x1", NULL, NULL,
@@ -265,6 +283,30 @@ skin_dynamic_text_get_property (GObject      *object,
     }
 }
 
+static gint 
+cb_event(GnomeCanvasItem *item, GdkEvent *event, SkinDynamicText* dtext)
+{
+	static gboolean is_pressing = FALSE;
+
+	switch (event->type) 
+	{
+	case GDK_BUTTON_PRESS:
+		if(event->button.button == 1) 
+			is_pressing = TRUE;
+		break;
+	case GDK_MOTION_NOTIFY:
+		break;
+	case GDK_BUTTON_RELEASE:
+		g_signal_emit(dtext, signals[CLICKED], 0, NULL);
+		is_pressing = FALSE;
+		break;
+	default:
+		break;
+	}
+
+	return FALSE;
+}
+
 static void
 skin_dynamic_text_update(SkinDynamicText *dtext)
 {
@@ -364,6 +406,8 @@ skin_dynamic_text_new(GnomeCanvasGroup *root, const gchar *first_arg_name, ...)
 
 	dtext = SKIN_DYNAMIC_TEXT(item);
 	priv = dtext->priv;
+
+	g_signal_connect(G_OBJECT(item), "event", G_CALLBACK(cb_event), dtext);
 
 	va_start(args, first_arg_name);
 	skin_dynamic_text_construct(dtext, root, first_arg_name, args);

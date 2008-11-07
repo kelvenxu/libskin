@@ -25,4 +25,37 @@
 #ifndef __SKINSTATUSBAR_H__
 #define __SKINSTATUSBAR_H__  1
 
+#include <glib-object.h>
+#include <libgnomecanvas/libgnomecanvas.h>
+
+G_BEGIN_DECLS
+
+#define SKIN_TYPE_STATUS_BAR (skin_status_bar_get_type ())
+#define SKIN_STATUS_BAR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), SKIN_TYPE_STATUS_BAR, SkinStatusBar))
+#define SKIN_STATUS_BAR_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), SKIN_TYPE_STATUS_BAR, SkinStatusBarClass))
+#define SKIN_IS_STATUS_BAR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), SKIN_TYPE_STATUS_BAR))
+#define SKIN_IS_STATUS_BAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), SKIN_TYPE_STATUS_BAR))
+#define SKIN_STATUS_BAR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), SKIN_TYPE_STATUS_BAR, SkinStatusBarClass))
+
+typedef struct _SkinStatusBarPrivate SkinStatusBarPrivate;
+
+typedef struct 
+{
+	GnomeCanvasText parent;
+
+	SkinStatusBarPrivate *priv;
+} SkinStatusBar;
+
+typedef struct
+{
+	GnomeCanvasTextClass parent;
+} SkinStatusBarClass;
+
+GType skin_status_bar_get_type();
+
+SkinStatusBar *skin_status_bar_new(GnomeCanvasGroup *root, const gchar *first_arg_name, ...);
+void skin_status_bar_set_text(SkinStatusBar *dtext, const gchar *text);
+
+G_END_DECLS
+
 #endif /*__SKINSTATUSBAR_H__ */
