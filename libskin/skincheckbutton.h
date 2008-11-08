@@ -25,4 +25,49 @@
 #ifndef __SKINCHECKBUTTON_H__
 #define __SKINCHECKBUTTON_H__  1
 
+
+#include    <glib-object.h>
+#include	<glib.h>
+#include	<gtk/gtk.h>
+#include	<libgnomecanvas/libgnomecanvas.h>
+
+G_BEGIN_DECLS
+
+#define SKIN_TYPE_CHECK_BUTTON              (skin_check_button_get_type ())
+#define SKIN_CHECK_BUTTON(obj)              (G_TYPE_CHECK_INSTANCE_CAST ((obj), SKIN_TYPE_CHECK_BUTTON, SkinCheckButton)) 
+#define SKIN_CHECK_BUTTON_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), SKIN_TYPE_CHECK_BUTTON, SkinCheckButtonClass))
+#define SKIN_IS_CHECK_BUTTON(obj)           (G_TYPE_CHECK_INSTANCE_TYPE ((obj), SKIN_TYPE_CHECK_BUTTON))
+#define SKIN_IS_CHECK_BUTTON_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), SKIN_TYPE_CHECK_BUTTON))
+#define SKIN_CHECK_BUTTON_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), SKIN_TYPE_CHECK_BUTTON, SkinCheckButtonClass))
+
+typedef struct _SkinCheckButton             SkinCheckButton;
+typedef struct _SkinCheckButtonClass        SkinCheckButtonClass;
+typedef struct _SkinCheckButtonPrivate        SkinCheckButtonPrivate;
+
+/* 这样的button只有一个图片，靠位置的微移来响应用户的行为
+ * 主要用在如播放列表上方的工具条上 */
+struct _SkinCheckButton
+{
+	GnomeCanvasPixbuf parent;
+	SkinCheckButtonPrivate *priv;
+};
+
+struct _SkinCheckButtonClass
+{
+	GnomeCanvasPixbufClass parent_class;
+	void (*clicked) (SkinCheckButton *skin_check_button); 
+	void (*activated) (SkinCheckButton *skin_check_button); 
+};
+
+GType      skin_check_button_get_type           (void) G_GNUC_CONST;
+
+SkinCheckButton* skin_check_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdouble y);
+
+void skin_check_button_set_active(SkinCheckButton *button, gboolean is_active);
+gboolean skin_check_button_get_active(SkinCheckButton *button);
+void skin_check_button_show(SkinCheckButton *button);
+void skin_check_button_hide(SkinCheckButton *button);
+
+G_END_DECLS
+
 #endif /*__SKINCHECKBUTTON_H__ */

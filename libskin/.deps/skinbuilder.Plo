@@ -446,7 +446,7 @@ skinbuilder.lo: skinbuilder.c skinbuilder.h \
   /usr/include/libgnomecanvas-2.0/libgnomecanvas/gnome-canvas-clipgroup.h \
   /usr/include/libart-2.0/libart_lgpl/art_svp_wind.h \
   /usr/include/libart-2.0/libart_lgpl/art_vpath_dash.h skinbutton.h \
-  skinvolumebutton.h skindynamictext.h
+  skincheckbutton.h skinvolumebutton.h skindynamictext.h
 
 skinbuilder.h:
 
@@ -1481,6 +1481,8 @@ skinwindow.h:
 /usr/include/libart-2.0/libart_lgpl/art_vpath_dash.h:
 
 skinbutton.h:
+
+skincheckbutton.h:
 
 skinvolumebutton.h:
 

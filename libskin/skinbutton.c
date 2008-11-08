@@ -148,50 +148,6 @@ skin_button_get_type(void)
 	return skin_button_type;
 }
 
-SkinButton*
-skin_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdouble y)
-{
-	SkinButton *button;
-	GnomeCanvasItem *item;
-	gdouble pw;
-	gdouble ph;
-	gdouble w;
-	gdouble h;
-	gint i;
-	
-	item = gnome_canvas_item_new(root,
-			skin_button_get_type(),
-			NULL);
-
-	button = SKIN_BUTTON(item);
-
-	pw = gdk_pixbuf_get_width(pixbuf);
-	ph = gdk_pixbuf_get_height(pixbuf);
-	  
-	w = pw / SUBPIXBUF;
-	h = ph;
-	
-	for(i = 0; i < SUBPIXBUF; ++i)
-	{
-		button->priv->subpixbuf[i] = gdk_pixbuf_new_subpixbuf(pixbuf, w * i, 0, w, h);
-	}
-
-	gnome_canvas_item_set(item, 
-			"pixbuf", button->priv->subpixbuf[0], 
-			"x", x, 
-			"y", y, 
-			NULL);
-
-	g_signal_connect(G_OBJECT(item), "event", G_CALLBACK(cb_event), button);
-
-    return button;
-}
-
-SkinButton*
-skin_button_new_from_pixbuf(GnomeCanvasGroup *root, GdkPixbuf *pixbuf)
-{
-	return NULL;
-}
 
 static void
 skin_button_set_property (GObject      *object,
@@ -231,6 +187,44 @@ skin_button_get_property (GObject      *object,
     }
 }
 
+SkinButton*
+skin_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdouble y)
+{
+	SkinButton *button;
+	GnomeCanvasItem *item;
+	gdouble pw;
+	gdouble ph;
+	gdouble w;
+	gdouble h;
+	gint i;
+	
+	item = gnome_canvas_item_new(root,
+			skin_button_get_type(),
+			NULL);
+
+	button = SKIN_BUTTON(item);
+
+	pw = gdk_pixbuf_get_width(pixbuf);
+	ph = gdk_pixbuf_get_height(pixbuf);
+	  
+	w = pw / SUBPIXBUF;
+	h = ph;
+	
+	for(i = 0; i < SUBPIXBUF; ++i)
+	{
+		button->priv->subpixbuf[i] = gdk_pixbuf_new_subpixbuf(pixbuf, w * i, 0, w, h);
+	}
+
+	gnome_canvas_item_set(item, 
+			"pixbuf", button->priv->subpixbuf[0], 
+			"x", x, 
+			"y", y, 
+			NULL);
+
+	g_signal_connect(G_OBJECT(item), "event", G_CALLBACK(cb_event), button);
+
+    return button;
+}
 
 void skin_button_show(SkinButton *button)
 {

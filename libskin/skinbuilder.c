@@ -33,6 +33,7 @@
 #include "skinarchive.h"
 #include "skinwindow.h"
 #include "skinbutton.h"
+#include "skincheckbutton.h"
 #include "skinvolumebutton.h"
 #include "skindynamictext.h"
 
@@ -165,7 +166,22 @@ create_player_window(SkinBuilder *builder)
 			"album", "album ==",
 			"format", "format --",
 			NULL);
+	add_object(builder, G_OBJECT(info), "player-info");
 
+	SkinCheckButton *playlist = skin_check_button_new(root,
+			player->playlist.img,
+			player->playlist.x1, player->playlist.y1);
+	add_object(builder, G_OBJECT(playlist), "player-playlist-button");
+
+	SkinCheckButton *lyric = skin_check_button_new(root,
+			player->lyric.img,
+			player->lyric.x1, player->lyric.y1);
+	add_object(builder, G_OBJECT(lyric), "player-lyric-button");
+
+	SkinCheckButton *equalizer = skin_check_button_new(root,
+			player->equalizer.img,
+			player->equalizer.x1, player->equalizer.y1);
+	add_object(builder, G_OBJECT(equalizer), "player-equalizer-button");
 	/*
 	SkinVolumeButton *volume = skin_volume_button_new(root, 
 			"fill_pixbuf", player->volume.img,

@@ -194,8 +194,9 @@ static void
 delete_temp_dir(const gchar *dir)
 {
 	gchar cmd[512];
+	gint result;
 	sprintf(cmd, "rm -rf %s", dir);
-	system(cmd); //FIXME: return value
+	result = system(cmd); //FIXME: return value
 }
 
 static char *
