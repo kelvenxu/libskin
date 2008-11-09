@@ -35,4 +35,5 @@ docs/Makefile.in
 docs/reference/Makefile
 docs/reference/Makefile.in
 docs/reference/html
+tests/.deps
 
