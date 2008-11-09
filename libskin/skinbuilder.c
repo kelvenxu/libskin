@@ -34,11 +34,13 @@
 #include "skinwindow.h"
 #include "skinbutton.h"
 #include "skincheckbutton.h"
+#include "skintogglebutton.h"
 #include "skinvolumebutton.h"
 #include "skindynamictext.h"
 #include "skinhscale.h"
 #include "skinvscale.h"
 
+#define TOOLBAR_ITEMS 7
 
 G_DEFINE_TYPE (SkinBuilder, skin_builder, G_TYPE_OBJECT);
 
@@ -394,6 +396,148 @@ create_equalizer_window(SkinBuilder *builder)
 			NULL);
 }
 
+static void
+create_lyric_window(SkinBuilder *builder)
+{
+	LyricArchive *lyric;
+	GnomeCanvasGroup *root;
+
+	g_return_if_fail(SKIN_IS_BUILDER(builder));
+
+	lyric = builder->priv->ar->lyric;
+
+	SkinWindow *window = skin_window_new(lyric->window.img);
+	add_object(builder, G_OBJECT(window), "lyric-window");
+
+	root = window->canvas_root;
+
+	SkinButton *close = skin_button_new(root,
+			lyric->close.img,
+			lyric->close.x1, lyric->close.y1);
+	add_object(builder, G_OBJECT(close), "lyric-close");
+
+	SkinCheckButton *ontop = skin_check_button_new(root,
+			lyric->ontop.img,
+			lyric->ontop.x1, lyric->ontop.y1);
+	add_object(builder, G_OBJECT(ontop), "lyric-ontop");
+}
+
+static void
+create_playlist_window(SkinBuilder *builder)
+{
+	PlaylistArchive *pl;
+	GdkPixbuf *pixbuf;
+	GnomeCanvasGroup *root;
+	gdouble width, height;
+	gdouble x;
+	gint i;
+	gchar *tb_items[TOOLBAR_ITEMS] = {
+		"toolbar-add",
+		"toolbar-remove",
+		"toolbar-list",
+		"toolbar-sort",
+		"toolbar-search",
+		"toolbar-edit",
+		"toolbar-mode"
+	};
+
+	g_return_if_fail(SKIN_IS_BUILDER(builder));
+
+	pl = builder->priv->ar->playlist;
+
+	SkinWindow *window = skin_window_new(pl->window.img);
+	add_object(builder, G_OBJECT(window), "playlist-window");
+
+	root = window->canvas_root;
+
+	SkinButton *close = skin_button_new(root,
+			pl->close.img,
+			pl->close.x1, pl->close.y1);
+	add_object(builder, G_OBJECT(close), "playlist-close");
+
+	width = (gdouble)gdk_pixbuf_get_width(pl->toolbar.img);
+	height = (gdouble)gdk_pixbuf_get_height(pl->toolbar.img);
+	width = width / TOOLBAR_ITEMS;
+	x = pl->toolbar.x1;
+
+	SkinToggleButton *tb;
+	for(i = 0; i < TOOLBAR_ITEMS; ++i)
+	{
+		pixbuf = gdk_pixbuf_new_subpixbuf(pl->toolbar.img,
+				i * width, 0, width, height);
+
+		x = pl->toolbar.x1 + i * width;
+		tb = skin_toggle_button_new(root, pixbuf, x, pl->toolbar.y1);
+		add_object(builder, G_OBJECT(close), tb_items[i]);
+	}
+}
+
+static void
+create_mini_window(SkinBuilder *builder)
+{
+	MiniArchive *mini;
+	GnomeCanvasGroup *root;
+
+	g_return_if_fail(SKIN_IS_BUILDER(builder));
+
+	mini = builder->priv->ar->mini;
+
+	SkinWindow *window = skin_window_new(mini->window.img);
+	add_object(builder, G_OBJECT(window), "mini-window");
+
+	root = window->canvas_root;
+
+	SkinButton *pause = skin_button_new(root,
+			mini->pause.img, 
+			mini->pause.x1, mini->pause.y1);
+	add_object(builder, G_OBJECT(pause), "mini-pause");
+
+	SkinButton *play = skin_button_new(root,
+			mini->play.img, 
+			mini->play.x1, mini->play.y1);
+	add_object(builder, G_OBJECT(play), "mini-play");
+
+	SkinButton *prev = skin_button_new(root,
+			mini->prev.img, 
+			mini->prev.x1, mini->prev.y1);
+	add_object(builder, G_OBJECT(prev), "mini-prev");
+
+	SkinButton *next = skin_button_new(root,
+			mini->next.img, 
+			mini->next.x1, mini->next.y1);
+	add_object(builder, G_OBJECT(next), "mini-next");
+
+	SkinButton *stop = skin_button_new(root,
+			mini->stop.img, 
+			mini->stop.x1, mini->stop.y1);
+	add_object(builder, G_OBJECT(stop), "mini-stop");
+
+	SkinCheckButton *lyric = skin_check_button_new(root,
+			mini->lyric.img, 
+			mini->lyric.x1, mini->lyric.y1);
+	add_object(builder, G_OBJECT(lyric), "mini-lyric");
+
+	SkinButton *icon = skin_button_new(root,
+			mini->icon.img, 
+			mini->icon.x1, mini->icon.y1);
+	add_object(builder, G_OBJECT(icon), "mini-icon");
+
+	SkinButton *minimize = skin_button_new(root,
+			mini->minimize.img, 
+			mini->minimize.x1, mini->minimize.y1);
+	add_object(builder, G_OBJECT(minimize), "mini-minimize");
+
+	SkinButton *minimode = skin_button_new(root,
+			mini->minimode.img, 
+			mini->minimode.x1, mini->minimode.y1);
+	add_object(builder, G_OBJECT(minimode), "mini-minimode");
+
+	SkinButton *exit = skin_button_new(root,
+			mini->exit.img, 
+			mini->exit.x1, mini->exit.y1);
+	add_object(builder, G_OBJECT(exit), "mini-exit");
+}
+
 SkinBuilder *skin_builder_new()
 {
 	SkinBuilder *builder;
@@ -413,6 +557,9 @@ gint skin_builder_add_from_archive(SkinBuilder *builder, SkinArchive *ar)
 	builder->priv->ar = ar;
 	create_player_window(builder);
 	create_equalizer_window(builder);
+	create_lyric_window(builder);
+	create_playlist_window(builder);
+	create_mini_window(builder);
 	return 0;
 }
 

@@ -47,6 +47,9 @@ int main(int argc, char *argv[])
 {
 	SkinWindow *player_window;
 	SkinWindow *equalizer_window;
+	SkinWindow *lyric_window;
+	SkinWindow *playlist_window;
+	SkinWindow *mini_window;
 	SkinButton *play;
 
 	gtk_init(NULL, NULL);
@@ -71,8 +74,14 @@ int main(int argc, char *argv[])
 	g_signal_connect(G_OBJECT(play), "clicked", G_CALLBACK(play_action), NULL);
 
 	equalizer_window = SKIN_WINDOW(skin_builder_get_object(builder, "equalizer-window"));
+	lyric_window = SKIN_WINDOW(skin_builder_get_object(builder, "lyric-window"));
+	playlist_window = SKIN_WINDOW(skin_builder_get_object(builder, "playlist-window"));
+	mini_window = SKIN_WINDOW(skin_builder_get_object(builder, "mini-window"));
 	skin_window_show(player_window);
 	skin_window_show(equalizer_window);
+	skin_window_show(lyric_window);
+	skin_window_show(playlist_window);
+	skin_window_show(mini_window);
 
 	gtk_main();
 

@@ -198,6 +198,11 @@ skin_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdouble y)
 	gdouble h;
 	gint i;
 	
+	g_return_val_if_fail(GNOME_IS_CANVAS_GROUP(root), NULL);
+	g_return_val_if_fail(GDK_IS_PIXBUF(pixbuf), NULL);
+	g_return_val_if_fail(x >= 0.0, NULL);
+	g_return_val_if_fail(y >= 0.0, NULL);
+
 	item = gnome_canvas_item_new(root,
 			skin_button_get_type(),
 			NULL);
