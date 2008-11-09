@@ -2,6 +2,7 @@
 *.o
 .deps
 .libs
+.dotest
 Makefile
 Makefile.in
 acinclude.m4
