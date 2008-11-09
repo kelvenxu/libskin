@@ -235,14 +235,17 @@ create_equalizer_window(SkinBuilder *builder)
 	SkinCheckButton *enabled = skin_check_button_new(root, 
 			eq->enabled.img,
 			eq->enabled.x1, eq->enabled.y1);
+	add_object(builder, G_OBJECT(enabled), "equalizer-enabled");
 
 	SkinCheckButton *profile = skin_check_button_new(root, 
 			eq->profile.img,
 			eq->profile.x1, eq->profile.y1);
+	add_object(builder, G_OBJECT(profile), "equalizer-profile");
 
 	SkinCheckButton *reset = skin_check_button_new(root, 
 			eq->reset.img,
 			eq->reset.x1, eq->reset.y1);
+	add_object(builder, G_OBJECT(reset), "equalizer-reset");
 
 	SkinHScale *balance = skin_hscale_new(root,
 			"x1", (gdouble)(eq->balance.x1),
@@ -255,6 +258,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(balance), "equalizer-balance");
 
 	SkinHScale *surround = skin_hscale_new(root,
 			"x1", (gdouble)(eq->surround.x1),
@@ -267,6 +271,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(surround), "equalizer-surround");
 
 	SkinVScale *preamp = skin_vscale_new(root,
 			"x1", (gdouble)(eq->preamp.x1),
@@ -279,6 +284,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(preamp), "equalizer-preamp");
 
 	SkinVScale *eqfactor0 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1),
@@ -291,6 +297,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(eqfactor0), "equalizer-eqfactor0");
 
 	SkinVScale *eqfactor1 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval,
@@ -303,6 +310,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(eqfactor1), "equalizer-eqfactor1");
 
 	SkinVScale *eqfactor2 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 2.0,
@@ -315,6 +323,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(eqfactor2), "equalizer-eqfactor2");
 
 	SkinVScale *eqfactor3 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 3.0,
@@ -327,6 +336,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(eqfactor3), "equalizer-eqfactor3");
 	SkinVScale *eqfactor4 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 4.0,
 			"y1", (gdouble)(eq->eqfactor.y1),
@@ -338,6 +348,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(eqfactor4), "equalizer-eqfactor4");
 	SkinVScale *eqfactor5 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 5.0,
 			"y1", (gdouble)(eq->eqfactor.y1),
@@ -349,6 +360,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(eqfactor5), "equalizer-eqfactor5");
 	SkinVScale *eqfactor6 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 6.0,
 			"y1", (gdouble)(eq->eqfactor.y1),
@@ -360,6 +372,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(eqfactor6), "equalizer-eqfactor6");
 	SkinVScale *eqfactor7 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 7.0,
 			"y1", (gdouble)(eq->eqfactor.y1),
@@ -371,6 +384,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(eqfactor7), "equalizer-eqfactor7");
 	SkinVScale *eqfactor8 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 8.0,
 			"y1", (gdouble)(eq->eqfactor.y1),
@@ -382,6 +396,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(eqfactor8), "equalizer-eqfactor8");
 
 	SkinVScale *eqfactor9 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 9.0,
@@ -394,6 +409,7 @@ create_equalizer_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
+	add_object(builder, G_OBJECT(eqfactor9), "equalizer-eqfactor9");
 }
 
 static void
