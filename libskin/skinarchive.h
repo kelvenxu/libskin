@@ -126,15 +126,15 @@ typedef struct _SkinItem
 	int x2;
 	int y2;
 
-	GdkPixbuf* img; 
-	GdkPixbuf* bar_img;
-	GdkPixbuf* buttons_img;
-	GdkPixbuf* thumb_img;
-	GdkPixbuf* fill_img;
-	GdkPixbuf* hot_img;
+	GdkPixbuf *img; 
+	GdkPixbuf *bar_img;
+	GdkPixbuf *buttons_img;
+	GdkPixbuf *thumb_img;
+	GdkPixbuf *fill_img;
+	GdkPixbuf *hot_img;
 
-	GdkColor color;
-	gchar* font;
+	gchar *color;
+	gchar *font;
 	gint font_size;
 	gint align; /*! 0: left 1: center 2: right */
 	gint vertical; /*! 0: not vertical 1: vertical */

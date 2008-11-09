@@ -16,10 +16,11 @@ skin_headers = \
 	skintogglebutton.h\
 	skindigitaltime.h\
 	skindynamictext.h\
-	skinprocessbar.h\
 	skinscrollbar.h\
 	skinstatusbar.h\
 	skinvolumebutton.h\
+	skinhscale.h\
+	skinvscale.h\
 	skinarchive.h\
 	skinbuilder.h
 
@@ -48,6 +49,8 @@ libskin_la_SOURCES = \
 	skinscrollbar.c\
 	skinstatusbar.c\
 	skinvolumebutton.c\
+	skinhscale.c\
+	skinvscale.c\
 	skinarchive.c\
 	skinbuilder.c\
 	skin-marshal.c

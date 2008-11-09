@@ -62,8 +62,8 @@ libskin_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_libskin_la_OBJECTS = skin-enum-types.lo skinwindow.lo skinbutton.lo \
 	skincheckbutton.lo skintogglebutton.lo skindigitaltime.lo \
 	skindynamictext.lo skinprocessbar.lo skinscrollbar.lo \
-	skinstatusbar.lo skinvolumebutton.lo skinarchive.lo \
-	skinbuilder.lo skin-marshal.lo
+	skinstatusbar.lo skinvolumebutton.lo skinhscale.lo \
+	skinvscale.lo skinarchive.lo skinbuilder.lo skin-marshal.lo
 libskin_la_OBJECTS = $(am_libskin_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -83,14 +83,14 @@ HEADERS = $(noinst_HEADERS) $(skininc_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /media/disk-1/libskin/missing --run aclocal-1.9
+ACLOCAL = ${SHELL} /home/kelvenxu/proj/libskin/missing --run aclocal-1.9
 AMDEP_FALSE = #
 AMDEP_TRUE = 
-AMTAR = ${SHELL} /media/disk-1/libskin/missing --run tar
+AMTAR = ${SHELL} /home/kelvenxu/proj/libskin/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /media/disk-1/libskin/missing --run autoconf
-AUTOHEADER = ${SHELL} /media/disk-1/libskin/missing --run autoheader
-AUTOMAKE = ${SHELL} /media/disk-1/libskin/missing --run automake-1.9
+AUTOCONF = ${SHELL} /home/kelvenxu/proj/libskin/missing --run autoconf
+AUTOHEADER = ${SHELL} /home/kelvenxu/proj/libskin/missing --run autoheader
+AUTOMAKE = ${SHELL} /home/kelvenxu/proj/libskin/missing --run automake-1.9
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
@@ -131,7 +131,7 @@ LT_AGE = 0
 LT_CURRENT = 2
 LT_RELEASE = 0.1.0
 LT_REVISION = 4
-MAKEINFO = ${SHELL} /media/disk-1/libskin/missing --run makeinfo
+MAKEINFO = ${SHELL} /home/kelvenxu/proj/libskin/missing --run makeinfo
 NM = /usr/bin/nm -B
 NMEDIT = 
 NO_UNDEFINED = 
@@ -140,8 +140,8 @@ OTOOL =
 OTOOL64 = 
 PACKAGE = libskin
 PACKAGE_BUGREPORT = chipx86@chipx86.com
-PACKAGE_CFLAGS = -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/freetype2 -I/usr/include/libpng12 -I/usr/include/pixman-1 -I/usr/include/libxml2 -I/usr/include/libgnomecanvas-2.0 -I/usr/include/gail-1.0 -I/usr/include/libart-2.0  
-PACKAGE_LIBS = -lxml2 -lgnomecanvas-2 -lart_lgpl_2 -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgdk_pixbuf-2.0 -lm -lpangocairo-1.0 -lpango-1.0 -lcairo -lgobject-2.0 -lgmodule-2.0 -ldl -lglib-2.0  
+PACKAGE_CFLAGS = -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng12 -I/usr/include/libxml2 -I/usr/include/libgnomecanvas-2.0 -I/usr/include/gail-1.0 -I/usr/include/libart-2.0  
+PACKAGE_LIBS = -lxml2 -lgnomecanvas-2 -lart_lgpl_2 -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lpangoft2-1.0 -lgdk_pixbuf-2.0 -lm -lpangocairo-1.0 -lgio-2.0 -lcairo -lpango-1.0 -lfreetype -lz -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lglib-2.0  
 PACKAGE_NAME = libskin
 PACKAGE_STRING = libskin 0.1.0
 PACKAGE_TARNAME = libskin
@@ -184,7 +184,7 @@ host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = /media/disk-1/libskin/install-sh
+install_sh = /home/kelvenxu/proj/libskin/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -211,10 +211,11 @@ skin_headers = \
 	skintogglebutton.h\
 	skindigitaltime.h\
 	skindynamictext.h\
-	skinprocessbar.h\
 	skinscrollbar.h\
 	skinstatusbar.h\
 	skinvolumebutton.h\
+	skinhscale.h\
+	skinvscale.h\
 	skinarchive.h\
 	skinbuilder.h
 
@@ -243,6 +244,8 @@ libskin_la_SOURCES = \
 	skinscrollbar.c\
 	skinstatusbar.c\
 	skinvolumebutton.c\
+	skinhscale.c\
+	skinvscale.c\
 	skinarchive.c\
 	skinbuilder.c\
 	skin-marshal.c
@@ -343,11 +346,13 @@ include ./$(DEPDIR)/skinbutton.Plo
 include ./$(DEPDIR)/skincheckbutton.Plo
 include ./$(DEPDIR)/skindigitaltime.Plo
 include ./$(DEPDIR)/skindynamictext.Plo
+include ./$(DEPDIR)/skinhscale.Plo
 include ./$(DEPDIR)/skinprocessbar.Plo
 include ./$(DEPDIR)/skinscrollbar.Plo
 include ./$(DEPDIR)/skinstatusbar.Plo
 include ./$(DEPDIR)/skintogglebutton.Plo
 include ./$(DEPDIR)/skinvolumebutton.Plo
+include ./$(DEPDIR)/skinvscale.Plo
 include ./$(DEPDIR)/skinwindow.Plo
 
 .c.o:

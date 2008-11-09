@@ -2,7 +2,7 @@
 /*
  * skinprocessbar.h
  *
- * This file is part of ________.
+ * This file is part of libskin.
  *
  * Copyright (C) 2008 - kelvenxu <kelvenxu@gmail.com>.
  *
@@ -24,5 +24,6 @@
 
 #ifndef __SKINPROCESSBAR_H__
 #define __SKINPROCESSBAR_H__  1
+
 
 #endif /*__SKINPROCESSBAR_H__ */

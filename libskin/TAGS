@@ -199,7 +199,7 @@ typedef struct _SkinArchiveClass_SkinArchiveClass269,7608
 	GObjectClass parent_class;parent_class271,7643
 } SkinArchiveClass;SkinArchiveClass272,7671
 
-skincheckbutton.h,1050
+skincheckbutton.h,1126
 #define __SKINCHECKBUTTON_H__ __SKINCHECKBUTTON_H__26,900
 #define SKIN_TYPE_CHECK_BUTTON SKIN_TYPE_CHECK_BUTTON36,1061
 #define SKIN_CHECK_BUTTON(SKIN_CHECK_BUTTON37,1137
@@ -216,6 +216,7 @@ struct _SkinCheckButton_SkinCheckButton49,2057
 struct _SkinCheckButtonClass_SkinCheckButtonClass55,2145
 	GnomeCanvasPixbufClass parent_class;parent_class57,2176
 	void (*clicked) (SkinCheckButton *skin_check_button); clicked58,2214
+	void (*activated) (SkinCheckButton *skin_check_button); activated59,2270
 
 skinwindow.c,1576
 struct _SkinWindowPrivate_SkinWindowPrivate30,1020
@@ -274,21 +275,21 @@ typedef struct _SkinDynamicTextPrivate SkinDynamicTextPrivate;SkinDynamicTextPr
 	void (*clicked) (SkinDynamicText *dtext); clicked53,1856
 } SkinDynamicTextClass;SkinDynamicTextClass54,1900
 
-skinbuilder.c,935
-#define SKIN_BUILDER_GET_PRIVATE(SKIN_BUILDER_GET_PRIVATE43,1391
-struct _SkinBuilderPrivate _SkinBuilderPrivate46,1505
-	int i;i48,1535
-	SkinArchive *ar;ar49,1543
-	GHashTable *objects;objects50,1561
-skin_builder_dispose (SkinBuilder *self)skin_builder_dispose55,1600
-skin_builder_finalize (SkinBuilder *self)skin_builder_finalize60,1658
-skin_builder_init (SkinBuilder *self)skin_builder_init67,1795
-skin_builder_class_init (SkinBuilderClass *self_class)skin_builder_class_init81,2094
-add_object(SkinBuilder *builder, GObject *obj, const char *name)add_object93,2505
-create_player_window(SkinBuilder *builder)create_player_window99,2655
-SkinBuilder *skin_builder_new()skin_builder_new198,5948
-gint skin_builder_add_from_archive(SkinBuilder *builder, SkinArchive *ar)skin_builder_add_from_archive207,6149
-GObject *skin_builder_get_object(SkinBuilder *builder, const gchar *name)skin_builder_get_object219,6452
+skinbuilder.c,936
+#define SKIN_BUILDER_GET_PRIVATE(SKIN_BUILDER_GET_PRIVATE44,1415
+struct _SkinBuilderPrivate _SkinBuilderPrivate47,1529
+	int i;i49,1559
+	SkinArchive *ar;ar50,1567
+	GHashTable *objects;objects51,1585
+skin_builder_dispose (SkinBuilder *self)skin_builder_dispose56,1624
+skin_builder_finalize (SkinBuilder *self)skin_builder_finalize61,1682
+skin_builder_init (SkinBuilder *self)skin_builder_init68,1819
+skin_builder_class_init (SkinBuilderClass *self_class)skin_builder_class_init82,2118
+add_object(SkinBuilder *builder, GObject *obj, const char *name)add_object94,2529
+create_player_window(SkinBuilder *builder)create_player_window100,2679
+SkinBuilder *skin_builder_new()skin_builder_new214,6437
+gint skin_builder_add_from_archive(SkinBuilder *builder, SkinArchive *ar)skin_builder_add_from_archive223,6638
+GObject *skin_builder_get_object(SkinBuilder *builder, const gchar *name)skin_builder_get_object235,6941
 
 skindigitaltime.c,1107
 #define SUBPIXBUF SUBPIXBUF28,900
@@ -306,8 +307,70 @@ void skin_digital_time_show(SkinDigitalTime *digital_time)skin_digital_time_sho
 void skin_digital_time_hide(SkinDigitalTime *digital_time)skin_digital_time_hide175,4505
 void skin_digital_time_set_value(SkinDigitalTime *digital_time, int value)skin_digital_time_set_value180,4627
 
+skinhscale.h,708
+#define __SKINHSCALE_H__ __SKINHSCALE_H__26,890
+typedef struct _SkinHScalePrivate SkinHScalePrivate;SkinHScalePrivate33,1003
+	GnomeCanvasRect parent;parent37,1075
+	SkinHScalePrivate *priv;priv39,1101
+} SkinHScale;SkinHScale40,1127
+	GnomeCanvasRectClass parent;parent44,1160
+	void (*value_changed) (SkinHScale *hscale);value_changed45,1190
+} SkinHScaleClass;SkinHScaleClass46,1235
+#define SKIN_TYPE_HSCALE SKIN_TYPE_HSCALE48,1255
+#define SKIN_HSCALE(SKIN_HSCALE49,1306
+#define SKIN_HSCALE_CLASS(SKIN_HSCALE_CLASS50,1398
+#define SKIN_IS_HSCALE(SKIN_IS_HSCALE51,1502
+#define SKIN_IS_HSCALE_CLASS(SKIN_IS_HSCALE_CLASS52,1585
+#define SKIN_HSCALE_GET_CLASS(SKIN_HSCALE_GET_CLASS53,1675
+
 skin.h,38
 #define __SKIN_H__ __SKIN_H__26,878
+
+skinvscale.c,2368
+#define SUBPIXBUF SUBPIXBUF27,890
+#define SKIN_VSCALE_GET_PRIVATE(SKIN_VSCALE_GET_PRIVATE31,976
+struct _SkinVScalePrivate _SkinVScalePrivate34,1087
+	GnomeCanvasGroup *root;root36,1116
+	gdouble x1;x137,1141
+	gdouble y1;y138,1154
+	gdouble x2;x239,1167
+	gdouble y2;y240,1180
+	GdkPixbuf *fill_pixbuf;fill_pixbuf41,1193
+	GdkPixbuf *thumb_pixbuf;thumb_pixbuf42,1218
+	GdkPixbuf *thumb_subpixbuf[SUBPIXBUF];thumb_subpixbuf43,1244
+	GnomeCanvasItem *fill_item;fill_item44,1284
+	GnomeCanvasItem *thumb_item;thumb_item45,1313
+	gboolean has_fill;has_fill47,1345
+	gboolean has_thumb;has_thumb48,1365
+	gboolean need_pixbuf_update;need_pixbuf_update49,1386
+	gboolean need_value_update;need_value_update50,1416
+	gdouble min;min53,1457
+	gdouble max;max54,1471
+	gdouble value;value56,1503
+	VALUE_CHANGED,VALUE_CHANGED61,1531
+    LAST_SIGNALLAST_SIGNAL62,1547
+	PROP_0,PROP_068,1601
+	PROP_FILL_PIXBUF,PROP_FILL_PIXBUF69,1610
+	PROP_THUMB_PIXBUF,PROP_THUMB_PIXBUF70,1629
+	PROP_MIN,PROP_MIN71,1649
+	PROP_MAX,PROP_MAX72,1660
+	PROP_VALUEPROP_VALUE73,1671
+static int signals[LAST_SIGNAL];signals76,1687
+skin_vscale_dispose (SkinVScale *self)skin_vscale_dispose95,2429
+skin_vscale_finalize (SkinVScale *self)skin_vscale_finalize100,2485
+skin_vscale_init (SkinVScale *self)skin_vscale_init105,2542
+skin_vscale_class_init (SkinVScaleClass *self_class)skin_vscale_class_init127,2931
+skin_vscale_set_property (GObject      *object,skin_vscale_set_property173,4611
+skin_vscale_get_property (GObject      *object,skin_vscale_get_property255,6475
+cb_rect_event(GnomeCanvasItem *item, GdkEvent *event, SkinVScale* hscale)cb_rect_event307,7687
+cb_fill_event(GnomeCanvasItem *item, GdkEvent *event, SkinVScale* hscale)cb_fill_event340,8390
+cb_thumb_event(GnomeCanvasItem *item, GdkEvent *event, SkinVScale* hscale)cb_thumb_event376,9082
+skin_vscale_pixbuf_update(SkinVScale *hscale)skin_vscale_pixbuf_update432,10507
+skin_vscale_value_update(SkinVScale *hscale)skin_vscale_value_update479,11723
+skin_vscale_update(SkinVScale *hscale)skin_vscale_update539,12982
+skin_vscale_construct(SkinVScale *hscale, skin_vscale_construct555,13308
+skin_vscale_new(GnomeCanvasGroup *root, const char *first_arg_name, ...)skin_vscale_new570,13668
+skin_vscale_set_value(SkinVScale *hscale, gdouble value)skin_vscale_set_value597,14285
 
 skinvolumebutton.c,2287
 #define SKIN_VOLUME_BUTTON_GET_PRIVATE(SKIN_VOLUME_BUTTON_GET_PRIVATE29,979
@@ -505,6 +568,22 @@ skin_marshal_OBJECT__OBJECT_OBJECT (GClosure     *closure,skin_marshal_OBJECT__
 skin-enum-types.h,53
 #define _SKIN_ENUM_TYPES_H__SKIN_ENUM_TYPES_H_5,69
 
+skinvscale.h,708
+#define __SKINVSCALE_H__ __SKINVSCALE_H__26,890
+typedef struct _SkinVScalePrivate SkinVScalePrivate;SkinVScalePrivate33,1003
+	GnomeCanvasRect parent;parent37,1075
+	SkinVScalePrivate *priv;priv39,1101
+} SkinVScale;SkinVScale40,1127
+	GnomeCanvasRectClass parent;parent44,1160
+	void (*value_changed) (SkinVScale *hscale);value_changed45,1190
+} SkinVScaleClass;SkinVScaleClass46,1235
+#define SKIN_TYPE_VSCALE SKIN_TYPE_VSCALE48,1255
+#define SKIN_VSCALE(SKIN_VSCALE49,1306
+#define SKIN_VSCALE_CLASS(SKIN_VSCALE_CLASS50,1398
+#define SKIN_IS_VSCALE(SKIN_IS_VSCALE51,1502
+#define SKIN_IS_VSCALE_CLASS(SKIN_IS_VSCALE_CLASS52,1585
+#define SKIN_VSCALE_GET_CLASS(SKIN_VSCALE_GET_CLASS53,1675
+
 skinvolumebutton.h,785
 #define __SKINVOLUMEBUTTON_H__ __SKINVOLUMEBUTTON_H__26,902
 #define SKIN_TYPE_VOLUME_BUTTON SKIN_TYPE_VOLUME_BUTTON35,1063
@@ -548,28 +627,31 @@ load_lyric_attr( const gchar* filename, LyricAttr* attr)load_lyric_attr633,184
 load_visual_attr(const gchar* filename, VisualAttr* attr)load_visual_attr682,19608
 do_load(SkinArchive *ar, const char *filename)do_load742,21164
 
-skincheckbutton.c,1383
+skincheckbutton.c,1567
 #define SUBPIXBUF SUBPIXBUF27,900
 	CLICKED,CLICKED30,928
-    LAST_SIGNALLAST_SIGNAL31,938
-    PROP_0,PROP_035,965
-static int signals[LAST_SIGNAL];signals38,981
-#define SKIN_CHECK_BUTTON_GET_PRIVATE(SKIN_CHECK_BUTTON_GET_PRIVATE40,1015
-struct _SkinCheckButtonPrivate_SkinCheckButtonPrivate42,1145
-	GdkPixbuf *subpixbuf[SUBPIXBUF];subpixbuf44,1178
-	gdouble x0;x045,1212
-	gdouble y0;y046,1225
-	gboolean checked;checked47,1238
-cb_event (GnomeCanvasItem *item, GdkEvent *event, SkinCheckButton* button)cb_event66,2012
-skin_check_button_class_init (SkinCheckButtonClass *class)skin_check_button_class_init107,2988
-skin_check_button_init (SkinCheckButton *skin_check_button)skin_check_button_init131,3595
-skin_check_button_get_type(void)skin_check_button_get_type137,3747
-skin_check_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdouble y)skin_check_button_new165,4308
-skin_check_button_set_active(SkinCheckButton *button, gboolean is_active)skin_check_button_set_active207,5109
-skin_check_button_set_property (GObject      *object,skin_check_button_set_property213,5236
-skin_check_button_get_property (GObject      *object,skin_check_button_get_property232,5692
-void skin_check_button_show(SkinCheckButton *button)skin_check_button_show251,6137
-void skin_check_button_hide(SkinCheckButton *button)skin_check_button_hide256,6247
+	ACTIVATED,ACTIVATED31,938
+    LAST_SIGNALLAST_SIGNAL32,950
+    PROP_0,PROP_036,977
+static int signals[LAST_SIGNAL];signals39,993
+#define SKIN_CHECK_BUTTON_GET_PRIVATE(SKIN_CHECK_BUTTON_GET_PRIVATE41,1027
+struct _SkinCheckButtonPrivate_SkinCheckButtonPrivate43,1157
+	GdkPixbuf *subpixbuf[SUBPIXBUF];subpixbuf45,1190
+	gdouble x0;x046,1224
+	gdouble y0;y047,1237
+	gboolean checked;checked48,1250
+cb_event(GnomeCanvasItem *item, GdkEvent *event, SkinCheckButton* button)cb_event68,2081
+cb_event_after(SkinCheckButton* button)cb_event_after103,2984
+skin_check_button_class_init (SkinCheckButtonClass *class)skin_check_button_class_init109,3117
+skin_check_button_init (SkinCheckButton *skin_check_button)skin_check_button_init145,3999
+skin_check_button_get_type(void)skin_check_button_get_type151,4151
+skin_check_button_set_property (GObject      *object,skin_check_button_set_property179,4707
+skin_check_button_get_property (GObject      *object,skin_check_button_get_property198,5163
+skin_check_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdouble y)skin_check_button_new217,5624
+skin_check_button_set_active(SkinCheckButton *button, gboolean is_active)skin_check_button_set_active259,6425
+skin_check_button_get_active(SkinCheckButton *button)skin_check_button_get_active279,6874
+void skin_check_button_show(SkinCheckButton *button)skin_check_button_show284,6964
+void skin_check_button_hide(SkinCheckButton *button)skin_check_button_hide289,7074
 
 skinstatusbar.c,1458
 #define SKIN_STATUS_BAR_GET_PRIVATE(SKIN_STATUS_BAR_GET_PRIVATE30,992
@@ -634,17 +716,60 @@ skin_dynamic_text_dispose (SkinDynamicText *self)skin_dynamic_text_dispose93,2
 skin_dynamic_text_finalize (SkinDynamicText *self)skin_dynamic_text_finalize98,2595
 skin_dynamic_text_init (SkinDynamicText *self)skin_dynamic_text_init103,2663
 skin_dynamic_text_class_init (SkinDynamicTextClass *self_class)skin_dynamic_text_class_init112,2822
-skin_dynamic_text_set_property (GObject      *object,skin_dynamic_text_set_property171,5411
-skin_dynamic_text_get_property (GObject      *object,skin_dynamic_text_get_property234,7035
-cb_event(GnomeCanvasItem *item, GdkEvent *event, SkinDynamicText* dtext)cb_event287,8300
-skin_dynamic_text_update(SkinDynamicText *dtext)skin_dynamic_text_update311,8725
-static gboolean update_text(SkinDynamicText *dtext)update_text359,9739
-skin_dynamic_text_construct(SkinDynamicText *dtext, skin_dynamic_text_construct375,10062
-skin_dynamic_text_new(GnomeCanvasGroup *root, const gchar *first_arg_name, ...)skin_dynamic_text_new392,10504
-skin_dynamic_text_set_text(SkinDynamicText *dtext, const gchar *text)skin_dynamic_text_set_text420,11148
+skin_dynamic_text_set_property (GObject      *object,skin_dynamic_text_set_property173,5441
+skin_dynamic_text_get_property (GObject      *object,skin_dynamic_text_get_property236,7065
+cb_event(GnomeCanvasItem *item, GdkEvent *event, SkinDynamicText* dtext)cb_event289,8330
+skin_dynamic_text_update(SkinDynamicText *dtext)skin_dynamic_text_update313,8755
+static gboolean update_text(SkinDynamicText *dtext)update_text361,9769
+skin_dynamic_text_construct(SkinDynamicText *dtext, skin_dynamic_text_construct376,10047
+skin_dynamic_text_new(GnomeCanvasGroup *root, const gchar *first_arg_name, ...)skin_dynamic_text_new393,10489
+skin_dynamic_text_set_text(SkinDynamicText *dtext, const gchar *text)skin_dynamic_text_set_text421,11133
 
-skinprocessbar.h,58
-#define __SKINPROCESSBAR_H__ __SKINPROCESSBAR_H__26,898
+skinhscale.c,2368
+#define SUBPIXBUF SUBPIXBUF27,890
+#define SKIN_HSCALE_GET_PRIVATE(SKIN_HSCALE_GET_PRIVATE31,976
+struct _SkinHScalePrivate _SkinHScalePrivate34,1087
+	GnomeCanvasGroup *root;root36,1116
+	gdouble x1;x137,1141
+	gdouble y1;y138,1154
+	gdouble x2;x239,1167
+	gdouble y2;y240,1180
+	GdkPixbuf *fill_pixbuf;fill_pixbuf41,1193
+	GdkPixbuf *thumb_pixbuf;thumb_pixbuf42,1218
+	GdkPixbuf *thumb_subpixbuf[SUBPIXBUF];thumb_subpixbuf43,1244
+	GnomeCanvasItem *fill_item;fill_item44,1284
+	GnomeCanvasItem *thumb_item;thumb_item45,1313
+	gboolean has_fill;has_fill47,1345
+	gboolean has_thumb;has_thumb48,1365
+	gboolean need_pixbuf_update;need_pixbuf_update49,1386
+	gboolean need_value_update;need_value_update50,1416
+	gdouble min;min53,1457
+	gdouble max;max54,1471
+	gdouble value;value56,1503
+	VALUE_CHANGED,VALUE_CHANGED61,1531
+    LAST_SIGNALLAST_SIGNAL62,1547
+	PROP_0,PROP_068,1601
+	PROP_FILL_PIXBUF,PROP_FILL_PIXBUF69,1610
+	PROP_THUMB_PIXBUF,PROP_THUMB_PIXBUF70,1629
+	PROP_MIN,PROP_MIN71,1649
+	PROP_MAX,PROP_MAX72,1660
+	PROP_VALUEPROP_VALUE73,1671
+static int signals[LAST_SIGNAL];signals76,1687
+skin_hscale_dispose (SkinHScale *self)skin_hscale_dispose95,2429
+skin_hscale_finalize (SkinHScale *self)skin_hscale_finalize100,2485
+skin_hscale_init (SkinHScale *self)skin_hscale_init105,2542
+skin_hscale_class_init (SkinHScaleClass *self_class)skin_hscale_class_init127,2931
+skin_hscale_set_property (GObject      *object,skin_hscale_set_property173,4611
+skin_hscale_get_property (GObject      *object,skin_hscale_get_property255,6475
+cb_rect_event(GnomeCanvasItem *item, GdkEvent *event, SkinHScale* hscale)cb_rect_event307,7687
+cb_fill_event(GnomeCanvasItem *item, GdkEvent *event, SkinHScale* hscale)cb_fill_event340,8390
+cb_thumb_event(GnomeCanvasItem *item, GdkEvent *event, SkinHScale* hscale)cb_thumb_event376,9082
+skin_hscale_pixbuf_update(SkinHScale *hscale)skin_hscale_pixbuf_update431,10424
+skin_hscale_value_update(SkinHScale *hscale)skin_hscale_value_update478,11640
+skin_hscale_update(SkinHScale *hscale)skin_hscale_update538,12899
+skin_hscale_construct(SkinHScale *hscale, skin_hscale_construct554,13225
+skin_hscale_new(GnomeCanvasGroup *root, const char *first_arg_name, ...)skin_hscale_new569,13585
+skin_hscale_set_value(SkinHScale *hscale, gdouble value)skin_hscale_set_value596,14202
 
 skin-marshal.h,67
 #define __skin_marshal_MARSHAL_H____skin_marshal_MARSHAL_H__3,36
@@ -672,7 +797,7 @@ skin_toggle_button_get_property (GObject      *object,skin_toggle_button_get_pr
 void skin_toggle_button_show(SkinToggleButton *button)skin_toggle_button_show224,5613
 void skin_toggle_button_hide(SkinToggleButton *button)skin_toggle_button_hide229,5725
 
-skinbutton.c,1124
+skinbutton.c,1043
 #define SUBPIXBUF SUBPIXBUF27,889
 	CLICKED,CLICKED30,917
     LAST_SIGNALLAST_SIGNAL31,927
@@ -685,9 +810,8 @@ cb_event (GnomeCanvasItem *item, GdkEvent *event, SkinButton* skin_button)cb_ev
 skin_button_class_init (SkinButtonClass *class)skin_button_class_init94,2676
 skin_button_init (SkinButton *skin_button)skin_button_init118,3250
 skin_button_get_type(void)skin_button_get_type124,3367
-skin_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdouble y)skin_button_new152,3854
-skin_button_set_active(GnomeCanvasGroup *root, )skin_button_set_active191,4592
-skin_button_set_property (GObject      *object,skin_button_set_property197,4672
-skin_button_get_property (GObject      *object,skin_button_get_property216,5099
-void skin_button_show(SkinButton *button)skin_button_show235,5515
-void skin_button_hide(SkinButton *button)skin_button_hide240,5614
+skin_button_set_property (GObject      *object,skin_button_set_property153,3855
+skin_button_get_property (GObject      *object,skin_button_get_property172,4282
+skin_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdouble y)skin_button_new191,4709
+void skin_button_show(SkinButton *button)skin_button_show229,5435
+void skin_button_hide(SkinButton *button)skin_button_hide234,5534

@@ -305,7 +305,15 @@ read_item_with_xpath(xmlDocPtr doc,
 		g_return_val_if_fail(flag, FALSE);
 	}
 	
-	g_print("align\n");
+	value = (gchar *)xmlGetProp(cur, (const xmlChar *)"eq_interval");
+	if(value && (strlen(value) > 0))
+	{
+		item->eq_interval = atoi(value);
+		xmlFree(value);
+	}
+	else
+		item->eq_interval = 2;
+
 	value = (gchar *)xmlGetProp(cur, (const xmlChar *)"align");
 	if(value && (strlen(value) > 0))
 	{
@@ -337,9 +345,9 @@ read_item_with_xpath(xmlDocPtr doc,
 	value = (gchar *)xmlGetProp(cur, (const xmlChar *)"color");
 	if(value && (strlen(value) > 0))
 	{
-		gdk_color_parse(value, &(item->color));
-		g_print("color: %s, r: %d, g: %d, b: %d\n", value, item->color.red, item->color.green, item->color.blue);
-		xmlFree(value);
+		item->color = value;
+		//gdk_color_parse(value, &(item->color));
+		//xmlFree(value);
 	}
 
 

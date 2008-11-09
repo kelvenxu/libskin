@@ -62,8 +62,8 @@ libskin_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_libskin_la_OBJECTS = skin-enum-types.lo skinwindow.lo skinbutton.lo \
 	skincheckbutton.lo skintogglebutton.lo skindigitaltime.lo \
 	skindynamictext.lo skinprocessbar.lo skinscrollbar.lo \
-	skinstatusbar.lo skinvolumebutton.lo skinarchive.lo \
-	skinbuilder.lo skin-marshal.lo
+	skinstatusbar.lo skinvolumebutton.lo skinhscale.lo \
+	skinvscale.lo skinarchive.lo skinbuilder.lo skin-marshal.lo
 libskin_la_OBJECTS = $(am_libskin_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -211,10 +211,11 @@ skin_headers = \
 	skintogglebutton.h\
 	skindigitaltime.h\
 	skindynamictext.h\
-	skinprocessbar.h\
 	skinscrollbar.h\
 	skinstatusbar.h\
 	skinvolumebutton.h\
+	skinhscale.h\
+	skinvscale.h\
 	skinarchive.h\
 	skinbuilder.h
 
@@ -243,6 +244,8 @@ libskin_la_SOURCES = \
 	skinscrollbar.c\
 	skinstatusbar.c\
 	skinvolumebutton.c\
+	skinhscale.c\
+	skinvscale.c\
 	skinarchive.c\
 	skinbuilder.c\
 	skin-marshal.c
@@ -343,11 +346,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skincheckbutton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skindigitaltime.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skindynamictext.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skinhscale.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skinprocessbar.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skinscrollbar.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skinstatusbar.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skintogglebutton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skinvolumebutton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skinvscale.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skinwindow.Plo@am__quote@
 
 .c.o:

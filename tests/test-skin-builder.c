@@ -46,6 +46,7 @@ static gboolean play_action(SkinButton *button, gpointer user_data)
 int main(int argc, char *argv[])
 {
 	SkinWindow *player_window;
+	SkinWindow *equalizer_window;
 	SkinButton *play;
 
 	gtk_init(NULL, NULL);
@@ -68,7 +69,10 @@ int main(int argc, char *argv[])
 
 	g_signal_connect(G_OBJECT(player_window), "delete-event", G_CALLBACK(quit), NULL);
 	g_signal_connect(G_OBJECT(play), "clicked", G_CALLBACK(play_action), NULL);
+
+	equalizer_window = SKIN_WINDOW(skin_builder_get_object(builder, "equalizer-window"));
 	skin_window_show(player_window);
+	skin_window_show(equalizer_window);
 
 	gtk_main();
 

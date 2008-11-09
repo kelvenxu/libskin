@@ -165,6 +165,8 @@ skin_dynamic_text_class_init (SkinDynamicTextClass *self_class)
 	g_object_class_install_property(object_class, PROP_FORMAT, 
 			g_param_spec_string("format", _("Format"), _("Format, as string"), NULL, 
 				(G_PARAM_READABLE | G_PARAM_WRITABLE)));
+
+	self_class->clicked = NULL;
 }
 
 static void
@@ -363,7 +365,6 @@ static gboolean update_text(SkinDynamicText *dtext)
 	g_return_val_if_fail(SKIN_IS_DYNAMIC_TEXT(dtext), TRUE);
 
 	if(i >= 4) i = 0;
-	printf("text: %s\n", dtext->priv->text[i]);
 	gnome_canvas_item_set(GNOME_CANVAS_ITEM(dtext),
 			"text", dtext->priv->text[i], NULL);
 

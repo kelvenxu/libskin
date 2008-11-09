@@ -36,6 +36,8 @@
 #include "skincheckbutton.h"
 #include "skinvolumebutton.h"
 #include "skindynamictext.h"
+#include "skinhscale.h"
+#include "skinvscale.h"
 
 
 G_DEFINE_TYPE (SkinBuilder, skin_builder, G_TYPE_OBJECT);
@@ -160,13 +162,26 @@ create_player_window(SkinBuilder *builder)
 			"y1", (gdouble)(player->info.y1),
 			"x2", (gdouble)(player->info.x2),
 			"y2", (gdouble)(player->info.y2),
-			"color", "#00ff00",//&(player->info.color),
+			"color", player->info.color,
 			"title", "title --",
 			"artist", "artist --",
 			"album", "album ==",
 			"format", "format --",
 			NULL);
 	add_object(builder, G_OBJECT(info), "player-info");
+
+	SkinHScale *progressbar = skin_hscale_new(root,
+			"x1", (gdouble)(player->progress.x1),
+			"y1", (gdouble)(player->progress.y1),
+			"x2", (gdouble)(player->progress.x2),
+			"y2", (gdouble)(player->progress.y2),
+			"fill-pixbuf", player->progress.fill_img,
+			"thumb-pixbuf", player->progress.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+	add_object(builder, G_OBJECT(progressbar), "player-progress-bar");
 
 	SkinCheckButton *playlist = skin_check_button_new(root,
 			player->playlist.img,
@@ -182,6 +197,7 @@ create_player_window(SkinBuilder *builder)
 			player->equalizer.img,
 			player->equalizer.x1, player->equalizer.y1);
 	add_object(builder, G_OBJECT(equalizer), "player-equalizer-button");
+
 	/*
 	SkinVolumeButton *volume = skin_volume_button_new(root, 
 			"fill_pixbuf", player->volume.img,
@@ -193,6 +209,189 @@ create_player_window(SkinBuilder *builder)
 			"height", player->volume.y2 - player->volume.y1);
 	add_object(builder, G_OBJECT(volume), "player-volume-button");
 	*/
+}
+
+static void 
+create_equalizer_window(SkinBuilder *builder)
+{
+	EqualizerArchive *eq;
+	GnomeCanvasGroup *root;
+	g_print("create eq window\n");
+	g_return_if_fail(SKIN_IS_BUILDER(builder));
+	eq = builder->priv->ar->equalizer;
+
+	SkinWindow *window = skin_window_new(eq->window.img);
+	add_object(builder, G_OBJECT(window), "equalizer-window");
+
+	root = window->canvas_root;
+
+	SkinButton *close = skin_button_new(root,
+			eq->close.img,
+			eq->close.x1, eq->close.y1);
+	add_object(builder, G_OBJECT(close), "equalizer-close");
+
+	SkinCheckButton *enabled = skin_check_button_new(root, 
+			eq->enabled.img,
+			eq->enabled.x1, eq->enabled.y1);
+
+	SkinCheckButton *profile = skin_check_button_new(root, 
+			eq->profile.img,
+			eq->profile.x1, eq->profile.y1);
+
+	SkinCheckButton *reset = skin_check_button_new(root, 
+			eq->reset.img,
+			eq->reset.x1, eq->reset.y1);
+
+	SkinHScale *balance = skin_hscale_new(root,
+			"x1", (gdouble)(eq->balance.x1),
+			"y1", (gdouble)(eq->balance.y1),
+			"x2", (gdouble)(eq->balance.x2),
+			"y2", (gdouble)(eq->balance.y2),
+			"fill-pixbuf", eq->balance.fill_img,
+			"thumb-pixbuf", eq->balance.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+
+	SkinHScale *surround = skin_hscale_new(root,
+			"x1", (gdouble)(eq->surround.x1),
+			"y1", (gdouble)(eq->surround.y1),
+			"x2", (gdouble)(eq->surround.x2),
+			"y2", (gdouble)(eq->surround.y2),
+			"fill-pixbuf", eq->surround.fill_img,
+			"thumb-pixbuf", eq->surround.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+
+	SkinVScale *preamp = skin_vscale_new(root,
+			"x1", (gdouble)(eq->preamp.x1),
+			"y1", (gdouble)(eq->preamp.y1),
+			"x2", (gdouble)(eq->preamp.x2),
+			"y2", (gdouble)(eq->preamp.y2),
+			"fill-pixbuf", eq->preamp.fill_img,
+			"thumb-pixbuf", eq->preamp.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+
+	SkinVScale *eqfactor0 = skin_vscale_new(root,
+			"x1", (gdouble)(eq->eqfactor.x1),
+			"y1", (gdouble)(eq->eqfactor.y1),
+			"x2", (gdouble)(eq->eqfactor.x2),
+			"y2", (gdouble)(eq->eqfactor.y2),
+			"fill-pixbuf", eq->eqfactor.fill_img,
+			"thumb-pixbuf", eq->eqfactor.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+
+	SkinVScale *eqfactor1 = skin_vscale_new(root,
+			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval,
+			"y1", (gdouble)(eq->eqfactor.y1),
+			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval,
+			"y2", (gdouble)(eq->eqfactor.y2),
+			"fill-pixbuf", eq->eqfactor.fill_img,
+			"thumb-pixbuf", eq->eqfactor.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+
+	SkinVScale *eqfactor2 = skin_vscale_new(root,
+			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 2.0,
+			"y1", (gdouble)(eq->eqfactor.y1),
+			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 2.0,
+			"y2", (gdouble)(eq->eqfactor.y2),
+			"fill-pixbuf", eq->eqfactor.fill_img,
+			"thumb-pixbuf", eq->eqfactor.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+
+	SkinVScale *eqfactor3 = skin_vscale_new(root,
+			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 3.0,
+			"y1", (gdouble)(eq->eqfactor.y1),
+			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 3.0,
+			"y2", (gdouble)(eq->eqfactor.y2),
+			"fill-pixbuf", eq->eqfactor.fill_img,
+			"thumb-pixbuf", eq->eqfactor.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+	SkinVScale *eqfactor4 = skin_vscale_new(root,
+			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 4.0,
+			"y1", (gdouble)(eq->eqfactor.y1),
+			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 4.0,
+			"y2", (gdouble)(eq->eqfactor.y2),
+			"fill-pixbuf", eq->eqfactor.fill_img,
+			"thumb-pixbuf", eq->eqfactor.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+	SkinVScale *eqfactor5 = skin_vscale_new(root,
+			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 5.0,
+			"y1", (gdouble)(eq->eqfactor.y1),
+			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 5.0,
+			"y2", (gdouble)(eq->eqfactor.y2),
+			"fill-pixbuf", eq->eqfactor.fill_img,
+			"thumb-pixbuf", eq->eqfactor.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+	SkinVScale *eqfactor6 = skin_vscale_new(root,
+			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 6.0,
+			"y1", (gdouble)(eq->eqfactor.y1),
+			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 6.0,
+			"y2", (gdouble)(eq->eqfactor.y2),
+			"fill-pixbuf", eq->eqfactor.fill_img,
+			"thumb-pixbuf", eq->eqfactor.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+	SkinVScale *eqfactor7 = skin_vscale_new(root,
+			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 7.0,
+			"y1", (gdouble)(eq->eqfactor.y1),
+			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 7.0,
+			"y2", (gdouble)(eq->eqfactor.y2),
+			"fill-pixbuf", eq->eqfactor.fill_img,
+			"thumb-pixbuf", eq->eqfactor.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+	SkinVScale *eqfactor8 = skin_vscale_new(root,
+			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 8.0,
+			"y1", (gdouble)(eq->eqfactor.y1),
+			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 8.0,
+			"y2", (gdouble)(eq->eqfactor.y2),
+			"fill-pixbuf", eq->eqfactor.fill_img,
+			"thumb-pixbuf", eq->eqfactor.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+
+	SkinVScale *eqfactor9 = skin_vscale_new(root,
+			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 9.0,
+			"y1", (gdouble)(eq->eqfactor.y1),
+			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 9.0,
+			"y2", (gdouble)(eq->eqfactor.y2),
+			"fill-pixbuf", eq->eqfactor.fill_img,
+			"thumb-pixbuf", eq->eqfactor.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
 }
 
 SkinBuilder *skin_builder_new()
@@ -213,6 +412,7 @@ gint skin_builder_add_from_archive(SkinBuilder *builder, SkinArchive *ar)
 	g_print("add archive\n");
 	builder->priv->ar = ar;
 	create_player_window(builder);
+	create_equalizer_window(builder);
 	return 0;
 }
 

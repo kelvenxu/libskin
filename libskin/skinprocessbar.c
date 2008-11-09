@@ -23,3 +23,4 @@
  * */
 
 #include "skinprocessbar.h"
+
