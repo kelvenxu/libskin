@@ -1,3 +1,0 @@
-skinscrollbar.lo: skinscrollbar.c skinscrollbar.h
-
-skinscrollbar.h:
