@@ -309,8 +309,6 @@ cb_rect_event(GnomeCanvasItem *item, GdkEvent *event, SkinHScale* hscale)
 	static gboolean is_pressing = FALSE;
 	SkinHScalePrivate *priv;
 	
-	printf("rect event");
-
 	priv = hscale->priv;
 
 	switch (event->type) 
@@ -376,16 +374,15 @@ static gint
 cb_thumb_event(GnomeCanvasItem *item, GdkEvent *event, SkinHScale* hscale)
 {
 	static gboolean is_pressing = FALSE;
-	static gdouble x, y;
+	static gdouble x;
 
 	SkinHScalePrivate *priv;
-	gdouble item_x, item_y;
-	gdouble new_x, new_y;
+	gdouble item_x;
+	gdouble new_x;
 
 	priv = hscale->priv;
 
 	item_x = event->button.x;
-	//item_y = event->button.y;
 
 	switch (event->type) 
 	{
@@ -395,18 +392,13 @@ cb_thumb_event(GnomeCanvasItem *item, GdkEvent *event, SkinHScale* hscale)
 			gnome_canvas_item_set(item, "pixbuf", priv->thumb_subpixbuf[2], NULL);
 			is_pressing = TRUE;
 			x = item_x;
-			//y = item_y;
 		}
 		break;
 	case GDK_MOTION_NOTIFY:
-		if(is_pressing && (item_x > priv->x1 && item_x < priv->x2))// && item_y > priv->y1 && item_y < priv->y2))
+		if(is_pressing && (item_x > priv->x1 && item_x < priv->x2))
 		{
 			new_x = item_x;
-			//new_y = item_y;
-			//gnome_canvas_item_move(item, new_x - x, 0.0);
-		
 			x = new_x;
-			//y = new_y;
 			priv->value = (x - priv->x1) / (priv->x2 - priv->x1) * (priv->max - priv->min);
 			priv->need_value_update = TRUE;
 			skin_hscale_value_update(hscale);
@@ -577,6 +569,7 @@ skin_hscale_new(GnomeCanvasGroup *root, const char *first_arg_name, ...)
 
 	item = gnome_canvas_item_new(root,
 			skin_hscale_get_type(),
+			"fill-color-rgba", 0xff00ff00, //只是为了能够影响鼠标事件
 			NULL);
 
 	g_return_val_if_fail(GNOME_IS_CANVAS_ITEM(item), NULL);

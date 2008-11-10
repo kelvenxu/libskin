@@ -117,47 +117,47 @@ create_player_window(SkinBuilder *builder)
 	SkinButton *pause = skin_button_new(root, 
 			player->pause.img, 
 			player->pause.x1, player->pause.y1);
-	add_object(builder, G_OBJECT(pause), "player-pause-button");
+	add_object(builder, G_OBJECT(pause), "player-pause");
 
 	SkinButton *play = skin_button_new(root, 
 			player->play.img, 
 			player->play.x1, player->play.y1);
-	add_object(builder, G_OBJECT(play), "player-play-button");
+	add_object(builder, G_OBJECT(play), "player-play");
 
 	SkinButton *stop = skin_button_new(root, 
 			player->stop.img, 
 			player->stop.x1, player->stop.y1);
-	add_object(builder, G_OBJECT(stop), "player-stop-button");
+	add_object(builder, G_OBJECT(stop), "player-stop");
 
 	SkinButton *prev = skin_button_new(root, 
 			player->prev.img, 
 			player->prev.x1, player->prev.y1);
-	add_object(builder, G_OBJECT(prev), "player-prev-button");
+	add_object(builder, G_OBJECT(prev), "player-prev");
 
 	SkinButton *next = skin_button_new(root, 
 			player->next.img, 
 			player->next.x1, player->next.y1);
-	add_object(builder, G_OBJECT(next), "player-next-button");
+	add_object(builder, G_OBJECT(next), "player-next");
 
 	SkinButton *exit = skin_button_new(root, 
 			player->exit.img, 
 			player->exit.x1, player->exit.y1);
-	add_object(builder, G_OBJECT(exit), "player-exit-button");
+	add_object(builder, G_OBJECT(exit), "player-exit");
 
 	SkinButton *minimize = skin_button_new(root, 
 			player->minimize.img, 
 			player->minimize.x1, player->minimize.y1);
-	add_object(builder, G_OBJECT(minimize), "player-minimize-button");
+	add_object(builder, G_OBJECT(minimize), "player-minimize");
 
 	SkinButton *minimode = skin_button_new(root, 
 			player->minimode.img, 
 			player->minimode.x1, player->minimode.y1);
-	add_object(builder, G_OBJECT(minimode), "player-minimode-button");
+	add_object(builder, G_OBJECT(minimode), "player-minimode");
 
 	SkinButton *open = skin_button_new(root, 
 			player->open.img, 
 			player->open.x1, player->open.y1);
-	add_object(builder, G_OBJECT(open), "player-open-button");
+	add_object(builder, G_OBJECT(open), "player-open");
 	
 	SkinDynamicText *info = skin_dynamic_text_new(root, 
 			"x1", (gdouble)(player->info.x1),
@@ -183,22 +183,35 @@ create_player_window(SkinBuilder *builder)
 			"max", 100.0,
 			"value", 50.0,
 			NULL);
-	add_object(builder, G_OBJECT(progressbar), "player-progress-bar");
+	add_object(builder, G_OBJECT(progressbar), "player-progressbar");
 
 	SkinCheckButton *playlist = skin_check_button_new(root,
 			player->playlist.img,
 			player->playlist.x1, player->playlist.y1);
-	add_object(builder, G_OBJECT(playlist), "player-playlist-button");
+	add_object(builder, G_OBJECT(playlist), "player-playlist");
 
 	SkinCheckButton *lyric = skin_check_button_new(root,
 			player->lyric.img,
 			player->lyric.x1, player->lyric.y1);
-	add_object(builder, G_OBJECT(lyric), "player-lyric-button");
+	add_object(builder, G_OBJECT(lyric), "player-lyric");
 
 	SkinCheckButton *equalizer = skin_check_button_new(root,
 			player->equalizer.img,
 			player->equalizer.x1, player->equalizer.y1);
-	add_object(builder, G_OBJECT(equalizer), "player-equalizer-button");
+	add_object(builder, G_OBJECT(equalizer), "player-equalizer");
+
+	SkinHScale *volume = skin_hscale_new(root,
+			"x1", (gdouble)(player->volume.x1),
+			"y1", (gdouble)(player->volume.y1),
+			"x2", (gdouble)(player->volume.x2),
+			"y2", (gdouble)(player->volume.y2),
+			"fill-pixbuf", player->volume.fill_img,
+			"thumb-pixbuf", player->volume.thumb_img,
+			"min", 0.0,
+			"max", 100.0,
+			"value", 50.0,
+			NULL);
+	add_object(builder, G_OBJECT(volume), "player-volume");
 
 	/*
 	SkinVolumeButton *volume = skin_volume_button_new(root, 

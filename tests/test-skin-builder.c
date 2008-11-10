@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 	skin_builder_add_from_archive(builder, ar);
 
 	player_window = SKIN_WINDOW(skin_builder_get_object(builder, "player-window"));
-	play = SKIN_BUTTON(skin_builder_get_object(builder, "player-play-button"));
+	play = SKIN_BUTTON(skin_builder_get_object(builder, "player-play"));
 	g_return_val_if_fail(SKIN_IS_WINDOW(player_window), -1);
 
 	g_signal_connect(G_OBJECT(player_window), "delete-event", G_CALLBACK(quit), NULL);
