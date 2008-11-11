@@ -213,6 +213,17 @@ create_player_window(SkinBuilder *builder)
 			NULL);
 	add_object(builder, G_OBJECT(volume), "player-volume");
 
+	GnomeCanvasItem *visualbox = gnome_canvas_item_new(root,
+			gnome_canvas_widget_get_type(),
+			"x", (gdouble)player->visual.x1,
+			"y", (gdouble)player->visual.y1,
+			"width", (gdouble)(player->visual.x2 - player->visual.x1),
+			"height", (gdouble)(player->visual.y2 - player->visual.y1),
+			"anchor", GTK_ANCHOR_NORTH_WEST,
+			"size-pixels", TRUE,
+			NULL);
+	add_object(builder, G_OBJECT(visualbox), "player-visualbox");
+
 	/*
 	SkinVolumeButton *volume = skin_volume_button_new(root, 
 			"fill_pixbuf", player->volume.img,
@@ -449,6 +460,17 @@ create_lyric_window(SkinBuilder *builder)
 			lyric->ontop.img,
 			lyric->ontop.x1, lyric->ontop.y1);
 	add_object(builder, G_OBJECT(ontop), "lyric-ontop");
+
+	GnomeCanvasItem *lyricbox = gnome_canvas_item_new(root,
+			gnome_canvas_widget_get_type(),
+			"x", (gdouble)lyric->lyric.x1,
+			"y", (gdouble)lyric->lyric.y1,
+			"width", (gdouble)(lyric->lyric.x2 - lyric->lyric.x1),
+			"height", (gdouble)(lyric->lyric.y2 - lyric->lyric.y1),
+			"anchor", GTK_ANCHOR_NORTH_WEST,
+			"size-pixels", TRUE,
+			NULL);
+	add_object(builder, G_OBJECT(lyricbox), "player-lyricbox");
 }
 
 static void
@@ -499,6 +521,17 @@ create_playlist_window(SkinBuilder *builder)
 		tb = skin_toggle_button_new(root, pixbuf, x, pl->toolbar.y1);
 		add_object(builder, G_OBJECT(close), tb_items[i]);
 	}
+
+	GnomeCanvasItem *playlistbox = gnome_canvas_item_new(root,
+			gnome_canvas_widget_get_type(),
+			"x", (gdouble)pl->playlist.x1,
+			"y", (gdouble)pl->playlist.y1,
+			"width", (gdouble)(pl->playlist.x2 - pl->playlist.x1),
+			"height", (gdouble)(pl->playlist.y2 - pl->playlist.y1),
+			"anchor", GTK_ANCHOR_NORTH_WEST,
+			"size-pixels", TRUE,
+			NULL);
+	add_object(builder, G_OBJECT(playlistbox), "player-playlistbox");
 }
 
 static void
