@@ -45,9 +45,8 @@ typedef struct _SkinWindowPrivate        SkinWindowPrivate;
 
 struct _SkinWindow
 {
-	GtkWidget parent;
+	GtkWindow parent;
 
-	GtkWidget* widget;
 	GtkWidget* canvas;
 	GnomeCanvasGroup* canvas_root;
 	GnomeCanvasItem* canvas_item;
@@ -65,7 +64,7 @@ struct _SkinWindow
 
 struct _SkinWindowClass
 {
-	GtkWidgetClass parent_class;
+	GtkWindowClass parent_class;
 	void (*right_button_press) (SkinWindow* skin_window, gpointer* user_data);
 	void (*delete_event) (SkinWindow* skin_window, gpointer* user_data);
 	void (*move_event) (SkinWindow* skin_window, gpointer* user_data);

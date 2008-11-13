@@ -82,7 +82,7 @@ AC_EXEEXT
 
 AM_PROG_LIBTOOL
 
-pkg_modules="pango >= 1.4.0, glib-2.0 >= 2.4.0, gtk+-2.0 >= 2.4.0, libxml-2.0 libgnomecanvas-2.0 >= 2.14.0"
+pkg_modules="glib-2.0 >= 2.4.0, gtk+-2.0 >= 2.4.0, libxml-2.0, libgnomecanvas-2.0 >= 2.14.0"
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)

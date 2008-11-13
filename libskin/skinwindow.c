@@ -36,7 +36,7 @@ struct _SkinWindowPrivate
 
 enum {
 	RIGHT_BUTTON_PRESS,
-	DELETE_EVENT,
+	//DELETE_EVENT,
 	MOVE_EVENT,
     LAST_SIGNAL
 };
@@ -88,7 +88,7 @@ skin_window_get_type(void)
 			NULL			/* value_table */
 		};
 
-		skin_window_type = g_type_register_static(GTK_TYPE_OBJECT, 
+		skin_window_type = g_type_register_static(GTK_TYPE_WINDOW, 
 								"SkinWindow",
 							    &object_info, 
 								0);
@@ -117,18 +117,6 @@ skin_window_class_init(SkinWindowClass *class)
 						G_TYPE_FROM_CLASS(gobject_class),
 						G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
 						G_STRUCT_OFFSET(SkinWindowClass, right_button_press),
-						NULL,
-						NULL,
-						g_cclosure_marshal_VOID__VOID,
-						G_TYPE_NONE,
-						0, 
-						NULL);
-
-	widget_signals[DELETE_EVENT] = 
-			g_signal_new("delete-event",
-						G_TYPE_FROM_CLASS(gobject_class),
-						G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-						G_STRUCT_OFFSET(SkinWindowClass, delete_event),
 						NULL,
 						NULL,
 						g_cclosure_marshal_VOID__VOID,
@@ -196,23 +184,12 @@ skin_window_get_property (GObject      *object,
     }
 }
 
-static void
-skin_window_destroy_event(GtkWidget* widget,
-									GdkEvent* event,
-									SkinWindow* skin_window)
-{
-	g_signal_emit(skin_window,
-			widget_signals[DELETE_EVENT],
-			0,
-			NULL);
-}
-
 static gboolean 
 skin_window_canvas_item_event(GnomeCanvasItem *item, 
 								GdkEvent *event, 
 								SkinWindow* skin_window)
 {
-	GtkWindow* window = GTK_WINDOW(skin_window->widget);
+	GtkWindow* window = GTK_WINDOW(skin_window);
 	static gint win_x0, win_y0;
 	static gboolean is_pressing = FALSE;
 
@@ -298,36 +275,29 @@ static void
 skin_window_construct(SkinWindow* skin_window, 
 		GdkPixbuf* pixbuf)
 {
-	g_print("construct\n");
+	GtkWidget *widget;
 	g_return_if_fail(SKIN_IS_WINDOW(skin_window));
 	g_return_if_fail(GDK_IS_PIXBUF(pixbuf));
 
-	skin_window->canvas = gnome_canvas_new_aa();
-	skin_window->canvas_root = 
-		gnome_canvas_root(GNOME_CANVAS(skin_window->canvas));
+	widget = GTK_WIDGET(skin_window);
 
-	gnome_canvas_set_center_scroll_region(GNOME_CANVAS(skin_window->canvas), 
-						FALSE);
+	skin_window->canvas = gnome_canvas_new_aa();
+	skin_window->canvas_root = gnome_canvas_root(GNOME_CANVAS(skin_window->canvas));
+
+	gnome_canvas_set_center_scroll_region(GNOME_CANVAS(skin_window->canvas), FALSE);
 	skin_window->canvas_item = gnome_canvas_item_new(skin_window->canvas_root,
 							gnome_canvas_pixbuf_get_type(),
 							"pixbuf", pixbuf,
 							NULL);
 
-	skin_window->widget = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_container_add(GTK_CONTAINER(skin_window->widget), skin_window->canvas);
+	gtk_container_add(GTK_CONTAINER(widget), skin_window->canvas);
 
-	gtk_widget_decorated_with_pixbuf(skin_window->widget, pixbuf); 
-
-	g_signal_connect(G_OBJECT(skin_window->widget), 
-					"delete-event",
-					G_CALLBACK(skin_window_destroy_event), 
-					skin_window);
+	gtk_widget_decorated_with_pixbuf(widget, pixbuf); 
 
 	g_signal_connect(G_OBJECT(skin_window->canvas_item), 
 					"event",
 					G_CALLBACK(skin_window_canvas_item_event), 
 					skin_window);
-	g_print("construct done\n");
 }
 
 /**
@@ -335,45 +305,47 @@ skin_window_construct(SkinWindow* skin_window,
  *
  * Create a skin window widget.
  *
- * Return: a new #SkinWindow.
+ * Return: a new #GtkWidget.
  */
 SkinWindow *
 skin_window_new(GdkPixbuf* pixbuf)
 {
-	SkinWindow* skin_window;
+
+	SkinWindow *window;
 	g_return_val_if_fail(GDK_IS_PIXBUF(pixbuf), NULL);
 
-	g_print("g_object_new\n");
-    skin_window = SKIN_WINDOW(g_object_new(SKIN_TYPE_WINDOW, NULL));
+	//window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	skin_window_construct(skin_window, pixbuf);
+	window = g_object_new(SKIN_TYPE_WINDOW, NULL);
+	
+	skin_window_construct(window, pixbuf);
 
-	return skin_window;
+	return window;
 }
 
 void skin_window_destroy(SkinWindow* skin_window)
 {
 	g_return_if_fail(SKIN_IS_WINDOW(skin_window));
-	gtk_widget_destroy(skin_window->widget);
+	gtk_widget_destroy(GTK_WIDGET(skin_window));
 }
 
 void skin_window_show(SkinWindow* skin_window)
 {
 	g_return_if_fail(SKIN_IS_WINDOW(skin_window));
-	gtk_widget_show_all(skin_window->widget);
+	gtk_widget_show_all(GTK_WIDGET(skin_window));
 }
 
 void skin_window_hide(SkinWindow* skin_window)
 {
 	g_return_if_fail(SKIN_IS_WINDOW(skin_window));
-	gtk_widget_hide_all(skin_window->widget);
+	gtk_widget_hide_all(GTK_WIDGET(skin_window));
 }
 
 void skin_window_move(SkinWindow* skin_window,
 						gint x, gint y)
 {
 	g_return_if_fail(SKIN_IS_WINDOW(skin_window));
-	gtk_window_move((GtkWindow*)skin_window->widget, x, y);
+	gtk_window_move(GTK_WINDOW(skin_window), x, y);
 }
 
 void skin_window_set_image(SkinWindow* skin_window,
@@ -382,7 +354,7 @@ void skin_window_set_image(SkinWindow* skin_window,
 	g_return_if_fail(SKIN_IS_WINDOW(skin_window));
 	g_return_if_fail(GDK_IS_PIXBUF(pixbuf));
 
-	gtk_widget_decorated_with_pixbuf(skin_window->widget, pixbuf);
+	gtk_widget_decorated_with_pixbuf(GTK_WIDGET(skin_window), pixbuf);
 	
 	gnome_canvas_item_set(skin_window->canvas_item,
 			"pixbuf", pixbuf,

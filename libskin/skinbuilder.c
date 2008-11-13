@@ -531,7 +531,7 @@ create_playlist_window(SkinBuilder *builder)
 			"anchor", GTK_ANCHOR_NORTH_WEST,
 			"size-pixels", TRUE,
 			NULL);
-	add_object(builder, G_OBJECT(playlistbox), "player-playlistbox");
+	add_object(builder, G_OBJECT(playlistbox), "playlist-playlistbox");
 }
 
 static void

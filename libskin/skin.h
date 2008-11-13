@@ -25,5 +25,18 @@
 #ifndef __SKIN_H__
 #define __SKIN_H__  1
 
+#include <libskin/skinarchive.h>
+#include <libskin/skinbuilder.h>
+#include <libskin/skinbutton.h>
+#include <libskin/skincheckbutton.h>
+#include <libskin/skindigitaltime.h>
+#include <libskin/skindynamictext.h>
+#include <libskin/skinhscale.h>
+#include <libskin/skinscrollbar.h>
+#include <libskin/skinstatusbar.h>
+#include <libskin/skintogglebutton.h>
+#include <libskin/skinvolumebutton.h>
+#include <libskin/skinvscale.h>
 #include <libskin/skinwindow.h>
+
 #endif /*__SKIN_H__ */

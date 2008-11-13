@@ -3,10 +3,10 @@ exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
-Name: libsexy
-Description: Doing naughty things to good widgets
+Name: libskin
+Description: Build beautiful GUI for players.
 Version: @VERSION@
-Libs: -L${libdir} -lsexy @PACKAGE_LIBS@
+Libs: -L${libdir} -lskin @PACKAGE_LIBS@
 Cflags: -I${includedir} @PACKAGE_CFLAGS@
 
 
