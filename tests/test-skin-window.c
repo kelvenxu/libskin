@@ -53,6 +53,7 @@ gboolean cb_clicked_event(SkinButton* button, SkinDigitalTime *time)
 	static int i = 0;
 	g_print("test: SkinButton 'clicked'_event\n");
 
+	skin_button_set_sensitive(button, FALSE);
 	skin_digital_time_set_value(time, i);
 
 	++i;

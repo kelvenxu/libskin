@@ -2,7 +2,7 @@
 /*
  * skinstatusbar.h
  *
- * This file is part of ________.
+ * This file is part of libskin.
  *
  * Copyright (C) 2008 - kelvenxu <kelvenxu@gmail.com>.
  *

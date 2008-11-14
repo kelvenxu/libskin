@@ -63,6 +63,8 @@ SkinButton* skin_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x
 
 void skin_button_show(SkinButton *button);
 void skin_button_hide(SkinButton *button);
+void skin_button_set_sensitive(SkinButton *button, gboolean sensitive);
+gboolean skin_button_get_sensitive(SkinButton *button);
 
 G_END_DECLS
 

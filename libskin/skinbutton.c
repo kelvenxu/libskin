@@ -42,6 +42,7 @@ static int signals[LAST_SIGNAL];
 struct _SkinButtonPrivate
 {
 	GdkPixbuf *subpixbuf[SUBPIXBUF];
+	gboolean sensitive;
 };
 
 static void skin_button_set_property  (GObject          *object,
@@ -60,30 +61,32 @@ static gint cb_event (GnomeCanvasItem *item,
 //G_DEFINE_TYPE (SkinButton, skin_button, SKIN_TYPE_BUTTON);
 
 static gint 
-cb_event (GnomeCanvasItem *item, GdkEvent *event, SkinButton* skin_button)
+cb_event (GnomeCanvasItem *item, GdkEvent *event, SkinButton* button)
 {
 	static gboolean is_pressing = FALSE;
+
+	if(!button->priv->sensitive) return FALSE;
 
 	switch (event->type) 
 	{
 	case GDK_BUTTON_PRESS:
 		if(event->button.button == 1) 
 		{
-			gnome_canvas_item_set(item, "pixbuf", skin_button->priv->subpixbuf[2], NULL);
+			gnome_canvas_item_set(item, "pixbuf", button->priv->subpixbuf[2], NULL);
 			is_pressing = TRUE;
 		}
 		break;
 	case GDK_MOTION_NOTIFY:
 		if(!is_pressing)
-			gnome_canvas_item_set(item, "pixbuf", skin_button->priv->subpixbuf[1], NULL);
+			gnome_canvas_item_set(item, "pixbuf", button->priv->subpixbuf[1], NULL);
 		break;
 	case GDK_BUTTON_RELEASE:
-		gnome_canvas_item_set(item, "pixbuf", skin_button->priv->subpixbuf[1], NULL);
-		g_signal_emit(skin_button, signals[CLICKED], 0, NULL);
+		gnome_canvas_item_set(item, "pixbuf", button->priv->subpixbuf[1], NULL);
+		g_signal_emit(button, signals[CLICKED], 0, NULL);
 		is_pressing = FALSE;
 		break;
 	default:
-		gnome_canvas_item_set(item, "pixbuf", skin_button->priv->subpixbuf[0], NULL);
+		gnome_canvas_item_set(item, "pixbuf", button->priv->subpixbuf[0], NULL);
 		break;
 	}
 
@@ -115,9 +118,10 @@ skin_button_class_init (SkinButtonClass *class)
 }
 
 static void
-skin_button_init (SkinButton *skin_button)
+skin_button_init (SkinButton *button)
 {
-    skin_button->priv = SKIN_BUTTON_GET_PRIVATE (skin_button);
+    button->priv = SKIN_BUTTON_GET_PRIVATE(button);
+	button->priv->sensitive = TRUE;
 }
 
 GType
@@ -233,10 +237,42 @@ skin_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdouble y)
 
 void skin_button_show(SkinButton *button)
 {
+	g_return_if_fail(SKIN_IS_BUTTON(button));
 	gnome_canvas_item_show(GNOME_CANVAS_ITEM(button));
 }
 
 void skin_button_hide(SkinButton *button)
 {
+	g_return_if_fail(SKIN_IS_BUTTON(button));
 	gnome_canvas_item_hide(GNOME_CANVAS_ITEM(button));
 }
+
+void 
+skin_button_set_sensitive(SkinButton *button, gboolean sensitive)
+{
+	g_return_if_fail(SKIN_IS_BUTTON(button));
+
+	button->priv->sensitive = sensitive;
+	if(sensitive)
+	{
+		gnome_canvas_item_set(GNOME_CANVAS_ITEM(button), 
+				"pixbuf", button->priv->subpixbuf[0], 
+				NULL);
+	}
+	else
+	{
+		gnome_canvas_item_set(GNOME_CANVAS_ITEM(button), 
+				"pixbuf", button->priv->subpixbuf[3], 
+				NULL);
+	}
+
+}
+
+gboolean 
+skin_button_get_sensitive(SkinButton *button)
+{
+	g_return_val_if_fail(SKIN_IS_BUTTON(button), FALSE);
+
+	return button->priv->sensitive;
+}
+

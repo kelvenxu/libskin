@@ -314,4 +314,8 @@ skin_status_bar_new(GnomeCanvasGroup *root, const gchar *first_arg_name, ...)
 void 
 skin_status_bar_set_text(SkinStatusBar *status_bar, const gchar *text)
 {
+	g_return_if_fail(SKIN_IS_STATUS_BAR(status_bar));
+	gnome_canvas_item_set(GNOME_CANVAS_ITEM(status_bar), 
+			"text", status_bar->priv->text, 
+			NULL);
 }
