@@ -29,6 +29,7 @@
 #include <libskin/skinbutton.h>
 #include <libskin/skinvolumebutton.h>
 #include <libskin/skindigitaltime.h>
+#include <libskin/skinstatusbar.h>
 #include <libskin/skinarchive.h>
 #include <libskin/skinbuilder.h>
 
@@ -77,6 +78,10 @@ int main(int argc, char *argv[])
 	lyric_window = SKIN_WINDOW(skin_builder_get_object(builder, "lyric-window"));
 	playlist_window = SKIN_WINDOW(skin_builder_get_object(builder, "playlist-window"));
 	mini_window = SKIN_WINDOW(skin_builder_get_object(builder, "mini-window"));
+
+	SkinStatusBar *statusbar = (SkinStatusBar*)skin_builder_get_object(builder, "player-statusbar");
+	skin_status_bar_set_text(statusbar, "Stop!");
+
 	skin_window_show(player_window);
 	skin_window_show(equalizer_window);
 	skin_window_show(lyric_window);

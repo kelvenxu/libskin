@@ -126,9 +126,11 @@ skin_status_bar_class_init (SkinStatusBarClass *self_class)
 	g_object_class_install_property(object_class, PROP_COLOR, 
 			g_param_spec_string("color", _("Color"), _("Text color, as string"), NULL, 
 				(G_PARAM_READABLE | G_PARAM_WRITABLE)));
+	/*
 	g_object_class_install_property(object_class, PROP_TEXT, 
 			g_param_spec_string("text", _("Status message"), _("Text, as string"), NULL, 
 				(G_PARAM_READABLE | G_PARAM_WRITABLE)));
+	*/
 }
 
 static void
@@ -172,10 +174,12 @@ skin_status_bar_set_property (GObject      *object,
 			priv->color = g_value_dup_string(value);
 			skin_status_bar_update(status_bar);
 			break;
+			/*
 		case PROP_TEXT:
 			priv->text = g_value_dup_string(value);
 			skin_status_bar_update(status_bar);
 			break;
+			*/
 		default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
             break;
@@ -217,9 +221,11 @@ skin_status_bar_get_property (GObject      *object,
 		case PROP_COLOR:
 			g_value_set_string(value, priv->color);
 			break;
+			/*
 		case PROP_TEXT:
 			g_value_set_string(value, priv->text);
 			break;
+			*/
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
             break;
@@ -264,10 +270,13 @@ skin_status_bar_update(SkinStatusBar *status_bar)
 				"justification", GTK_JUSTIFY_RIGHT,
 				NULL);
 
+	g_object_get(G_OBJECT(item), "text", &priv->text, NULL);
+	/*
 	if(priv->text)
 	{
 		gnome_canvas_item_set(item, "text", priv->text, NULL);
 	}
+	*/
 }
 
 static void
@@ -315,7 +324,9 @@ void
 skin_status_bar_set_text(SkinStatusBar *status_bar, const gchar *text)
 {
 	g_return_if_fail(SKIN_IS_STATUS_BAR(status_bar));
+	g_return_if_fail(text != NULL);
 	gnome_canvas_item_set(GNOME_CANVAS_ITEM(status_bar), 
-			"text", status_bar->priv->text, 
+			"text", text, 
 			NULL);
 }
+

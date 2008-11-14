@@ -30,6 +30,7 @@
  * GtkBuilder中使用了GHashTable来存储各个object
  */
 #include "skinbuilder.h"
+#include <glib/gi18n.h>
 #include "skinarchive.h"
 #include "skinwindow.h"
 #include "skinbutton.h"
@@ -37,6 +38,7 @@
 #include "skintogglebutton.h"
 #include "skinvolumebutton.h"
 #include "skindynamictext.h"
+#include "skinstatusbar.h"
 #include "skinhscale.h"
 #include "skinvscale.h"
 
@@ -171,6 +173,17 @@ create_player_window(SkinBuilder *builder)
 			"format", "format --",
 			NULL);
 	add_object(builder, G_OBJECT(info), "player-info");
+
+	SkinStatusBar *statusbar = skin_status_bar_new(root, 
+			"x1", (gdouble)(player->status.x1),
+			"y1", (gdouble)(player->status.y1),
+			"x2", (gdouble)(player->status.x2),
+			"y2", (gdouble)(player->status.y2),
+			"color", player->status.color,
+			"align", player->status.align,
+			"text", _("Stop"),
+			NULL);
+	add_object(builder, G_OBJECT(statusbar), "player-statusbar");
 
 	SkinHScale *progressbar = skin_hscale_new(root,
 			"x1", (gdouble)(player->progress.x1),
