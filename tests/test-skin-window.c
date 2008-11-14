@@ -52,16 +52,10 @@ gboolean cb_clicked_event(SkinButton* button, SkinDigitalTime *time)
 {
 	static int i = 0;
 	g_print("test: SkinButton 'clicked'_event\n");
-	g_object_set(button,
-			"x", 100.0,
-			"y", 100.0,
-			NULL);
 
 	skin_digital_time_set_value(time, i);
 
 	++i;
-	if(i > 10)
-		i = 0;
 	return FALSE;
 }
 
@@ -121,7 +115,8 @@ int main()
 
 	GdkPixbuf *pb = gdk_pixbuf_new_from_file("tests/number.png", NULL);
 
-	SkinDigitalTime *time_label = skin_digital_time_new(skin_window->canvas_root, pb, 150, 150);
+	SkinDigitalTime *time_label = skin_digital_time_new(skin_window->canvas_root, pb, 50, 50);
+	skin_digital_time_show(time_label);
 
 	pb = gdk_pixbuf_new_from_file("tests/play.png", NULL);
 

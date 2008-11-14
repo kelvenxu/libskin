@@ -24,6 +24,10 @@
  * */
 
 #include "skindigitaltime.h"
+#include <math.h>
+
+#define TIME_SP 10
+#define TIME_NONE 11
 
 #define SUBPIXBUF 12
 
@@ -36,7 +40,18 @@ enum {
 
 struct _SkinDigitalTimePrivate
 {
+	gdouble x;
+	gdouble y;
+
+	// 单个元素的尺寸
+	gdouble w;
+	gdouble h;
+
+	GdkPixbuf *pixbuf;
 	GdkPixbuf *subpixbuf[SUBPIXBUF];
+
+	GnomeCanvasGroup *root;
+	GnomeCanvasItem *items[5];
 };
 
 static void skin_digital_time_set_property  (GObject          *object,
@@ -60,17 +75,17 @@ skin_digital_time_class_init (SkinDigitalTimeClass *class)
 }
 
 static void
-skin_digital_time_init (SkinDigitalTime *skin_digital_time)
+skin_digital_time_init (SkinDigitalTime *dt)
 {
-    skin_digital_time->priv = SKIN_DIGITAL_TIME_GET_PRIVATE (skin_digital_time);
+    dt->priv = SKIN_DIGITAL_TIME_GET_PRIVATE(dt);
 }
 
 GType
 skin_digital_time_get_type(void)
 {
-	static GType skin_digital_time_type = 0;
+	static GType dt_type = 0;
 	
-	if(!skin_digital_time_type)
+	if(!dt_type)
 	{
 		static const GTypeInfo skin_digital_time_info =
 		{
@@ -85,47 +100,105 @@ skin_digital_time_get_type(void)
 			(GInstanceInitFunc)skin_digital_time_init
 		};
 
-		skin_digital_time_type = 
-		g_type_register_static(gnome_canvas_pixbuf_get_type(),
+		dt_type = g_type_register_static(gnome_canvas_group_get_type(),
 				"SkinDigitalTime", &skin_digital_time_info, 0);
 	}
 
-	return skin_digital_time_type;
+	return dt_type;
+}
+
+static void
+skin_digital_time_construct(SkinDigitalTime *dt)
+{
+	GnomeCanvasGroup *group;
+	SkinDigitalTimePrivate *priv;
+	gdouble w;
+	int i;
+
+	g_return_if_fail(SKIN_IS_DIGITAL_TIME(dt));
+
+	priv = dt->priv;
+
+	group = GNOME_CANVAS_GROUP(dt);
+
+	w = (gdouble)gdk_pixbuf_get_width(priv->pixbuf);
+
+	priv->w = w / (gdouble)SUBPIXBUF;
+	priv->h = (gdouble)gdk_pixbuf_get_height(priv->pixbuf);
+
+	priv->w = floor(priv->w + 0.5);
+	for(i = 0; i < SUBPIXBUF; ++i)
+	{
+		priv->subpixbuf[i] = 
+			gdk_pixbuf_new_subpixbuf(priv->pixbuf, (gint)(priv->w * i), 0, (gint)priv->w, (gint)priv->h);
+	}
+
+	priv->subpixbuf[SUBPIXBUF - 1] = 
+		gdk_pixbuf_new_subpixbuf(priv->pixbuf, (gint)(w - priv->w), 0, (gint)priv->w, (gint)priv->h);
+
+	priv->items[0] = gnome_canvas_item_new(group, 
+			gnome_canvas_pixbuf_get_type(),
+			"pixbuf", dt->priv->subpixbuf[TIME_NONE],
+			"x", priv->x,
+			"y", priv->y,
+			NULL);
+
+	priv->items[1] = gnome_canvas_item_new(group, 
+			gnome_canvas_pixbuf_get_type(),
+			"pixbuf", dt->priv->subpixbuf[TIME_NONE],
+			"x", priv->x + priv->w + 1,
+			"y", priv->y,
+			NULL);
+
+	priv->items[2] = gnome_canvas_item_new(group, 
+			gnome_canvas_pixbuf_get_type(),
+			"pixbuf", dt->priv->subpixbuf[TIME_SP],
+			"x", priv->x + priv->w * 2.0 + 1,
+			"y", priv->y,
+			NULL);
+
+	priv->items[3] = gnome_canvas_item_new(group, 
+			gnome_canvas_pixbuf_get_type(),
+			"pixbuf", dt->priv->subpixbuf[TIME_NONE],
+			"x", priv->x + priv->w * 3.0 + 1,
+			"y", priv->y,
+			NULL);
+
+	priv->items[4] = gnome_canvas_item_new(group, 
+			gnome_canvas_pixbuf_get_type(),
+			"pixbuf", dt->priv->subpixbuf[TIME_NONE],
+			"x", priv->x + priv->w * 4.0 + 1,
+			"y", priv->y,
+			NULL);
 }
 
 SkinDigitalTime*
 skin_digital_time_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdouble y)
 {
 	SkinDigitalTime *digital_time;
+	SkinDigitalTimePrivate *priv;
 	GnomeCanvasItem *item;
-	gdouble pw;
-	gdouble ph;
-	gdouble w;
-	gdouble h;
-	gint i;
+	
+	g_return_val_if_fail(GNOME_IS_CANVAS_GROUP(root), NULL);
+	g_return_val_if_fail(GDK_IS_PIXBUF(pixbuf), NULL);
+	g_return_val_if_fail((x >= 0.0 || y >= 0.0), NULL);
 	
 	item = gnome_canvas_item_new(root,
 			skin_digital_time_get_type(),
+			"x", x,
+			"y", y,
 			NULL);
 
 	digital_time = SKIN_DIGITAL_TIME(item);
 
-	pw = gdk_pixbuf_get_width(pixbuf);
-	ph = gdk_pixbuf_get_height(pixbuf);
-	  
-	w = pw / SUBPIXBUF;
-	h = ph;
-	
-	for(i = 0; i < SUBPIXBUF; ++i)
-	{
-		digital_time->priv->subpixbuf[i] = gdk_pixbuf_new_subpixbuf(pixbuf, w * i, 0, w, h);
-	}
+	priv = digital_time->priv;
+	g_assert(priv);
+	priv->root = root;
+	priv->x = x;
+	priv->y = y;
+	priv->pixbuf = gdk_pixbuf_copy(pixbuf);
 
-	gnome_canvas_item_set(item, 
-			"pixbuf", digital_time->priv->subpixbuf[SUBPIXBUF - 1], 
-			"x", x, 
-			"y", y, 
-			NULL);
+	skin_digital_time_construct(digital_time);
 
     return digital_time;
 }
@@ -136,9 +209,9 @@ skin_digital_time_set_property (GObject      *object,
                             const GValue *value,
                             GParamSpec   *pspec)
 {
-    SkinDigitalTime *skin_digital_time;
+    SkinDigitalTime *dt;
 
-    skin_digital_time = SKIN_DIGITAL_TIME (object);
+    dt = SKIN_DIGITAL_TIME (object);
 
     switch (prop_id)
     {
@@ -154,9 +227,9 @@ skin_digital_time_get_property (GObject      *object,
                             GValue       *value,
                             GParamSpec   *pspec)
 {
-    SkinDigitalTime *skin_digital_time;
+    SkinDigitalTime *dt;
 
-    skin_digital_time = SKIN_DIGITAL_TIME (object);
+    dt = SKIN_DIGITAL_TIME (object);
 
     switch (prop_id)
     {
@@ -167,22 +240,49 @@ skin_digital_time_get_property (GObject      *object,
 }
 
 
-void skin_digital_time_show(SkinDigitalTime *digital_time)
+void skin_digital_time_show(SkinDigitalTime *dt)
 {
-	gnome_canvas_item_show(GNOME_CANVAS_ITEM(digital_time));
+	gnome_canvas_item_show(GNOME_CANVAS_ITEM(dt));
 }
 
-void skin_digital_time_hide(SkinDigitalTime *digital_time)
+void skin_digital_time_hide(SkinDigitalTime *dt)
 {
-	gnome_canvas_item_hide(GNOME_CANVAS_ITEM(digital_time));
+	gnome_canvas_item_hide(GNOME_CANVAS_ITEM(dt));
 }
 
-void skin_digital_time_set_value(SkinDigitalTime *digital_time, int value)
+void skin_digital_time_set_value(SkinDigitalTime *dt, int value)
 {
-	g_return_if_fail((value < SUBPIXBUF) && (value >= 0));
+	int m1, m2;
+	int s1, s2; //MM:SS >> m1m2:s1s2
 
-	gnome_canvas_item_set(GNOME_CANVAS_ITEM(digital_time),
-			"pixbuf", digital_time->priv->subpixbuf[value],
+	g_return_if_fail(SKIN_IS_DIGITAL_TIME(dt));
+	g_return_if_fail(value >= 0);
+
+
+	if(value > 3600) value = 3600;
+
+	m2 = value / 60;
+	m1 = m2 / 10;
+	m2 = m2 % 10;
+
+	s2 = value % 60;
+	s1 = s2 / 10;
+	s2 = s2 % 10;
+
+	printf("(%d), time: %d%d:%d%d\n", value, m1, m2, s1, s2);
+
+	gnome_canvas_item_set(dt->priv->items[0],
+			"pixbuf", dt->priv->subpixbuf[m1],
+			NULL);
+	gnome_canvas_item_set(dt->priv->items[1],
+			"pixbuf", dt->priv->subpixbuf[m2],
+			NULL);
+
+	gnome_canvas_item_set(dt->priv->items[3],
+			"pixbuf", dt->priv->subpixbuf[s1],
+			NULL);
+	gnome_canvas_item_set(dt->priv->items[4],
+			"pixbuf", dt->priv->subpixbuf[s2],
 			NULL);
 }
 

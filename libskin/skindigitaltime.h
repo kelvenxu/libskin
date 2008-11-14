@@ -34,8 +34,6 @@
 
 G_BEGIN_DECLS
 
-#define DIGITAL_TIME_SEPARATOR 10
-#define DIGITAL_TIME_NONE 11
 
 #define SKIN_TYPE_DIGITAL_TIME              (skin_digital_time_get_type ())
 #define SKIN_DIGITAL_TIME(obj)              (G_TYPE_CHECK_INSTANCE_CAST ((obj), SKIN_TYPE_DIGITAL_TIME, SkinDigitalTime)) 
@@ -51,13 +49,13 @@ typedef struct _SkinDigitalTimePrivate        SkinDigitalTimePrivate;
 
 struct _SkinDigitalTime
 {
-	GnomeCanvasPixbuf parent;
+	GnomeCanvasGroup parent;
 	SkinDigitalTimePrivate *priv;
 };
 
 struct _SkinDigitalTimeClass
 {
-	GnomeCanvasPixbufClass parent_class;
+	GnomeCanvasGroupClass parent_class;
 };
 
 GType      skin_digital_time_get_type           (void) G_GNUC_CONST;
