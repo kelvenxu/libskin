@@ -2,7 +2,7 @@
 /*
  * skincheckbutton.h
  *
- * This file is part of ________.
+ * This file is part of libskin.
  *
  * Copyright (C) 2008 - kelvenxu <kelvenxu@gmail.com>.
  *
@@ -44,8 +44,6 @@ typedef struct _SkinCheckButton             SkinCheckButton;
 typedef struct _SkinCheckButtonClass        SkinCheckButtonClass;
 typedef struct _SkinCheckButtonPrivate        SkinCheckButtonPrivate;
 
-/* 这样的button只有一个图片，靠位置的微移来响应用户的行为
- * 主要用在如播放列表上方的工具条上 */
 struct _SkinCheckButton
 {
 	GnomeCanvasPixbuf parent;

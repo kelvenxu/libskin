@@ -2,7 +2,7 @@
 /*
  * skincheckbutton.c
  *
- * This file is part of ________.
+ * This file is part of libskin.
  *
  * Copyright (C) 2008 - kelvenxu <kelvenxu@gmail.com>.
  *
@@ -90,12 +90,14 @@ cb_event(GnomeCanvasItem *item, GdkEvent *event, SkinCheckButton* button)
 		is_pressing = FALSE;
 		break;
 	default:
-		gnome_canvas_item_set(item, "pixbuf", priv->subpixbuf[0], NULL);
+		//gnome_canvas_item_set(item, "pixbuf", priv->subpixbuf[0], NULL);
+		skin_check_button_set_active(button, button->priv->checked);
 		break;
 	}
 
-	//FIXME: how to make things better?
-	g_timeout_add(500, (GSourceFunc)cb_event_after, button);
+	//FIXME: 响应完用户鼠标的移动，还要回到原来的checked或unchecked状态
+	//在上面的default中完成？
+	//g_timeout_add(500, (GSourceFunc)cb_event_after, button);
 	return FALSE;
 }
 
