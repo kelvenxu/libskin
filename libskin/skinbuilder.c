@@ -204,7 +204,6 @@ create_player_window(SkinBuilder *builder)
 			(gdouble)(player->led.y1));
 	add_object(builder, G_OBJECT(led), "player-led");
 
-	skin_digital_time_set_value(led, 123);
 	SkinCheckButton *playlist = skin_check_button_new(root,
 			player->playlist.img,
 			player->playlist.x1, player->playlist.y1);
@@ -219,6 +218,11 @@ create_player_window(SkinBuilder *builder)
 			player->equalizer.img,
 			player->equalizer.x1, player->equalizer.y1);
 	add_object(builder, G_OBJECT(equalizer), "player-equalizer");
+
+	SkinCheckButton *mute = skin_check_button_new(root,
+			player->mute.img,
+			player->mute.x1, player->mute.y1);
+	add_object(builder, G_OBJECT(mute), "player-mute");
 
 	SkinHScale *volume = skin_hscale_new(root,
 			"x1", (gdouble)(player->volume.x1),
