@@ -336,6 +336,7 @@ cb_rect_event(GnomeCanvasItem *item, GdkEvent *event, SkinHScale* hscale)
 	}
 	return FALSE;
 }
+
 static gint 
 cb_fill_event(GnomeCanvasItem *item, GdkEvent *event, SkinHScale* hscale)
 {
@@ -628,4 +629,10 @@ skin_hscale_set_range_and_value(SkinHScale *hscale, gdouble min, gdouble max, gd
 	hscale->priv->value = value;
 	hscale->priv->need_value_update = TRUE;
 	skin_hscale_value_update(hscale);
+}
+
+gdouble 
+skin_hscale_get_value(SkinHScale *hscale)
+{
+	return hscale->priv->value;
 }
