@@ -60,7 +60,7 @@ static void skin_check_button_get_property  (GObject          *object,
 static gint cb_event (GnomeCanvasItem *item, 
 						GdkEvent *event, 
 						SkinCheckButton* skin_check_button);
-static gboolean cb_event_after(SkinCheckButton* button);
+//static gboolean cb_event_after(SkinCheckButton* button);
 
 //G_DEFINE_TYPE (SkinCheckButton, skin_check_button, SKIN_TYPE_CHECK_BUTTON);
 
@@ -101,12 +101,14 @@ cb_event(GnomeCanvasItem *item, GdkEvent *event, SkinCheckButton* button)
 	return FALSE;
 }
 
+/*
 static gboolean
 cb_event_after(SkinCheckButton* button)
 {
 	skin_check_button_set_active(button, button->priv->checked);
 	return FALSE;
 }
+*/
 static void
 skin_check_button_class_init (SkinCheckButtonClass *class)
 {

@@ -30,6 +30,12 @@
 struct _SkinWindowPrivate
 {
 	gboolean dispose_has_run;
+
+	// Position
+	gint x;
+	gint y;
+	gint width;
+	gint height;
 };
 
 #define SKIN_WINDOW_GET_PRIVATE(obj)  (G_TYPE_INSTANCE_GET_PRIVATE((obj), SKIN_TYPE_WINDOW, SkinWindowPrivate))
@@ -145,6 +151,11 @@ skin_window_init (GTypeInstance *instance,
 
 	self->priv = G_TYPE_INSTANCE_GET_PRIVATE(self, SKIN_TYPE_WINDOW, 
 			SkinWindowPrivate);
+
+	self->priv->x = 0;
+	self->priv->y = 0;
+	self->priv->width = -1;
+	self->priv->height = -1;
 }
 
 static void
@@ -323,40 +334,47 @@ skin_window_new(GdkPixbuf* pixbuf)
 	return window;
 }
 
-void skin_window_destroy(SkinWindow* skin_window)
+void skin_window_destroy(SkinWindow* window)
 {
-	g_return_if_fail(SKIN_IS_WINDOW(skin_window));
-	gtk_widget_destroy(GTK_WIDGET(skin_window));
+	g_return_if_fail(SKIN_IS_WINDOW(window));
+	gtk_widget_destroy(GTK_WIDGET(window));
 }
 
-void skin_window_show(SkinWindow* skin_window)
+void skin_window_show(SkinWindow* window)
 {
-	g_return_if_fail(SKIN_IS_WINDOW(skin_window));
-	gtk_widget_show_all(GTK_WIDGET(skin_window));
+	g_return_if_fail(SKIN_IS_WINDOW(window));
+	gtk_widget_show_all(GTK_WIDGET(window));
+	gtk_window_move(GTK_WINDOW(window), 
+			window->priv->x, 
+			window->priv->y);
 }
 
-void skin_window_hide(SkinWindow* skin_window)
+void skin_window_hide(SkinWindow* window)
 {
-	g_return_if_fail(SKIN_IS_WINDOW(skin_window));
-	gtk_widget_hide_all(GTK_WIDGET(skin_window));
+	g_return_if_fail(SKIN_IS_WINDOW(window));
+	gtk_window_get_position(GTK_WINDOW(window),
+			&window->priv->x,
+			&window->priv->y);
+	gtk_widget_hide_all(GTK_WIDGET(window));
 }
 
-void skin_window_move(SkinWindow* skin_window,
-						gint x, gint y)
+void skin_window_move(SkinWindow* window, gint x, gint y)
 {
-	g_return_if_fail(SKIN_IS_WINDOW(skin_window));
-	gtk_window_move(GTK_WINDOW(skin_window), x, y);
+	g_return_if_fail(SKIN_IS_WINDOW(window));
+	gtk_window_move(GTK_WINDOW(window), x, y);
+	window->priv->x = x;
+	window->priv->y = y;
 }
 
-void skin_window_set_image(SkinWindow* skin_window,
+void skin_window_set_image(SkinWindow* window,
 						GdkPixbuf* pixbuf)
 {
-	g_return_if_fail(SKIN_IS_WINDOW(skin_window));
+	g_return_if_fail(SKIN_IS_WINDOW(window));
 	g_return_if_fail(GDK_IS_PIXBUF(pixbuf));
 
-	gtk_widget_decorated_with_pixbuf(GTK_WIDGET(skin_window), pixbuf);
+	gtk_widget_decorated_with_pixbuf(GTK_WIDGET(window), pixbuf);
 	
-	gnome_canvas_item_set(skin_window->canvas_item,
+	gnome_canvas_item_set(window->canvas_item,
 			"pixbuf", pixbuf,
 			NULL);
 }

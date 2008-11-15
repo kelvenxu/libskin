@@ -114,6 +114,7 @@ create_player_window(SkinBuilder *builder)
 	
 	SkinWindow *window = skin_window_new(player->window.img);
 	add_object(builder, G_OBJECT(window), "player-window");
+	skin_window_move(window, player->window.x1, player->window.y1);
 
 	GnomeCanvasGroup *root = window->canvas_root;
 
@@ -272,6 +273,7 @@ create_equalizer_window(SkinBuilder *builder)
 
 	SkinWindow *window = skin_window_new(eq->window.img);
 	add_object(builder, G_OBJECT(window), "equalizer-window");
+	skin_window_move(window, eq->window.x1, eq->window.y1);
 
 	root = window->canvas_root;
 
@@ -472,6 +474,7 @@ create_lyric_window(SkinBuilder *builder)
 
 	SkinWindow *window = skin_window_new(lyric->window.img);
 	add_object(builder, G_OBJECT(window), "lyric-window");
+	skin_window_move(window, lyric->window.x1, lyric->window.y1);
 
 	root = window->canvas_root;
 
@@ -522,6 +525,7 @@ create_playlist_window(SkinBuilder *builder)
 
 	SkinWindow *window = skin_window_new(pl->window.img);
 	add_object(builder, G_OBJECT(window), "playlist-window");
+	skin_window_move(window, pl->window.x1, pl->window.y1);
 
 	root = window->canvas_root;
 
@@ -570,6 +574,7 @@ create_mini_window(SkinBuilder *builder)
 
 	SkinWindow *window = skin_window_new(mini->window.img);
 	add_object(builder, G_OBJECT(window), "mini-window");
+	skin_window_move(window, mini->window.x1, mini->window.y1);
 
 	root = window->canvas_root;
 
