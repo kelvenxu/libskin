@@ -117,7 +117,7 @@ int main()
 	GdkPixbuf *pb = gdk_pixbuf_new_from_file("tests/number.png", NULL);
 
 	SkinDigitalTime *time_label = skin_digital_time_new(skin_window->canvas_root, pb, 50, 50);
-	skin_digital_time_show(time_label);
+	//skin_digital_time_show(time_label);
 
 	pb = gdk_pixbuf_new_from_file("tests/play.png", NULL);
 

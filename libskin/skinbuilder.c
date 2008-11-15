@@ -37,6 +37,7 @@
 #include "skincheckbutton.h"
 #include "skintogglebutton.h"
 #include "skinvolumebutton.h"
+#include "skindigitaltime.h"
 #include "skindynamictext.h"
 #include "skinstatusbar.h"
 #include "skinhscale.h"
@@ -198,6 +199,12 @@ create_player_window(SkinBuilder *builder)
 			NULL);
 	add_object(builder, G_OBJECT(progressbar), "player-progressbar");
 
+	SkinDigitalTime *led = skin_digital_time_new(root, player->led.img,
+			(gdouble)(player->led.x1),
+			(gdouble)(player->led.y1));
+	add_object(builder, G_OBJECT(led), "player-led");
+
+	skin_digital_time_set_value(led, 123);
 	SkinCheckButton *playlist = skin_check_button_new(root,
 			player->playlist.img,
 			player->playlist.x1, player->playlist.y1);

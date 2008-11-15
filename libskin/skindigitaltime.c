@@ -127,7 +127,7 @@ skin_digital_time_construct(SkinDigitalTime *dt)
 	priv->h = (gdouble)gdk_pixbuf_get_height(priv->pixbuf);
 
 	priv->w = floor(priv->w + 0.5);
-	for(i = 0; i < SUBPIXBUF; ++i)
+	for(i = 0; i < SUBPIXBUF - 1; ++i)
 	{
 		priv->subpixbuf[i] = 
 			gdk_pixbuf_new_subpixbuf(priv->pixbuf, (gint)(priv->w * i), 0, (gint)priv->w, (gint)priv->h);
@@ -136,39 +136,40 @@ skin_digital_time_construct(SkinDigitalTime *dt)
 	priv->subpixbuf[SUBPIXBUF - 1] = 
 		gdk_pixbuf_new_subpixbuf(priv->pixbuf, (gint)(w - priv->w), 0, (gint)priv->w, (gint)priv->h);
 
+	// 是相对于group的x，y
 	priv->items[0] = gnome_canvas_item_new(group, 
 			gnome_canvas_pixbuf_get_type(),
 			"pixbuf", dt->priv->subpixbuf[TIME_NONE],
-			"x", priv->x,
-			"y", priv->y,
+			"x", 0.0,
+			"y", 0.0,
 			NULL);
 
 	priv->items[1] = gnome_canvas_item_new(group, 
 			gnome_canvas_pixbuf_get_type(),
 			"pixbuf", dt->priv->subpixbuf[TIME_NONE],
-			"x", priv->x + priv->w + 1,
-			"y", priv->y,
+			"x", priv->w + 1.0,
+			"y", 0.0,
 			NULL);
 
 	priv->items[2] = gnome_canvas_item_new(group, 
 			gnome_canvas_pixbuf_get_type(),
 			"pixbuf", dt->priv->subpixbuf[TIME_SP],
-			"x", priv->x + priv->w * 2.0 + 1,
-			"y", priv->y,
+			"x", priv->w * 2.0 + 1.0,
+			"y", 0.0,
 			NULL);
 
 	priv->items[3] = gnome_canvas_item_new(group, 
 			gnome_canvas_pixbuf_get_type(),
 			"pixbuf", dt->priv->subpixbuf[TIME_NONE],
-			"x", priv->x + priv->w * 3.0 + 1,
-			"y", priv->y,
+			"x", priv->w * 3.0 + 1.0,
+			"y", 0.0,
 			NULL);
 
 	priv->items[4] = gnome_canvas_item_new(group, 
 			gnome_canvas_pixbuf_get_type(),
 			"pixbuf", dt->priv->subpixbuf[TIME_NONE],
-			"x", priv->x + priv->w * 4.0 + 1,
-			"y", priv->y,
+			"x", priv->w * 4.0 + 1.0,
+			"y", 0.0,
 			NULL);
 }
 
@@ -268,8 +269,6 @@ void skin_digital_time_set_value(SkinDigitalTime *dt, int value)
 	s2 = value % 60;
 	s1 = s2 / 10;
 	s2 = s2 % 10;
-
-	printf("(%d), time: %d%d:%d%d\n", value, m1, m2, s1, s2);
 
 	gnome_canvas_item_set(dt->priv->items[0],
 			"pixbuf", dt->priv->subpixbuf[m1],

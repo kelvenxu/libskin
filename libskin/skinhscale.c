@@ -2,7 +2,7 @@
 /*
  * skinhscale.c
  *
- * This file is part of ________.
+ * This file is part of libskin.
  *
  * Copyright (C) 2008 - kelvenxu <kelvenxu@gmail.com>.
  *
@@ -113,6 +113,8 @@ skin_hscale_init (SkinHScale *self)
 	priv->thumb_pixbuf = NULL;
 	priv->fill_item = NULL;
 	priv->thumb_item = NULL;
+	priv->has_fill = FALSE;
+	priv->has_thumb = FALSE;
 
 	priv->x1 = 0.0;
 	priv->y1 = 0.0;
@@ -431,15 +433,22 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 	if(!priv->need_pixbuf_update)
 		return;
 
+	//priv->has_fill = FALSE;
 	if(priv->fill_pixbuf && GDK_IS_PIXBUF(priv->fill_pixbuf) && !priv->fill_item)
 	{
 		priv->fill_item = gnome_canvas_item_new(hscale->priv->root, 
 				gnome_canvas_pixbuf_get_type(), 
+				"x", priv->x1,
+				"y", priv->y1,
+				"x-in-pixels", TRUE,
+				"y-in-pixels", TRUE,
 				NULL);
 
+		priv->has_fill = TRUE;
 		g_signal_connect(G_OBJECT(priv->fill_item), "event", G_CALLBACK(cb_fill_event), hscale);
 	}
 
+	//priv->has_thumb = TRUE;
 	if(priv->thumb_pixbuf && GDK_IS_PIXBUF(priv->thumb_pixbuf) && !priv->thumb_item)
 	{
 		pw = gdk_pixbuf_get_width(priv->thumb_pixbuf);
@@ -456,10 +465,13 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 		priv->thumb_item = gnome_canvas_item_new(hscale->priv->root, 
 				gnome_canvas_pixbuf_get_type(),
 				"x", priv->x1,
+				"x-in-pixels", TRUE,
 				"y", (priv->y2 - priv->y1) / 2.0,
+				"y-in-pixels", TRUE,
 				"pixbuf", priv->thumb_subpixbuf[0],
 				NULL);
 
+		priv->has_thumb = TRUE;
 		g_signal_connect(G_OBJECT(priv->thumb_item), "event", G_CALLBACK(cb_thumb_event), hscale);
 	}
 	
@@ -490,18 +502,14 @@ skin_hscale_value_update(SkinHScale *hscale)
 		position = 0.0;
 	}
 
-	if(GNOME_IS_CANVAS_ITEM(priv->fill_item))
+	if(priv->has_fill)
 	{
-		if(position > 0.0)
+		if(position > 1.0) // position > 0.0 will get some warnings
 		{
 			gnome_canvas_item_show(priv->fill_item);
 			height = gdk_pixbuf_get_height(priv->fill_pixbuf);
-			pixbuf = gdk_pixbuf_new_subpixbuf(priv->fill_pixbuf, 0, 0, (gint)position, height);
+			pixbuf = gdk_pixbuf_new_subpixbuf(priv->fill_pixbuf, 0, 0, (gint)(position + 0.5), height);
 			gnome_canvas_item_set(priv->fill_item,
-					"x", priv->x1,
-					"x-in-pixels", TRUE,
-					"y", priv->y1,
-					"y-in-pixels", TRUE,
 					"pixbuf", pixbuf,
 					NULL);
 		}
@@ -511,15 +519,12 @@ skin_hscale_value_update(SkinHScale *hscale)
 		}
 	}
 
-	if(GNOME_IS_CANVAS_ITEM(priv->thumb_item))
+	if(priv->has_thumb)
 	{
 		height = gdk_pixbuf_get_height(priv->thumb_pixbuf);
 		gnome_canvas_item_set(priv->thumb_item,
-				"x", priv->x1 + position,
-				"x-in-pixels", TRUE,
+				"x", priv->x1 + position - 0.5, //FIXME: 是想让thumb不要走得太快，和fill接在一起
 				"y", priv->y1 - (height / 2.0) + 1.0, //FIXME: priv->y1 + (priv->y2 - priv->y1) / 2.0
-				"y-in-pixels", TRUE,
-				"pixbuf", priv->thumb_subpixbuf[0],
 				NULL);
 	}
 
@@ -586,6 +591,19 @@ skin_hscale_new(GnomeCanvasGroup *root, const char *first_arg_name, ...)
 }
 
 void
+skin_hscale_set_range(SkinHScale *hscale, gdouble min, gdouble max)
+{
+	g_return_if_fail(SKIN_IS_HSCALE(hscale));
+	g_return_if_fail(min >= 0.0 && max > min);
+
+
+	hscale->priv->min = min;
+	hscale->priv->max = max;
+	hscale->priv->need_value_update = TRUE;
+	skin_hscale_value_update(hscale);
+}
+
+void
 skin_hscale_set_value(SkinHScale *hscale, gdouble value)
 {
 	g_return_if_fail(SKIN_IS_HSCALE(hscale));
@@ -596,7 +614,18 @@ skin_hscale_set_value(SkinHScale *hscale, gdouble value)
 
 	hscale->priv->value = value;
 	hscale->priv->need_value_update = TRUE;
-
 	skin_hscale_value_update(hscale);
 }
 
+void
+skin_hscale_set_range_and_value(SkinHScale *hscale, gdouble min, gdouble max, gdouble value)
+{
+	g_return_if_fail(SKIN_IS_HSCALE(hscale));
+	g_return_if_fail(min >= 0.0 && max > min && value >= min && value <= max);
+
+	hscale->priv->min = min;
+	hscale->priv->max = max;
+	hscale->priv->value = value;
+	hscale->priv->need_value_update = TRUE;
+	skin_hscale_value_update(hscale);
+}

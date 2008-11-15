@@ -147,7 +147,6 @@ skin_archive_get_property (GObject      *object,
 
 SkinArchive *skin_archive_new()
 {
-	g_print("skin_archive_new\n");
 	return g_object_new(SKIN_TYPE_ARCHIVE, NULL);
 }
 
@@ -157,36 +156,29 @@ skin_archive_load(SkinArchive *ar, const char* filename)
 {
 	gchar *xml = NULL;
 
-	g_print("skin_archive_load start\n");
 	g_return_val_if_fail(ar != NULL, FALSE);
 	g_return_val_if_fail(filename != NULL, FALSE);
 
-	g_print("uncompress_skin_archive\n");
 	ar->priv->path = uncompress_skin_archive(filename);
 
 	g_return_val_if_fail(ar->priv->path != NULL, FALSE);
 
-	g_print("load skin.xml\n");
 	xml = g_build_filename(ar->priv->path, "skin.xml", NULL);
 	do_load(ar, xml);
 	g_free(xml);
 
-	g_print("load lyric.xml\n");
 	xml = g_build_filename(ar->priv->path, "lyric.xml", NULL);
 	load_lyric_attr(xml, &(ar->lyric->attr));
 	g_free(xml);
 	
-	g_print("load visual.xml\n");
 	xml = g_build_filename(ar->priv->path, "visual.xml", NULL);
 	load_visual_attr(xml, &(ar->player->attr));
 	g_free(xml);
 
-	g_print("load playlist.xml\n");
 	xml = g_build_filename(ar->priv->path, "playlist.xml", NULL);
 	load_playlist_attr(xml, &(ar->playlist->attr));
 	g_free(xml);
 
-	g_print("load done\n");
 	return TRUE;
 }
 
@@ -296,7 +288,6 @@ read_item_with_xpath(xmlDocPtr doc,
 	nodeset = app_result->nodesetval;
 	cur = nodeset->nodeTab[0];
 
-	g_print("position\n");
 	value = (gchar *)xmlGetProp(cur, (const xmlChar *)"position");
 	if(value && (strlen(value) > 0))
 	{
@@ -328,7 +319,6 @@ read_item_with_xpath(xmlDocPtr doc,
 	else
 		item->align = 0;
 
-	g_print("vertical\n");
 	value = (gchar *)xmlGetProp(cur, (const xmlChar *)"vertical");
 	if(value && (strlen(value) > 0))
 	{
@@ -351,14 +341,12 @@ read_item_with_xpath(xmlDocPtr doc,
 	}
 
 
-	g_print("font\n");
 	value = (gchar *)xmlGetProp(cur, (const xmlChar *)"font");
 	if(value != NULL)
 		item->font = value;
 	else
 		item->font = NULL;
 
-	g_print("font_size\n");
 	value = (gchar *)xmlGetProp(cur, (const xmlChar *)"font_size");
 	if(value && (strlen(value) > 0))
 	{
@@ -368,7 +356,6 @@ read_item_with_xpath(xmlDocPtr doc,
 	else
 		item->font_size = 10;
 
-	g_print("img\n");
 	item->img = NULL;
 	value = (gchar *)xmlGetProp(cur, (const xmlChar *)"image");
 	if(value && (strlen(value) > IMG_SUFFIX_LENGTH))
@@ -383,7 +370,6 @@ read_item_with_xpath(xmlDocPtr doc,
 		g_free(full_path);
 	}
 	
-	g_print("bar_img\n");
 	item->bar_img = NULL;
 	value = (gchar *)xmlGetProp(cur, (const xmlChar *)"bar_image");
 	if(value && (strlen(value) > IMG_SUFFIX_LENGTH))
@@ -751,26 +737,19 @@ do_load(SkinArchive *ar, const char *filename)
 {
 	xmlDocPtr doc;
 
-	g_print("do_load start\n");
     doc = xmlReadFile(filename, NULL, 256);	//解析文件   
 	g_return_val_if_fail(doc != NULL, FALSE);
 	
 	g_assert(ar->info != NULL);
 	read_info(doc, ar->info);
-	g_print("load player\n");
 	load_player_archive(doc, ar->player, ar->priv->path);
-	g_print("load equ\n");
 	load_equalizer_archive(doc, ar->equalizer, ar->priv->path);
-	g_print("load lyric\n");
 	load_lyric_archive(doc, ar->lyric, ar->priv->path);
-	g_print("load playlist\n");
 	load_playlist_archive(doc, ar->playlist, ar->priv->path);
-	g_print("load mini\n");
 	load_mini_archive(doc, ar->mini, ar->priv->path);
 
 	xmlFreeDoc(doc);
 
-	g_print("do_load end\n");
 	return TRUE;
 }
 

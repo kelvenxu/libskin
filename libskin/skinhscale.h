@@ -56,7 +56,9 @@ typedef struct
 GType skin_hscale_get_type();
 
 SkinHScale * skin_hscale_new(GnomeCanvasGroup *root, const char *first_arg_name, ...);
+void skin_hscale_set_range(SkinHScale *hscale, gdouble min, gdouble max);
 void skin_hscale_set_value(SkinHScale *hscale, gdouble value);
+void skin_hscale_set_range_and_value(SkinHScale *hscale, gdouble min, gdouble max, gdouble value);
 
 G_END_DECLS
 
