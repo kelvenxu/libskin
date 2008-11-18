@@ -323,11 +323,12 @@ create_equalizer_window(SkinBuilder *builder)
 			NULL);
 	add_object(builder, G_OBJECT(surround), "equalizer-surround");
 
+	// SkinVScale的(x1,y1)在左下角，(x2,y2)在右上角
 	SkinVScale *preamp = skin_vscale_new(root,
 			"x1", (gdouble)(eq->preamp.x1),
-			"y1", (gdouble)(eq->preamp.y1),
+			"y1", (gdouble)(eq->preamp.y2),
 			"x2", (gdouble)(eq->preamp.x2),
-			"y2", (gdouble)(eq->preamp.y2),
+			"y2", (gdouble)(eq->preamp.y1),
 			"fill-pixbuf", eq->preamp.fill_img,
 			"thumb-pixbuf", eq->preamp.thumb_img,
 			"min", 0.0,
@@ -336,11 +337,12 @@ create_equalizer_window(SkinBuilder *builder)
 			NULL);
 	add_object(builder, G_OBJECT(preamp), "equalizer-preamp");
 
+	// SkinVScale的(x1,y1)在左下角，(x2,y2)在右上角
 	SkinVScale *eqfactor0 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1),
-			"y1", (gdouble)(eq->eqfactor.y1),
+			"y1", (gdouble)(eq->eqfactor.y2),
 			"x2", (gdouble)(eq->eqfactor.x2),
-			"y2", (gdouble)(eq->eqfactor.y2),
+			"y2", (gdouble)(eq->eqfactor.y1),
 			"fill-pixbuf", eq->eqfactor.fill_img,
 			"thumb-pixbuf", eq->eqfactor.thumb_img,
 			"min", 0.0,
@@ -349,11 +351,12 @@ create_equalizer_window(SkinBuilder *builder)
 			NULL);
 	add_object(builder, G_OBJECT(eqfactor0), "equalizer-eqfactor0");
 
+	// SkinVScale的(x1,y1)在左下角，(x2,y2)在右上角
 	SkinVScale *eqfactor1 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval,
-			"y1", (gdouble)(eq->eqfactor.y1),
+			"y1", (gdouble)(eq->eqfactor.y2),
 			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval,
-			"y2", (gdouble)(eq->eqfactor.y2),
+			"y2", (gdouble)(eq->eqfactor.y1),
 			"fill-pixbuf", eq->eqfactor.fill_img,
 			"thumb-pixbuf", eq->eqfactor.thumb_img,
 			"min", 0.0,
@@ -364,9 +367,9 @@ create_equalizer_window(SkinBuilder *builder)
 
 	SkinVScale *eqfactor2 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 2.0,
-			"y1", (gdouble)(eq->eqfactor.y1),
+			"y1", (gdouble)(eq->eqfactor.y2),
 			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 2.0,
-			"y2", (gdouble)(eq->eqfactor.y2),
+			"y2", (gdouble)(eq->eqfactor.y1),
 			"fill-pixbuf", eq->eqfactor.fill_img,
 			"thumb-pixbuf", eq->eqfactor.thumb_img,
 			"min", 0.0,
@@ -377,9 +380,9 @@ create_equalizer_window(SkinBuilder *builder)
 
 	SkinVScale *eqfactor3 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 3.0,
-			"y1", (gdouble)(eq->eqfactor.y1),
+			"y1", (gdouble)(eq->eqfactor.y2),
 			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 3.0,
-			"y2", (gdouble)(eq->eqfactor.y2),
+			"y2", (gdouble)(eq->eqfactor.y1),
 			"fill-pixbuf", eq->eqfactor.fill_img,
 			"thumb-pixbuf", eq->eqfactor.thumb_img,
 			"min", 0.0,
@@ -389,9 +392,9 @@ create_equalizer_window(SkinBuilder *builder)
 	add_object(builder, G_OBJECT(eqfactor3), "equalizer-eqfactor3");
 	SkinVScale *eqfactor4 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 4.0,
-			"y1", (gdouble)(eq->eqfactor.y1),
+			"y1", (gdouble)(eq->eqfactor.y2),
 			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 4.0,
-			"y2", (gdouble)(eq->eqfactor.y2),
+			"y2", (gdouble)(eq->eqfactor.y1),
 			"fill-pixbuf", eq->eqfactor.fill_img,
 			"thumb-pixbuf", eq->eqfactor.thumb_img,
 			"min", 0.0,
@@ -401,9 +404,9 @@ create_equalizer_window(SkinBuilder *builder)
 	add_object(builder, G_OBJECT(eqfactor4), "equalizer-eqfactor4");
 	SkinVScale *eqfactor5 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 5.0,
-			"y1", (gdouble)(eq->eqfactor.y1),
+			"y1", (gdouble)(eq->eqfactor.y2),
 			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 5.0,
-			"y2", (gdouble)(eq->eqfactor.y2),
+			"y2", (gdouble)(eq->eqfactor.y1),
 			"fill-pixbuf", eq->eqfactor.fill_img,
 			"thumb-pixbuf", eq->eqfactor.thumb_img,
 			"min", 0.0,
@@ -413,9 +416,9 @@ create_equalizer_window(SkinBuilder *builder)
 	add_object(builder, G_OBJECT(eqfactor5), "equalizer-eqfactor5");
 	SkinVScale *eqfactor6 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 6.0,
-			"y1", (gdouble)(eq->eqfactor.y1),
+			"y1", (gdouble)(eq->eqfactor.y2),
 			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 6.0,
-			"y2", (gdouble)(eq->eqfactor.y2),
+			"y2", (gdouble)(eq->eqfactor.y1),
 			"fill-pixbuf", eq->eqfactor.fill_img,
 			"thumb-pixbuf", eq->eqfactor.thumb_img,
 			"min", 0.0,
@@ -425,9 +428,9 @@ create_equalizer_window(SkinBuilder *builder)
 	add_object(builder, G_OBJECT(eqfactor6), "equalizer-eqfactor6");
 	SkinVScale *eqfactor7 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 7.0,
-			"y1", (gdouble)(eq->eqfactor.y1),
+			"y1", (gdouble)(eq->eqfactor.y2),
 			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 7.0,
-			"y2", (gdouble)(eq->eqfactor.y2),
+			"y2", (gdouble)(eq->eqfactor.y1),
 			"fill-pixbuf", eq->eqfactor.fill_img,
 			"thumb-pixbuf", eq->eqfactor.thumb_img,
 			"min", 0.0,
@@ -437,9 +440,9 @@ create_equalizer_window(SkinBuilder *builder)
 	add_object(builder, G_OBJECT(eqfactor7), "equalizer-eqfactor7");
 	SkinVScale *eqfactor8 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 8.0,
-			"y1", (gdouble)(eq->eqfactor.y1),
+			"y1", (gdouble)(eq->eqfactor.y2),
 			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 8.0,
-			"y2", (gdouble)(eq->eqfactor.y2),
+			"y2", (gdouble)(eq->eqfactor.y1),
 			"fill-pixbuf", eq->eqfactor.fill_img,
 			"thumb-pixbuf", eq->eqfactor.thumb_img,
 			"min", 0.0,
@@ -450,9 +453,9 @@ create_equalizer_window(SkinBuilder *builder)
 
 	SkinVScale *eqfactor9 = skin_vscale_new(root,
 			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * 9.0,
-			"y1", (gdouble)(eq->eqfactor.y1),
+			"y1", (gdouble)(eq->eqfactor.y2),
 			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * 9.0,
-			"y2", (gdouble)(eq->eqfactor.y2),
+			"y2", (gdouble)(eq->eqfactor.y1),
 			"fill-pixbuf", eq->eqfactor.fill_img,
 			"thumb-pixbuf", eq->eqfactor.thumb_img,
 			"min", 0.0,

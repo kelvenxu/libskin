@@ -2,7 +2,7 @@
 /*
  * skinhscale.c
  *
- * This file is part of ________.
+ * This file is part of libskin.
  *
  * Copyright (C) 2008 - kelvenxu <kelvenxu@gmail.com>.
  *
@@ -113,6 +113,9 @@ skin_vscale_init (SkinVScale *self)
 	priv->thumb_pixbuf = NULL;
 	priv->fill_item = NULL;
 	priv->thumb_item = NULL;
+
+	priv->has_fill = FALSE;
+	priv->has_thumb = FALSE;
 
 	priv->x1 = 0.0;
 	priv->y1 = 0.0;
@@ -309,8 +312,6 @@ cb_rect_event(GnomeCanvasItem *item, GdkEvent *event, SkinVScale* hscale)
 	static gboolean is_pressing = FALSE;
 	SkinVScalePrivate *priv;
 	
-	printf("rect event");
-
 	priv = hscale->priv;
 
 	switch (event->type) 
@@ -324,7 +325,7 @@ cb_rect_event(GnomeCanvasItem *item, GdkEvent *event, SkinVScale* hscale)
 	case GDK_BUTTON_RELEASE:
 		if(is_pressing)
 		{
-			priv->value = (event->button.x - priv->x1) / (priv->x2 - priv->x1) * (priv->max - priv->min);
+			priv->value = (priv->y1 - event->button.y) / (priv->y1 - priv->y2) * (priv->max - priv->min);
 			priv->need_value_update = TRUE;
 			skin_vscale_value_update(hscale);
 			g_signal_emit(hscale, signals[VALUE_CHANGED], 0, NULL);
@@ -358,7 +359,7 @@ cb_fill_event(GnomeCanvasItem *item, GdkEvent *event, SkinVScale* hscale)
 	case GDK_BUTTON_RELEASE:
 		if(is_pressing)
 		{
-			priv->value = (event->button.y - priv->y1) / (priv->y2 - priv->y1) * (priv->max - priv->min);
+			priv->value = (priv->y1 - event->button.y) / (priv->y1 - priv->y2) * (priv->max - priv->min);
 			priv->need_value_update = TRUE;
 			skin_vscale_value_update(hscale);
 			g_signal_emit(hscale, signals[VALUE_CHANGED], 0, NULL);
@@ -376,7 +377,7 @@ static gint
 cb_thumb_event(GnomeCanvasItem *item, GdkEvent *event, SkinVScale* hscale)
 {
 	static gboolean is_pressing = FALSE;
-	static gdouble x, y;
+	static gdouble y;
 
 	SkinVScalePrivate *priv;
 	gdouble item_y;
@@ -396,12 +397,12 @@ cb_thumb_event(GnomeCanvasItem *item, GdkEvent *event, SkinVScale* hscale)
 		}
 		break;
 	case GDK_MOTION_NOTIFY:
-		if(is_pressing && (item_y > priv->y1 && item_y < priv->y2))
+		if(is_pressing && (item_y > priv->y2 && item_y < priv->y1))
 		{
 			new_y = item_y;
 		
 			y = new_y;
-			priv->value = (y - priv->y1) / (priv->y2 - priv->y1) * (priv->max - priv->min);
+			priv->value = (y - priv->y1) / (priv->y1 - priv->y2) * (priv->max - priv->min);
 			priv->need_value_update = TRUE;
 			skin_vscale_value_update(hscale);
 
@@ -437,8 +438,13 @@ skin_vscale_pixbuf_update(SkinVScale *hscale)
 	{
 		priv->fill_item = gnome_canvas_item_new(hscale->priv->root, 
 				gnome_canvas_pixbuf_get_type(), 
+				"x-in-pixels", TRUE,
+				"y-in-pixels", TRUE,
+				"x", priv->x1,
+				"y", priv->y1,
 				NULL);
 
+		priv->has_fill = TRUE;
 		g_signal_connect(G_OBJECT(priv->fill_item), "event", G_CALLBACK(cb_fill_event), hscale);
 	}
 
@@ -454,14 +460,18 @@ skin_vscale_pixbuf_update(SkinVScale *hscale)
 			priv->thumb_subpixbuf[i] = gdk_pixbuf_new_subpixbuf(priv->thumb_pixbuf,
 					(gint)(i * pw), 0, (gint)pw, (gint)ph);
 		}
-		printf("create thumb item\n");
+
+		pw = pw - gdk_pixbuf_get_width(priv->fill_pixbuf);
 		priv->thumb_item = gnome_canvas_item_new(hscale->priv->root, 
 				gnome_canvas_pixbuf_get_type(),
-				"x", priv->x1,
-				"y", (priv->y2 - priv->y1) / 2.0,
+				"x-in-pixels", TRUE,
+				"y-in-pixels", TRUE,
+				"x", priv->x1 - pw / 2.0,
+				"y", priv->y1,
 				"pixbuf", priv->thumb_subpixbuf[0],
 				NULL);
 
+		priv->has_thumb = TRUE;
 		g_signal_connect(G_OBJECT(priv->thumb_item), "event", G_CALLBACK(cb_thumb_event), hscale);
 	}
 	
@@ -485,25 +495,23 @@ skin_vscale_value_update(SkinVScale *hscale)
 	range = priv->max - priv->min;
 	if(range > 0)
 	{
-		position = priv->value / range * (priv->y2 - priv->y1);
+		// y1 > y2
+		position = priv->value / range * (priv->y1 - priv->y2);
 	}
 	else
 	{
 		position = 0.0;
 	}
 
-	if(GNOME_IS_CANVAS_ITEM(priv->fill_item))
+	if(priv->has_fill)
 	{
-		if(position > 0.0)
+		if(position > 1.0)
 		{
 			gnome_canvas_item_show(priv->fill_item);
 			width = gdk_pixbuf_get_width(priv->fill_pixbuf);
 			pixbuf = gdk_pixbuf_new_subpixbuf(priv->fill_pixbuf, 0, 0, width, (gint)position);
 			gnome_canvas_item_set(priv->fill_item,
-					"x", priv->x1,
-					"x-in-pixels", TRUE,
-					"y", priv->y1,
-					"y-in-pixels", TRUE,
+					"y", priv->y1 - position,
 					"pixbuf", pixbuf,
 					NULL);
 		}
@@ -513,14 +521,10 @@ skin_vscale_value_update(SkinVScale *hscale)
 		}
 	}
 
-	if(GNOME_IS_CANVAS_ITEM(priv->thumb_item))
+	if(priv->has_thumb)
 	{
-		width = gdk_pixbuf_get_width(priv->thumb_pixbuf);
 		gnome_canvas_item_set(priv->thumb_item,
-				"x", priv->x1 - (width / 2.0) + 1.0 ,
-				"x-in-pixels", TRUE,
-				"y", priv->y1 + position, 
-				"y-in-pixels", TRUE,
+				"y", priv->y1 - position, 
 				"pixbuf", priv->thumb_subpixbuf[0],
 				NULL);
 	}
@@ -558,6 +562,7 @@ skin_vscale_construct(SkinVScale *hscale,
 	skin_vscale_update(hscale);
 }
 
+// 其(x1, y1)在左下角, (x2,y2)在右上角
 
 SkinVScale *
 skin_vscale_new(GnomeCanvasGroup *root, const char *first_arg_name, ...)
@@ -571,6 +576,7 @@ skin_vscale_new(GnomeCanvasGroup *root, const char *first_arg_name, ...)
 
 	item = gnome_canvas_item_new(root,
 			skin_vscale_get_type(),
+			"fill-color-rgba", 0xff00ff00, //只是为了能够影响鼠标事件
 			NULL);
 
 	g_return_val_if_fail(GNOME_IS_CANVAS_ITEM(item), NULL);
