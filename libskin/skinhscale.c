@@ -434,7 +434,6 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 	if(!priv->need_pixbuf_update)
 		return;
 
-	//priv->has_fill = FALSE;
 	if(priv->fill_pixbuf && GDK_IS_PIXBUF(priv->fill_pixbuf) && !priv->fill_item)
 	{
 		priv->fill_item = gnome_canvas_item_new(hscale->priv->root, 
@@ -449,9 +448,9 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 		g_signal_connect(G_OBJECT(priv->fill_item), "event", G_CALLBACK(cb_fill_event), hscale);
 	}
 
-	//priv->has_thumb = TRUE;
 	if(priv->thumb_pixbuf && GDK_IS_PIXBUF(priv->thumb_pixbuf) && !priv->thumb_item)
 	{
+
 		pw = gdk_pixbuf_get_width(priv->thumb_pixbuf);
 		ph = gdk_pixbuf_get_height(priv->thumb_pixbuf);
 
@@ -462,12 +461,15 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 			priv->thumb_subpixbuf[i] = gdk_pixbuf_new_subpixbuf(priv->thumb_pixbuf,
 					(gint)(i * pw), 0, (gint)pw, (gint)ph);
 		}
-		printf("create thumb item\n");
+
+		
+		ph = ph - gdk_pixbuf_get_height(priv->fill_pixbuf);
+
 		priv->thumb_item = gnome_canvas_item_new(hscale->priv->root, 
 				gnome_canvas_pixbuf_get_type(),
 				"x", priv->x1,
 				"x-in-pixels", TRUE,
-				"y", (priv->y2 - priv->y1) / 2.0,
+				"y", priv->y1 - ph / 2.0,
 				"y-in-pixels", TRUE,
 				"pixbuf", priv->thumb_subpixbuf[0],
 				NULL);
@@ -522,10 +524,8 @@ skin_hscale_value_update(SkinHScale *hscale)
 
 	if(priv->has_thumb)
 	{
-		height = gdk_pixbuf_get_height(priv->thumb_pixbuf);
 		gnome_canvas_item_set(priv->thumb_item,
 				"x", priv->x1 + position - 0.5, //FIXME: 是想让thumb不要走得太快，和fill接在一起
-				"y", priv->y1 - (height / 2.0) + 1.0, //FIXME: priv->y1 + (priv->y2 - priv->y1) / 2.0
 				NULL);
 	}
 
