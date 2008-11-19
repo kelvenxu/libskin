@@ -45,6 +45,8 @@ struct _SkinDynamicTextPrivate
 	gchar *color;
 	gint align;
 	GnomeCanvasGroup *root;
+
+	gint counter;
 };
 
 enum {
@@ -360,15 +362,16 @@ skin_dynamic_text_update(SkinDynamicText *dtext)
 
 static gboolean update_text(SkinDynamicText *dtext)
 {
-	static gint i = 1;
+	SkinDynamicTextPrivate *priv;
 
 	g_return_val_if_fail(SKIN_IS_DYNAMIC_TEXT(dtext), TRUE);
+	priv = dtext->priv;
 
-	if(i >= 4) i = 0;
+	if(priv->counter >= 4) priv->counter = 0;
 	gnome_canvas_item_set(GNOME_CANVAS_ITEM(dtext),
-			"text", dtext->priv->text[i], NULL);
+			"text", dtext->priv->text[priv->counter], NULL);
 
-	++i;
+	++priv->counter;
 	return TRUE;
 }
 
