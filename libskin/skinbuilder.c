@@ -630,6 +630,19 @@ create_mini_window(SkinBuilder *builder)
 			mini->exit.img, 
 			mini->exit.x1, mini->exit.y1);
 	add_object(builder, G_OBJECT(exit), "mini-exit");
+
+	SkinDynamicText *info = skin_dynamic_text_new(root, 
+			"x1", (gdouble)(mini->info.x1),
+			"y1", (gdouble)(mini->info.y1),
+			"x2", (gdouble)(mini->info.x2),
+			"y2", (gdouble)(mini->info.y2),
+			"color", mini->info.color,
+			"title", "title --",
+			"artist", "artist --",
+			"album", "album ==",
+			"format", "format --",
+			NULL);
+	add_object(builder, G_OBJECT(info), "mini-info");
 }
 
 SkinBuilder *skin_builder_new()
