@@ -550,7 +550,7 @@ create_playlist_window(SkinBuilder *builder)
 
 		x = pl->toolbar.x1 + i * width;
 		tb = skin_toggle_button_new(root, pixbuf, x, pl->toolbar.y1);
-		add_object(builder, G_OBJECT(close), tb_items[i]);
+		add_object(builder, G_OBJECT(tb), tb_items[i]);
 	}
 
 	GnomeCanvasItem *playlistbox = gnome_canvas_item_new(root,
