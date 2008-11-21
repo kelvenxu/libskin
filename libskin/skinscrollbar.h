@@ -64,6 +64,7 @@ SkinScrollBar *skin_scroll_bar_new(GnomeCanvasGroup *root,
 									gdouble y2);
 
 void skin_scroll_bar_set_adjustment(SkinScrollBar *bar, GtkAdjustment *adj);
+gdouble skin_scroll_bar_get_width(SkinScrollBar *bar);
 
 G_END_DECLS
 
