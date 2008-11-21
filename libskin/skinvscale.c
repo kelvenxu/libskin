@@ -377,7 +377,7 @@ static gint
 cb_thumb_event(GnomeCanvasItem *item, GdkEvent *event, SkinVScale* hscale)
 {
 	static gboolean is_pressing = FALSE;
-	static gdouble y;
+	static gdouble y; //FIXME: static变量在声明了多个控件后可能出现混乱
 
 	SkinVScalePrivate *priv;
 	gdouble item_y;

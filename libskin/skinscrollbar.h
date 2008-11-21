@@ -2,7 +2,7 @@
 /*
  * skinscrollbar.h
  *
- * This file is part of ________.
+ * This file is part of libskin.
  *
  * Copyright (C) 2008 - kelvenxu <kelvenxu@gmail.com>.
  *
@@ -24,5 +24,47 @@
 
 #ifndef __SKINSCROLLBAR_H__
 #define __SKINSCROLLBAR_H__  1
+
+#include    <glib-object.h>
+#include	<glib.h>
+#include	<gtk/gtk.h>
+#include	<libgnomecanvas/libgnomecanvas.h>
+
+G_BEGIN_DECLS
+
+#define SKIN_TYPE_SCROLL_BAR (skin_scroll_bar_get_type ())
+#define SKIN_SCROLL_BAR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), SKIN_TYPE_SCROLL_BAR, SkinScrollBar))
+#define SKIN_SCROLL_BAR_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), SKIN_TYPE_SCROLL_BAR, SkinScrollBarClass))
+#define SKIN_IS_SCROLL_BAR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), SKIN_TYPE_SCROLL_BAR))
+#define SKIN_IS_SCROLL_BAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), SKIN_TYPE_SCROLL_BAR))
+#define SKIN_SCROLL_BAR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), SKIN_TYPE_SCROLL_BAR, SkinScrollBarClass))
+typedef struct _SkinScrollBarPrivate SkinScrollBarPrivate;
+
+typedef struct 
+{
+	GnomeCanvasGroup parent;
+
+	SkinScrollBarPrivate *priv;
+} SkinScrollBar;
+
+typedef struct 
+{
+	GnomeCanvasGroupClass parent;
+} SkinScrollBarClass;
+
+GType skin_scroll_bar_get_type();
+
+SkinScrollBar *skin_scroll_bar_new(GnomeCanvasGroup *root, 
+									GdkPixbuf *button_pixbuf, 
+									GdkPixbuf *bar_pixbuf, 
+									GdkPixbuf *thumb_pixbuf,
+									gdouble x1, //not used 
+									gdouble y1,
+									gdouble x2,
+									gdouble y2);
+
+void skin_scroll_bar_set_adjustment(SkinScrollBar *bar, GtkAdjustment *adj);
+
+G_END_DECLS
 
 #endif /*__SKINSCROLLBAR_H__ */

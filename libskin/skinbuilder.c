@@ -41,6 +41,7 @@
 #include "skindynamictext.h"
 #include "skinstatusbar.h"
 #include "skinhscale.h"
+#include "skinscrollbar.h"
 #include "skinvscale.h"
 
 #define TOOLBAR_ITEMS 7
@@ -563,6 +564,22 @@ create_playlist_window(SkinBuilder *builder)
 			"size-pixels", TRUE,
 			NULL);
 	add_object(builder, G_OBJECT(playlistbox), "playlist-playlistbox");
+	
+	SkinScrollBar *bar = skin_scroll_bar_new(root,
+			pl->scrollbar.buttons_img,
+			pl->scrollbar.bar_img,
+			pl->scrollbar.thumb_img,
+			(gdouble)pl->playlist.x1,
+			(gdouble)pl->playlist.y1,
+			(gdouble)pl->playlist.x2,
+			(gdouble)pl->playlist.y2);
+	add_object(builder, G_OBJECT(bar), "playlist-scrollbar");
+
+	gdouble w = skin_scroll_bar_get_width(bar);
+	gnome_canvas_item_set(playlistbox, 
+			"width", (gdouble)(pl->playlist.x2 - pl->playlist.x1) - w,
+			NULL);
+
 }
 
 static void
