@@ -21,6 +21,7 @@ skin_headers = \
 	skinvolumebutton.h\
 	skinhscale.h\
 	skinvscale.h\
+	skinlyric.h\
 	skinarchive.h\
 	skinbuilder.h
 
@@ -51,6 +52,7 @@ libskin_la_SOURCES = \
 	skinvolumebutton.c\
 	skinhscale.c\
 	skinvscale.c\
+	skinlyric.c\
 	skinarchive.c\
 	skinbuilder.c\
 	skin-marshal.c
