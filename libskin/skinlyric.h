@@ -54,5 +54,11 @@ GType skin_lyric_get_type();
 
 SkinLyric *skin_lyric_new();
 
+void skin_lyric_set_size(SkinLyric *lyric, gint width, gint height);
+gboolean skin_lyric_add_file(SkinLyric *lyric, const gchar *file);
+void skin_lyric_set_current_second(SkinLyric *lyric, gint sec);
+void skin_lyric_set_bg_color(SkinLyric *lyric, const GdkColor *color);
+void skin_lyric_set_text_color(SkinLyric *lyric, const GdkColor *color);
+void skin_lyric_set_highlight_color(SkinLyric *lyric, const GdkColor *color);
 G_END_DECLS
 #endif /*__SKINLYRIC_H__ */

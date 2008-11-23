@@ -143,17 +143,25 @@ da_expose_cb(GtkWidget *widget, GdkEventExpose *event, SkinLyric *lyric)
 	GdkGC *gc;
 	PangoContext *context;
 	PangoLayout *layout;
+	printf("expose_cb\n");
 	SkinLyricPrivate *priv = lyric->priv;
 
+	printf("expose_cb\n");
 	gc = gdk_gc_new(widget->window);
 	gdk_gc_set_rgb_fg_color(gc, &priv->bg);
+	printf("r: %d, g: %d, b: %d\n",
+			priv->bg.red,
+			priv->bg.green,
+			priv->bg.blue);
 	gdk_draw_rectangle(widget->window, gc, TRUE,
 			0, 0,
 			priv->da_width, priv->da_height);
 
+	printf("expose_cb2\n");
 	if(!priv->loaded)
 		return TRUE;
 
+	printf("expose_cb3\n");
 	context = gtk_widget_get_pango_context(widget);
 	layout = pango_layout_new(context);
 	gdk_gc_set_rgb_fg_color(gc, &priv->fg);
@@ -162,8 +170,10 @@ da_expose_cb(GtkWidget *widget, GdkEventExpose *event, SkinLyric *lyric)
 	for(iter = priv->lines; iter; iter = iter->next)
 	{
 		line = (LyricLine*)iter->data;
+		if(line->text == NULL) continue;
 		pango_layout_set_text(layout, line->text, -1);
 		gdk_draw_layout(widget->window, gc, line->x, line->y, layout);
+		printf("x: %d, y: %d %s\n", line->x, line->y, line->text);
 	}
 
 	line = (LyricLine*)g_list_nth_data(priv->lines, priv->index);
@@ -189,12 +199,17 @@ skin_lyric_new()
 
 	priv = lyric->priv;
 	priv->alignment = gtk_alignment_new(0, 0, 1, 1);
+	gtk_widget_show(priv->alignment);
+
 	priv->da = gtk_drawing_area_new();
+	gtk_widget_show(priv->da);
+
 	gtk_container_add(GTK_CONTAINER(priv->alignment), priv->da);
 	gtk_container_add(GTK_CONTAINER(lyric), priv->alignment);
 
 	gtk_widget_set_events(priv->da, GDK_EXPOSURE_MASK);
-	g_signal_connect(G_OBJECT(priv->da), "expose-event", G_CALLBACK(da_expose_cb), NULL);
+
+	g_signal_connect(G_OBJECT(priv->da), "expose-event", G_CALLBACK(da_expose_cb), lyric);
 
 	return lyric;
 }
@@ -202,6 +217,13 @@ skin_lyric_new()
 void
 skin_lyric_set_size(SkinLyric *lyric, gint width, gint height)
 {
+	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+
+	gtk_widget_set_size_request(GTK_WIDGET(lyric), width, height);
+	gtk_widget_set_size_request(lyric->priv->da, width, height);
+
+	lyric->priv->da_width = width;
+	lyric->priv->da_height = height;
 }
 
 //NOTE: str: [mm:ss.ss
@@ -242,12 +264,13 @@ str2time(const gchar* str, int* sec, int* msec)
 }
 
 static gboolean
-parse_lyric_line(SkinLyric *lyric, const gchar *line)
+parse_lyric_line(SkinLyric *lyric, const gchar *line, gint line_no)
 {
 	char** p;
 	char* text;
 	int sec, ms; 
 	int old_sec = -1;
+	int inter = 14; // FIXME: 字高 ＋ 间隙
 	gboolean flag = FALSE;
 
 	SkinLyricPrivate *priv = lyric->priv;
@@ -282,6 +305,8 @@ parse_lyric_line(SkinLyric *lyric, const gchar *line)
 			data->text = text;
 			data->sec = sec;
 			data->ms = ms;
+			data->x = 0;
+			data->y = inter * line_no;
 			priv->lines = g_list_append(priv->lines, data);
 		}
 	}
@@ -296,13 +321,15 @@ parse_lyric_file_without_check(SkinLyric *lyric, const gchar *filename)
 {
 	gchar buf[1024];
 	gchar *pbuf;
-	SkinLyricPrivate *priv = lyric->priv;
+	gint n;
 	gboolean flag = FALSE;
+	SkinLyricPrivate *priv = lyric->priv;
 
 	FILE* fp = fopen(filename, "r");
 
 	if(!fp) return FALSE;
 
+	n = 0;
 	while(fgets(buf, 1024, fp))
 	{
 		g_strstrip(buf);
@@ -364,7 +391,8 @@ parse_lyric_file_without_check(SkinLyric *lyric, const gchar *filename)
 			continue;
 		}
 
-		flag = parse_lyric_line(lyric, pbuf);
+		flag = parse_lyric_line(lyric, pbuf, n);
+		++n;
 		g_free(pbuf);
 	}
 
@@ -385,7 +413,10 @@ skin_lyric_add_file(SkinLyric *lyric, const gchar *file)
 		lyric->priv->lines = NULL;
 	}
 
-	return parse_lyric_file_without_check(lyric, file);
+	lyric->priv->loaded = parse_lyric_file_without_check(lyric, file);
+	if(lyric->priv->loaded)
+		gdk_window_invalidate_rect(lyric->priv->da->window, NULL, FALSE);
+	return lyric->priv->loaded;
 }
 
 void 
@@ -396,15 +427,39 @@ skin_lyric_set_current_second(SkinLyric *lyric, gint sec)
 void 
 skin_lyric_set_bg_color(SkinLyric *lyric, const GdkColor *color)
 {
+	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+	g_return_if_fail(color != NULL);
+	
+	lyric->priv->bg.red = color->red;
+	lyric->priv->bg.green = color->green;
+	lyric->priv->bg.blue = color->blue;
+	lyric->priv->bg.pixel = color->pixel;
+	gdk_window_invalidate_rect(lyric->priv->da->window, NULL, FALSE);
 }
 
 void 
-skin_lyric_set_fg_color(SkinLyric *lyric, const GdkColor *color)
+skin_lyric_set_text_color(SkinLyric *lyric, const GdkColor *color)
 {
+	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+	g_return_if_fail(color != NULL);
+	
+	lyric->priv->fg.red = color->red;
+	lyric->priv->fg.green = color->green;
+	lyric->priv->fg.blue = color->blue;
+	lyric->priv->fg.pixel = color->pixel;
+	gdk_window_invalidate_rect(lyric->priv->da->window, NULL, FALSE);
 }
 
 void 
-skin_lyric_set_active_color(SkinLyric *lyric, const GdkColor *color)
+skin_lyric_set_highlight_color(SkinLyric *lyric, const GdkColor *color)
 {
+	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+	g_return_if_fail(color != NULL);
+	
+	lyric->priv->current.red = color->red;
+	lyric->priv->current.green = color->green;
+	lyric->priv->current.blue = color->blue;
+	lyric->priv->current.pixel = color->pixel;
+	gdk_window_invalidate_rect(lyric->priv->da->window, NULL, FALSE);
 }
 

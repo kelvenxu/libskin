@@ -43,6 +43,7 @@
 #include "skinhscale.h"
 #include "skinscrollbar.h"
 #include "skinvscale.h"
+#include "skinlyric.h"
 
 #define TOOLBAR_ITEMS 7
 
@@ -501,7 +502,23 @@ create_lyric_window(SkinBuilder *builder)
 			"anchor", GTK_ANCHOR_NORTH_WEST,
 			"size-pixels", TRUE,
 			NULL);
-	add_object(builder, G_OBJECT(lyricbox), "player-lyricbox");
+	add_object(builder, G_OBJECT(lyricbox), "lyric-lyricbox");
+
+	SkinLyric *lyricview = skin_lyric_new();
+	skin_lyric_set_size(lyricview, 
+			lyric->lyric.x2 - lyric->lyric.x1,
+			lyric->lyric.y2 - lyric->lyric.y1);
+	skin_lyric_set_bg_color(lyricview, &lyric->attr.color_bg);
+	skin_lyric_set_text_color(lyricview, &lyric->attr.color_text);
+	skin_lyric_set_highlight_color(lyricview, &lyric->attr.color_hilight);
+
+	gnome_canvas_item_set(lyricbox,
+			"widget", GTK_WIDGET(lyricview),
+			NULL);
+
+	add_object(builder, G_OBJECT(lyricview), "lyric-lyricview");
+
+	printf("item_set lyricview\n");
 }
 
 static void

@@ -32,6 +32,7 @@
 #include <libskin/skinstatusbar.h>
 #include <libskin/skinarchive.h>
 #include <libskin/skinbuilder.h>
+#include <libskin/skinlyric.h>
 
 static gboolean quit(SkinWindow *window, gpointer user_data)
 {
@@ -82,6 +83,8 @@ int main(int argc, char *argv[])
 	SkinStatusBar *statusbar = (SkinStatusBar*)skin_builder_get_object(builder, "player-statusbar");
 	skin_status_bar_set_text(statusbar, "Stop!");
 
+	SkinLyric *lyricview = (SkinLyric*)skin_builder_get_object(builder, "lyric-lyricview");
+	skin_lyric_add_file(lyricview, "tests/test.lrc");
 	skin_window_show(player_window);
 	skin_window_show(equalizer_window);
 	skin_window_show(lyric_window);
