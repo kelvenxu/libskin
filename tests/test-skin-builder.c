@@ -45,6 +45,13 @@ static gboolean play_action(SkinButton *button, gpointer user_data)
 	return FALSE;
 }
 
+static gboolean lyric_animation(SkinLyric *lyric)
+{
+	static int i = 0;
+	skin_lyric_set_current_second(lyric, i);
+	++i;
+	return TRUE;
+}
 int main(int argc, char *argv[])
 {
 	SkinWindow *player_window;
@@ -85,6 +92,7 @@ int main(int argc, char *argv[])
 
 	SkinLyric *lyricview = (SkinLyric*)skin_builder_get_object(builder, "lyric-lyricview");
 	skin_lyric_add_file(lyricview, "tests/test.lrc");
+	g_timeout_add(500, (GSourceFunc)lyric_animation, lyricview);
 	skin_window_show(player_window);
 	skin_window_show(equalizer_window);
 	skin_window_show(lyric_window);
