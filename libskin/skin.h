@@ -38,5 +38,6 @@
 #include <libskin/skinvolumebutton.h>
 #include <libskin/skinvscale.h>
 #include <libskin/skinwindow.h>
+#include <libskin/skinlyric.h>
 
 #endif /*__SKIN_H__ */
