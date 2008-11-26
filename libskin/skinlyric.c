@@ -195,6 +195,8 @@ void update_pixmap(SkinLyric *lyric)
 
 	context = gtk_widget_get_pango_context(priv->da);
 	layout = pango_layout_new(context);
+	pango_layout_set_width(layout, priv->da_width * PANGO_SCALE);
+	pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
 	gdk_gc_set_rgb_fg_color(gc, &priv->fg);
 
 	for(iter = priv->lines; iter; iter = iter->next)
@@ -567,6 +569,8 @@ skin_lyric_set_current_second(SkinLyric *lyric, gint sec)
 		{
 			gdk_gc_set_rgb_fg_color(priv->da_gc, &priv->current);
 			pango_layout_set_text(priv->pango_layout, line->text, -1);
+			pango_layout_set_width(priv->pango_layout, priv->da_width * PANGO_SCALE);
+			pango_layout_set_alignment(priv->pango_layout, PANGO_ALIGN_CENTER);
 
 			// 注意：这里是在da上直接绘，而不是在pixmap上
 			gdk_draw_layout(priv->da->window, priv->da_gc, line->x, line->y, priv->pango_layout);
@@ -581,6 +585,8 @@ skin_lyric_set_current_second(SkinLyric *lyric, gint sec)
 			{
 				gdk_gc_set_rgb_fg_color(priv->da_gc, &priv->fg);
 				pango_layout_set_text(priv->pango_layout, line->text, -1);
+				pango_layout_set_width(priv->pango_layout, priv->da_width * PANGO_SCALE);
+				pango_layout_set_alignment(priv->pango_layout, PANGO_ALIGN_CENTER);
 
 				// 注意：这里是在da上直接绘，而不是在pixmap上
 				gdk_draw_layout(priv->da->window, priv->da_gc, line->x, line->y, priv->pango_layout);
