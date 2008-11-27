@@ -47,17 +47,17 @@ struct _SkinWindow
 {
 	GtkWindow parent;
 
-	GtkWidget* canvas;
-	GnomeCanvasGroup* canvas_root;
-	GnomeCanvasItem* canvas_item;
-	GdkPixbuf* image;
-	gboolean movable;
-	gboolean resizable;
+	//GtkWidget* canvas;
+	//GnomeCanvasGroup* canvas_root;
+	//GnomeCanvasItem* canvas_item;
+	//GdkPixbuf* image;
+	//gboolean movable;
+	//gboolean resizable;
 
-	gchar* test_string;
+	//gchar* test_string;
 
-	gint width;
-	gint height;
+	//gint width;
+	//gint height;
 
 	SkinWindowPrivate* priv;
 };
@@ -78,6 +78,8 @@ void skin_window_show(SkinWindow* skin_window);
 void skin_window_hide(SkinWindow* skin_window);
 void skin_window_move(SkinWindow* skin_window, gint x, gint y);
 void skin_window_set_image(SkinWindow* skin_window, GdkPixbuf* pixbuf);
+GnomeCanvasGroup * skin_window_get_canvas_root(SkinWindow *window);
+void skin_window_set_resizeable(SkinWindow *window, gboolean resizeable);
 
 G_END_DECLS
 

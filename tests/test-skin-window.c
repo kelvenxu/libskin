@@ -35,7 +35,6 @@ gboolean cb_skin_window_right_button_press(SkinWindow* skin_window,
 				gpointer user_data)
 {
 	GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file("tests/player_skin2.png", NULL);
-	g_print("%s", skin_window->test_string);
 	skin_window_move(skin_window, 20, 20);
 	skin_window_set_image(skin_window, pixbuf);
 	return FALSE;
@@ -98,6 +97,7 @@ int main()
 
 	skin_window = skin_window_new(pixbuf);
 
+	skin_window_set_resizeable(skin_window, TRUE);
 	g_signal_connect(G_OBJECT(skin_window), 
 			"right-button-press", 
 			G_CALLBACK(cb_skin_window_right_button_press), 
@@ -112,20 +112,21 @@ int main()
 			G_CALLBACK(cb_destroy_event), 
 		NULL);
 	
-	skin_window->test_string = g_strdup("Hello, gobject!\n");
+	//skin_window->test_string = g_strdup("Hello, gobject!\n");
 
 	GdkPixbuf *pb = gdk_pixbuf_new_from_file("tests/number.png", NULL);
 
-	SkinDigitalTime *time_label = skin_digital_time_new(skin_window->canvas_root, pb, 50, 50);
+	GnomeCanvasGroup *root = skin_window_get_canvas_root(skin_window);
+	SkinDigitalTime *time_label = skin_digital_time_new(root, pb, 50, 50);
 	//skin_digital_time_show(time_label);
 
 	pb = gdk_pixbuf_new_from_file("tests/play.png", NULL);
 
-	SkinButton *button = skin_button_new(skin_window->canvas_root, pb, 140, 140);
+	SkinButton *button = skin_button_new(root, pb, 140, 140);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(cb_clicked_event), time_label);
 
 	pb = gdk_pixbuf_new_from_file("tests/volume_fill.png", NULL);
-	SkinVolumeButton *volume = skin_volume_button_new(skin_window->canvas_root, "fill_pixbuf", pb, NULL);
+	SkinVolumeButton *volume = skin_volume_button_new(root, "fill_pixbuf", pb, NULL);
 
 	g_object_set(G_OBJECT(volume), 
 			"fill-pixbuf", pb, 

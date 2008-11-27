@@ -108,6 +108,7 @@ static void
 create_player_window(SkinBuilder *builder)
 {
 	PlayerArchive *player;
+	GnomeCanvasGroup *root;
 
 	g_print("create player window\n");
 	g_return_if_fail(SKIN_IS_BUILDER(builder));
@@ -118,7 +119,7 @@ create_player_window(SkinBuilder *builder)
 	add_object(builder, G_OBJECT(window), "player-window");
 	skin_window_move(window, player->window.x1, player->window.y1);
 
-	GnomeCanvasGroup *root = window->canvas_root;
+	root = skin_window_get_canvas_root(window);
 
 	SkinButton *pause = skin_button_new(root, 
 			player->pause.img, 
@@ -269,6 +270,7 @@ create_equalizer_window(SkinBuilder *builder)
 {
 	EqualizerArchive *eq;
 	GnomeCanvasGroup *root;
+
 	g_print("create eq window\n");
 	g_return_if_fail(SKIN_IS_BUILDER(builder));
 	eq = builder->priv->ar->equalizer;
@@ -277,7 +279,7 @@ create_equalizer_window(SkinBuilder *builder)
 	add_object(builder, G_OBJECT(window), "equalizer-window");
 	skin_window_move(window, eq->window.x1, eq->window.y1);
 
-	root = window->canvas_root;
+	root = skin_window_get_canvas_root(window);
 
 	SkinButton *close = skin_button_new(root,
 			eq->close.img,
@@ -481,7 +483,7 @@ create_lyric_window(SkinBuilder *builder)
 	add_object(builder, G_OBJECT(window), "lyric-window");
 	skin_window_move(window, lyric->window.x1, lyric->window.y1);
 
-	root = window->canvas_root;
+	root = skin_window_get_canvas_root(window);
 
 	SkinButton *close = skin_button_new(root,
 			lyric->close.img,
@@ -548,7 +550,7 @@ create_playlist_window(SkinBuilder *builder)
 	add_object(builder, G_OBJECT(window), "playlist-window");
 	skin_window_move(window, pl->window.x1, pl->window.y1);
 
-	root = window->canvas_root;
+	root = skin_window_get_canvas_root(window);
 
 	SkinButton *close = skin_button_new(root,
 			pl->close.img,
@@ -613,7 +615,7 @@ create_mini_window(SkinBuilder *builder)
 	add_object(builder, G_OBJECT(window), "mini-window");
 	skin_window_move(window, mini->window.x1, mini->window.y1);
 
-	root = window->canvas_root;
+	root = skin_window_get_canvas_root(window);
 
 	SkinButton *pause = skin_button_new(root,
 			mini->pause.img, 

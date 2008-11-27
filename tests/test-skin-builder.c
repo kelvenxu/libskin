@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 	skin_builder_add_from_archive(builder, ar);
 
 	player_window = SKIN_WINDOW(skin_builder_get_object(builder, "player-window"));
+	skin_window_set_resizeable(player_window, FALSE);
 	play = SKIN_BUTTON(skin_builder_get_object(builder, "player-play"));
 	g_return_val_if_fail(SKIN_IS_WINDOW(player_window), -1);
 
@@ -83,9 +84,13 @@ int main(int argc, char *argv[])
 	g_signal_connect(G_OBJECT(play), "clicked", G_CALLBACK(play_action), NULL);
 
 	equalizer_window = SKIN_WINDOW(skin_builder_get_object(builder, "equalizer-window"));
+	skin_window_set_resizeable(equalizer_window, FALSE);
 	lyric_window = SKIN_WINDOW(skin_builder_get_object(builder, "lyric-window"));
+	skin_window_set_resizeable(lyric_window, TRUE);
 	playlist_window = SKIN_WINDOW(skin_builder_get_object(builder, "playlist-window"));
+	skin_window_set_resizeable(playlist_window, TRUE);
 	mini_window = SKIN_WINDOW(skin_builder_get_object(builder, "mini-window"));
+	skin_window_set_resizeable(mini_window, FALSE);
 
 	SkinStatusBar *statusbar = (SkinStatusBar*)skin_builder_get_object(builder, "player-statusbar");
 	skin_status_bar_set_text(statusbar, "Stop!");

@@ -31,11 +31,22 @@ struct _SkinWindowPrivate
 {
 	gboolean dispose_has_run;
 
+	GtkWidget *canvas;
+	GnomeCanvasGroup *root;
+	GnomeCanvasItem *item;
+
 	// Position
 	gint x;
 	gint y;
 	gint width;
 	gint height;
+
+	GdkPixbuf *pixbuf;
+	gboolean resizeable;
+	gint resize_step;
+	
+	gint movebar_width;
+	gint corner_size;
 };
 
 #define SKIN_WINDOW_GET_PRIVATE(obj)  (G_TYPE_INSTANCE_GET_PRIVATE((obj), SKIN_TYPE_WINDOW, SkinWindowPrivate))
@@ -63,11 +74,9 @@ static void skin_window_get_property  (GObject          *object,
                                          guint             prop_id,
                                          GValue           *value,
                                          GParamSpec       *pspec);
-static gboolean 
-skin_window_canvas_item_event(GnomeCanvasItem *item, 
-								GdkEvent *event, 
-								//GtkWindow* window);
-								SkinWindow* skin_window);
+
+static void gtk_window_get_rect(GtkWindow *win, GdkRectangle *rect);
+static gboolean skin_window_canvas_item_event(GnomeCanvasItem *item, GdkEvent *event, SkinWindow* skin_window);
 
 static void skin_window_class_init(SkinWindowClass *class);
 static void skin_window_init (GTypeInstance *instance, gpointer g_class);
@@ -156,6 +165,13 @@ skin_window_init (GTypeInstance *instance,
 	self->priv->y = 0;
 	self->priv->width = -1;
 	self->priv->height = -1;
+
+	self->priv->pixbuf = NULL;
+	self->priv->resizeable = FALSE;
+
+	self->priv->resize_step = 5;
+	self->priv->movebar_width = 32;
+	self->priv->corner_size = 24;
 }
 
 static void
@@ -195,23 +211,42 @@ skin_window_get_property (GObject      *object,
     }
 }
 
+static void 
+gtk_window_get_rect(GtkWindow *win, GdkRectangle *rect)
+{
+	gtk_window_get_position(win, &(rect->x), &(rect->y));
+	gtk_window_get_size(win, &(rect->width), &(rect->height));
+}
+
 static gboolean 
 skin_window_canvas_item_event(GnomeCanvasItem *item, 
 								GdkEvent *event, 
 								SkinWindow* skin_window)
 {
+	SkinWindowPrivate *priv = skin_window->priv;
 	GtkWindow* window = GTK_WINDOW(skin_window);
+	GtkWidget* widget = GTK_WIDGET(skin_window);
+
 	static gint win_x0, win_y0;
 	static gboolean is_pressing = FALSE;
 
+	static gboolean cursor_flag = FALSE;
+	gint x, y;
+	static gint old_x, old_y;
+	static gint count = 0;
+
+	x = (gint)((GdkEventButton*)event)->x; 
+	y = (gint)((GdkEventButton*)event)->y; 
 	switch (event->type) 
 	{
 	case GDK_BUTTON_PRESS:
 		if(event->button.button == 1) 
 		{
 			is_pressing = TRUE;
-			win_x0 = (gint)((GdkEventButton*)event)->x; 
-			win_y0 = (gint)((GdkEventButton*)event)->y; 
+			win_x0 = x;//(gint)((GdkEventButton*)event)->x; 
+			win_y0 = y;//(gint)((GdkEventButton*)event)->y; 
+			old_x = x;
+			old_y = y;
 		}
 
 		break;
@@ -219,6 +254,8 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 	case GDK_MOTION_NOTIFY:
 		if(is_pressing)
 		{
+			if(y < priv->movebar_width)
+			{
 			//窗体的移动是针对窗体的左上角坐标而言的
 			gtk_window_move(window,
 					(gint)((GdkEventButton*)event)->x_root - win_x0, 
@@ -228,18 +265,57 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 					widget_signals[MOVE_EVENT],
 					0 /* details */,
 					NULL);
-
-			break;
+			}
 		}
-		else
+
+		if(!priv->resizeable) break;
+
+		if(x > priv->width - priv->corner_size && y > priv->height - priv->corner_size && cursor_flag == FALSE)
 		{
-			//printf("motion\n");
-			break;
+			GdkCursor *cursor = gdk_cursor_new(GDK_BOTTOM_RIGHT_CORNER);
+			gdk_window_set_cursor(widget->window, cursor);
+			cursor_flag = TRUE;
 		}
-		break;
 
+		if(is_pressing && cursor_flag && (++count % priv->resize_step == 0))
+		{
+			if(x > old_x)
+				priv->width += priv->resize_step;
+			else if(x < old_x)
+				priv->width -= priv->resize_step;
+
+			if(y > old_y)
+				priv->height += priv->resize_step;
+			else if(y < old_y)
+				priv->height -= priv->resize_step;
+			
+			GdkPixbuf *p = gdk_pixbuf_scale_simple(priv->pixbuf, 
+					priv->width, 
+					priv->height,
+					GDK_INTERP_BILINEAR);
+
+			gnome_canvas_item_set(priv->item,
+					"width", (gdouble)priv->width,
+					"height", (gdouble)priv->height,
+					"width-set", TRUE,
+					"height-set", TRUE,
+					NULL);
+
+			gtk_widget_decorated_with_pixbuf(widget, p);
+			g_object_unref(p);
+
+			old_x = x;
+			old_y = y;
+		}
+
+		break;
 	case GDK_BUTTON_RELEASE:
 		is_pressing = FALSE;
+		if(cursor_flag)
+		{
+			gdk_window_set_cursor(widget->window, NULL);
+			cursor_flag = FALSE;
+		}
 		//printf("release...\n");
 		if(event->button.button == 3)
 		{
@@ -287,25 +363,31 @@ skin_window_construct(SkinWindow* skin_window,
 		GdkPixbuf* pixbuf)
 {
 	GtkWidget *widget;
+	SkinWindowPrivate *priv;
+
 	g_return_if_fail(SKIN_IS_WINDOW(skin_window));
 	g_return_if_fail(GDK_IS_PIXBUF(pixbuf));
 
+	priv = skin_window->priv;
 	widget = GTK_WIDGET(skin_window);
 
-	skin_window->canvas = gnome_canvas_new_aa();
-	skin_window->canvas_root = gnome_canvas_root(GNOME_CANVAS(skin_window->canvas));
+	priv->canvas = gnome_canvas_new_aa();
+	priv->root = gnome_canvas_root(GNOME_CANVAS(priv->canvas));
 
-	gnome_canvas_set_center_scroll_region(GNOME_CANVAS(skin_window->canvas), FALSE);
-	skin_window->canvas_item = gnome_canvas_item_new(skin_window->canvas_root,
+	gnome_canvas_set_center_scroll_region(GNOME_CANVAS(priv->canvas), FALSE);
+	priv->item = gnome_canvas_item_new(priv->root,
 							gnome_canvas_pixbuf_get_type(),
 							"pixbuf", pixbuf,
 							NULL);
 
-	gtk_container_add(GTK_CONTAINER(widget), skin_window->canvas);
+	gtk_container_add(GTK_CONTAINER(widget), priv->canvas);
 
 	gtk_widget_decorated_with_pixbuf(widget, pixbuf); 
 
-	g_signal_connect(G_OBJECT(skin_window->canvas_item), 
+	priv->width = gdk_pixbuf_get_width(pixbuf);
+	priv->height = gdk_pixbuf_get_height(pixbuf);
+
+	g_signal_connect(G_OBJECT(priv->item), 
 					"event",
 					G_CALLBACK(skin_window_canvas_item_event), 
 					skin_window);
@@ -329,6 +411,7 @@ skin_window_new(GdkPixbuf* pixbuf)
 
 	window = g_object_new(SKIN_TYPE_WINDOW, NULL);
 	
+	window->priv->pixbuf = pixbuf;
 	skin_window_construct(window, pixbuf);
 
 	return window;
@@ -374,7 +457,24 @@ void skin_window_set_image(SkinWindow* window,
 
 	gtk_widget_decorated_with_pixbuf(GTK_WIDGET(window), pixbuf);
 	
-	gnome_canvas_item_set(window->canvas_item,
+	gnome_canvas_item_set(window->priv->item,
 			"pixbuf", pixbuf,
 			NULL);
 }
+
+GnomeCanvasGroup *
+skin_window_get_canvas_root(SkinWindow *window)
+{
+	g_return_val_if_fail(SKIN_IS_WINDOW(window), NULL);
+
+	return window->priv->root;
+}
+
+void
+skin_window_set_resizeable(SkinWindow *window, gboolean resizeable)
+{
+	g_return_if_fail(SKIN_IS_WINDOW(window));
+
+	window->priv->resizeable = resizeable;
+}
+
