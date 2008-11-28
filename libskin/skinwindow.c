@@ -47,6 +47,9 @@ struct _SkinWindowPrivate
 	
 	gint movebar_width;
 	gint corner_size;
+
+	// 鼠标切换的标志
+	gboolean cursor_flag; 
 };
 
 #define SKIN_WINDOW_GET_PRIVATE(obj)  (G_TYPE_INSTANCE_GET_PRIVATE((obj), SKIN_TYPE_WINDOW, SkinWindowPrivate))
@@ -75,7 +78,7 @@ static void skin_window_get_property  (GObject          *object,
                                          GValue           *value,
                                          GParamSpec       *pspec);
 
-static void gtk_window_get_rect(GtkWindow *win, GdkRectangle *rect);
+//static void gtk_window_get_rect(GtkWindow *win, GdkRectangle *rect);
 static gboolean skin_window_canvas_item_event(GnomeCanvasItem *item, GdkEvent *event, SkinWindow* skin_window);
 
 static void skin_window_class_init(SkinWindowClass *class);
@@ -172,6 +175,8 @@ skin_window_init (GTypeInstance *instance,
 	self->priv->resize_step = 5;
 	self->priv->movebar_width = 32;
 	self->priv->corner_size = 24;
+
+	self->priv->cursor_flag = FALSE;
 }
 
 static void
@@ -211,12 +216,14 @@ skin_window_get_property (GObject      *object,
     }
 }
 
+/*
 static void 
 gtk_window_get_rect(GtkWindow *win, GdkRectangle *rect)
 {
 	gtk_window_get_position(win, &(rect->x), &(rect->y));
 	gtk_window_get_size(win, &(rect->width), &(rect->height));
 }
+*/
 
 static gboolean 
 skin_window_canvas_item_event(GnomeCanvasItem *item, 
@@ -230,7 +237,6 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 	static gint win_x0, win_y0;
 	static gboolean is_pressing = FALSE;
 
-	static gboolean cursor_flag = FALSE;
 	gint x, y;
 	static gint old_x, old_y;
 	static gint count = 0;
@@ -252,10 +258,9 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 		break;
 
 	case GDK_MOTION_NOTIFY:
-		if(is_pressing)
+		// 当不在resize状态时，可以移动窗体
+		if(is_pressing && !priv->cursor_flag)
 		{
-			if(y < priv->movebar_width)
-			{
 			//窗体的移动是针对窗体的左上角坐标而言的
 			gtk_window_move(window,
 					(gint)((GdkEventButton*)event)->x_root - win_x0, 
@@ -265,19 +270,26 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 					widget_signals[MOVE_EVENT],
 					0 /* details */,
 					NULL);
-			}
 		}
 
 		if(!priv->resizeable) break;
 
-		if(x > priv->width - priv->corner_size && y > priv->height - priv->corner_size && cursor_flag == FALSE)
+		static gint delay = 0;
+		if((priv->cursor_flag == FALSE) 
+				&& (x > priv->width - priv->corner_size) 
+				&& (y > priv->height - priv->corner_size)) 
 		{
 			GdkCursor *cursor = gdk_cursor_new(GDK_BOTTOM_RIGHT_CORNER);
 			gdk_window_set_cursor(widget->window, cursor);
-			cursor_flag = TRUE;
+			priv->cursor_flag = TRUE;
+		}
+		else if(priv->cursor_flag && (is_pressing == FALSE))
+		{
+			gdk_window_set_cursor(widget->window, NULL);
+			priv->cursor_flag = FALSE;
 		}
 
-		if(is_pressing && cursor_flag && (++count % priv->resize_step == 0))
+		if(is_pressing && priv->cursor_flag && (++count % priv->resize_step == 0))
 		{
 			if(x > old_x)
 				priv->width += priv->resize_step;
@@ -311,12 +323,6 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 		break;
 	case GDK_BUTTON_RELEASE:
 		is_pressing = FALSE;
-		if(cursor_flag)
-		{
-			gdk_window_set_cursor(widget->window, NULL);
-			cursor_flag = FALSE;
-		}
-		//printf("release...\n");
 		if(event->button.button == 3)
 		{
 			g_signal_emit(skin_window,
@@ -327,8 +333,7 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 		break;
 
 	default:
-		//printf("else what...\n");
-		//鼠标离开的状态
+		// 鼠标离开的状态
 		break;
 	}
 
@@ -351,6 +356,7 @@ gtk_widget_decorated_with_pixbuf(GtkWidget* window,
 	width = gdk_pixbuf_get_width(pixbuf);
 	height = gdk_pixbuf_get_height(pixbuf);
 
+	gtk_window_resize(GTK_WINDOW(window), width, height);
 	gtk_widget_set_size_request(window, width, height);
 
 	gdk_pixbuf_render_pixmap_and_mask(pixbuf, &pixmap, &mask, 100);
