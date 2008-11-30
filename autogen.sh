@@ -63,5 +63,5 @@ else
 		trap 'echo "configure aborted" ; exit 0' 1 2 15
 		sleep 1
 	fi
-	./configure "$@";
+	./configure "$@" --enable-gtk-doc;
 fi

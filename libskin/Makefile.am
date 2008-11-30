@@ -46,7 +46,6 @@ libskin_la_SOURCES = \
 	skintogglebutton.c\
 	skindigitaltime.c\
 	skindynamictext.c\
-	skinprocessbar.c\
 	skinscrollbar.c\
 	skinstatusbar.c\
 	skinvolumebutton.c\
