@@ -36,7 +36,7 @@ enum {
     PROP_0,
 };
 
-static int signals[LAST_SIGNAL];
+//static int signals[LAST_SIGNAL];
 
 G_DEFINE_TYPE (SkinScrollBar, skin_scroll_bar, GNOME_TYPE_CANVAS_GROUP);
 
@@ -321,5 +321,48 @@ skin_scroll_bar_get_width(SkinScrollBar *bar)
 	g_return_val_if_fail(SKIN_IS_SCROLL_BAR(bar), 0.0);
 	
 	return bar->priv->x2 - bar->priv->x1;
+}
+
+gdouble 
+skin_scroll_bar_get_height(SkinScrollBar *bar)
+{
+	g_return_val_if_fail(SKIN_IS_SCROLL_BAR(bar), 0.0);
+
+	return bar->priv->y2 - bar->priv->y1;
+}
+
+/**
+ * skin_scroll_bar_set_height:
+ * @bar: a SkinScrollBar.
+ * @height:
+ *
+ * 设置SkinScrollBar的高度，其中变化的是fill和下面的一个.
+ */
+void
+skin_scroll_bar_set_height(SkinScrollBar *bar, gdouble height)
+{
+	SkinScrollBarPrivate *priv;
+	gdouble rh;
+
+	g_return_if_fail(SKIN_IS_SCROLL_BAR(bar));
+
+	priv = bar->priv;
+	rh = height - (priv->y2 - priv->y1);
+	priv->y2 = priv->y2 + rh;
+	priv->thumb_end = priv->thumb_end + rh;
+	priv->thumb_range = priv->thumb_range + rh;
+
+	gnome_canvas_item_set(priv->bar_item,
+			"height", priv->thumb_range,
+			"height-set", TRUE,
+			NULL);
+
+	gnome_canvas_item_set(priv->bottom_item,
+			"y", priv->thumb_end,
+			NULL);
+
+	gnome_canvas_item_set(priv->thumb_item,
+			"y", priv->thumb_begin,
+			NULL);
 }
 

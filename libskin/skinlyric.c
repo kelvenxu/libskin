@@ -285,6 +285,14 @@ skin_lyric_new()
 	return lyric;
 }
 
+void skin_lyric_get_size(SkinLyric *lyric, gint *width, gint *height)
+{
+	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+
+	*width = lyric->priv->da_width;
+	*height = lyric->priv->da_height;
+}
+
 void
 skin_lyric_set_size(SkinLyric *lyric, gint width, gint height)
 {
@@ -295,6 +303,8 @@ skin_lyric_set_size(SkinLyric *lyric, gint width, gint height)
 
 	lyric->priv->da_width = width;
 	lyric->priv->da_height = height;
+
+	update_pixmap(lyric);
 }
 
 //NOTE: str: [mm:ss.ss

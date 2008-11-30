@@ -470,6 +470,38 @@ create_equalizer_window(SkinBuilder *builder)
 }
 
 static void
+cb_lyric_change_size(SkinWindow *window, gint rx, gint ry, SkinBuilder *builder)
+{
+	SkinButton *button;
+	GnomeCanvasItem *item;
+	gdouble width, height;
+
+	button = (SkinButton*)skin_builder_get_object(builder, "lyric-close");
+	if(button)
+		gnome_canvas_item_move(GNOME_CANVAS_ITEM(button), rx, 0);
+	button = (SkinButton*)skin_builder_get_object(builder, "lyric-ontop");
+	if(button)
+		gnome_canvas_item_move(GNOME_CANVAS_ITEM(button), rx, 0);
+
+    item = (GnomeCanvasItem *)skin_builder_get_object(builder, "lyric-lyricbox");
+	if(item)
+	{
+		g_object_get(G_OBJECT(item), 
+				"width", &width,
+				"height", &height,
+				NULL);
+		printf("width: %f height: %f rx: %d ry: %d\n", width, height, rx, ry);
+		gnome_canvas_item_set(item, 
+				"width", width + (gdouble)rx,
+				"height", height + (gdouble)ry,
+				NULL);
+
+		SkinLyric *lyricview = (SkinLyric *)skin_builder_get_object(builder, "lyric-lyricview");
+		skin_lyric_set_size(lyricview, (gint)(width + rx), (gint)(height + ry));
+	}
+}
+
+static void
 create_lyric_window(SkinBuilder *builder)
 {
 	LyricArchive *lyric;
@@ -520,7 +552,45 @@ create_lyric_window(SkinBuilder *builder)
 
 	add_object(builder, G_OBJECT(lyricview), "lyric-lyricview");
 
+	g_signal_connect(G_OBJECT(window), "change-size", 
+			G_CALLBACK(cb_lyric_change_size), builder);
 	printf("item_set lyricview\n");
+}
+
+static void
+cb_playlist_change_size(SkinWindow *window, gint rx, gint ry, SkinBuilder *builder)
+{
+	SkinButton *button;
+	button = (SkinButton *)skin_builder_get_object(builder, "playlist-close");
+	if(button)
+		gnome_canvas_item_move(GNOME_CANVAS_ITEM(button), rx, 0);
+
+	GnomeCanvasItem *item;
+	item = (GnomeCanvasItem*)skin_builder_get_object(builder, "playlist-playlistbox");
+	if(item)
+	{
+		gdouble width, height;
+		g_object_get(G_OBJECT(item),
+				"width", &width,
+				"height", &height,
+				NULL);
+		gnome_canvas_item_set(item,
+				"width", width + rx,
+				"height", height + ry,
+				NULL);
+	}
+
+	SkinScrollBar *scrollbar;
+
+	scrollbar = (SkinScrollBar*)skin_builder_get_object(builder, "playlist-scrollbar");
+	if(scrollbar)
+	{
+		gdouble x;
+		g_object_get(G_OBJECT(scrollbar), "x", &x, NULL);
+		gnome_canvas_item_set((GnomeCanvasItem*)scrollbar, "x", x + rx, NULL);
+		x = skin_scroll_bar_get_height(scrollbar);
+		skin_scroll_bar_set_height(scrollbar, x + ry);
+	}
 }
 
 static void
@@ -599,6 +669,8 @@ create_playlist_window(SkinBuilder *builder)
 			"width", (gdouble)(pl->playlist.x2 - pl->playlist.x1) - w,
 			NULL);
 
+	g_signal_connect(G_OBJECT(window), "change-size", 
+			G_CALLBACK(cb_playlist_change_size), builder);
 }
 
 static void

@@ -54,6 +54,7 @@ GType skin_lyric_get_type();
 
 SkinLyric *skin_lyric_new();
 
+void skin_lyric_get_size(SkinLyric *lyric, gint *width, gint *height);
 void skin_lyric_set_size(SkinLyric *lyric, gint width, gint height);
 gboolean skin_lyric_add_file(SkinLyric *lyric, const gchar *file);
 void skin_lyric_set_current_second(SkinLyric *lyric, gint sec);

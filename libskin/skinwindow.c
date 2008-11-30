@@ -58,6 +58,7 @@ enum {
 	RIGHT_BUTTON_PRESS,
 	//DELETE_EVENT,
 	MOVE_EVENT,
+	CHANGE_SIZE,
     LAST_SIGNAL
 };
 
@@ -126,6 +127,7 @@ skin_window_class_init(SkinWindowClass *class)
 	class->right_button_press = NULL;
 	class->delete_event = NULL;
 	class->move_event = NULL;
+	class->change_size = NULL;
 
     g_type_class_add_private (class, sizeof (SkinWindowPrivate));
 
@@ -153,6 +155,20 @@ skin_window_class_init(SkinWindowClass *class)
 						G_TYPE_NONE,
 						0, 
 						NULL);
+
+	widget_signals[CHANGE_SIZE] = 
+			g_signal_new("change-size",
+						G_TYPE_FROM_CLASS(gobject_class),
+						G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+						G_STRUCT_OFFSET(SkinWindowClass, change_size),
+						NULL,
+						NULL,
+						gtk_marshal_VOID__INT_INT,
+						G_TYPE_NONE,
+						2,
+						G_TYPE_INT, 
+						G_TYPE_INT);
+
 }
 
 static void
@@ -274,7 +290,7 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 
 		if(!priv->resizeable) break;
 
-		static gint delay = 0;
+		//static gint delay = 0;
 		if((priv->cursor_flag == FALSE) 
 				&& (x > priv->width - priv->corner_size) 
 				&& (y > priv->height - priv->corner_size)) 
@@ -291,15 +307,28 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 
 		if(is_pressing && priv->cursor_flag && (++count % priv->resize_step == 0))
 		{
+			gint rx = 0, ry = 0;
 			if(x > old_x)
+			{
 				priv->width += priv->resize_step;
+				rx = priv->resize_step;
+			}
 			else if(x < old_x)
+			{
 				priv->width -= priv->resize_step;
+				rx = -1 * priv->resize_step;
+			}
 
 			if(y > old_y)
+			{
 				priv->height += priv->resize_step;
+				ry = priv->resize_step;
+			}
 			else if(y < old_y)
+			{
 				priv->height -= priv->resize_step;
+				ry = -1 * priv->resize_step;
+			}
 			
 			GdkPixbuf *p = gdk_pixbuf_scale_simple(priv->pixbuf, 
 					priv->width, 
@@ -318,6 +347,8 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 
 			old_x = x;
 			old_y = y;
+
+			g_signal_emit(widget, widget_signals[CHANGE_SIZE], 0, rx, ry);
 		}
 
 		break;

@@ -68,6 +68,7 @@ struct _SkinWindowClass
 	void (*right_button_press) (SkinWindow* skin_window, gpointer* user_data);
 	void (*delete_event) (SkinWindow* skin_window, gpointer* user_data);
 	void (*move_event) (SkinWindow* skin_window, gpointer* user_data);
+	void (*change_size) (SkinWindow* skin_window, gint rx, gint ry, gpointer* user_data);
 };
 
 GType skin_window_get_type(void) G_GNUC_CONST;
