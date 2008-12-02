@@ -41,6 +41,16 @@ struct _SkinWindowPrivate
 	gint width;
 	gint height;
 
+	// 最小尺寸
+	gint min_width;
+	gint min_height;
+
+	// 改变尺寸时图片缩放的位置
+	gint resize_x1;
+	gint resize_y1;
+	gint resize_x2;
+	gint resize_y2;
+
 	GdkPixbuf *pixbuf;
 	gboolean resizeable;
 	gint resize_step;
@@ -330,27 +340,105 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 				ry = -1 * priv->resize_step;
 			}
 			
-			GdkPixbuf *p = gdk_pixbuf_scale_simple(priv->pixbuf, 
-					priv->width, 
-					priv->height,
-					GDK_INTERP_BILINEAR);
+			if(priv->height < priv->min_height)
+			{
+				ry = 0;
+				priv->height = priv->min_height;
+			}
+			if(priv->width < priv->min_width)
+			{
+				rx = 0;
+				priv->width = priv->min_width;
+			}
 
-			gnome_canvas_item_set(priv->item,
-					"width", (gdouble)priv->width,
-					"height", (gdouble)priv->height,
-					"width-set", TRUE,
-					"height-set", TRUE,
-					NULL);
+			//GdkPixbuf *p = gdk_pixbuf_scale_simple(priv->pixbuf, 
+			//		priv->width, 
+			//		priv->height,
+			//		GDK_INTERP_BILINEAR);
 
-			gtk_widget_decorated_with_pixbuf(widget, p);
-			g_object_unref(p);
+			GdkPixbuf *des = NULL;
 
-			old_x = x;
-			old_y = y;
+			if(rx != 0)
+			{
+				priv->resize_x1 = 159;
+				priv->resize_y1 = 81;
+				priv->resize_x2 = 160;
+				priv->resize_y2 = 92;
+				// 所有操作都是在原始图上做的，即priv->pixbuf
+				printf("left_p\n");
+				GdkPixbuf *left_p = gdk_pixbuf_new_subpixbuf(priv->pixbuf, 
+						0, 0, 
+						priv->resize_x1, 
+						priv->min_height);
+				printf("mid_p\n");
+				GdkPixbuf *mid_p = gdk_pixbuf_new_subpixbuf(priv->pixbuf,
+						priv->resize_x1, 0,
+						priv->resize_x2 - priv->resize_x1,
+						priv->min_height);
+				printf("right_p\n");
+				GdkPixbuf *right_p = gdk_pixbuf_new_subpixbuf(priv->pixbuf, 
+						priv->resize_x2, 0, 
+						priv->min_width - priv->resize_x2, 
+						priv->min_height);
+				
+				printf("scaled mid_p\n");
+				GdkPixbuf *scaled_mid_p = gdk_pixbuf_scale_simple(mid_p, 
+						priv->width - (priv->resize_x1 + priv->min_width - priv->resize_x2),
+						priv->min_height,
+						GDK_INTERP_BILINEAR);
 
-			g_signal_emit(widget, widget_signals[CHANGE_SIZE], 0, rx, ry);
+				printf("new des\n");
+				des = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 
+						priv->width, priv->min_height);
+
+				printf("composite left_p\n");
+				gdk_pixbuf_composite(left_p, des, 0, 0, 
+						priv->resize_x1,
+						priv->min_height,
+						0.0, 0.0,
+						1.0, 1.0,
+						GDK_INTERP_BILINEAR,
+						255);
+				printf("composite mid_p\n");
+				gdk_pixbuf_composite(scaled_mid_p, des, priv->resize_x1, 0, 
+						priv->width - (priv->resize_x1 + priv->min_width - priv->resize_x2),
+						priv->min_height,
+						0.0, 0.0,
+						1.0, 1.0,
+						GDK_INTERP_BILINEAR,
+						255);
+				printf("composite right_p\n");
+				gdk_pixbuf_composite(right_p, des, priv->width - (priv->min_width - priv->resize_x2), 0, 
+						priv->min_width - priv->resize_x2, 
+						priv->min_height,
+						0.0, 0.0,
+						1.0, 1.0,
+						GDK_INTERP_BILINEAR,
+						255);
+				printf("composite right_p\n");
+			}
+
+
+			if(des != NULL)
+			{
+				gnome_canvas_item_set(priv->item,
+						//"width", (gdouble)priv->width,
+						//"height", (gdouble)priv->height,
+						//"width-set", TRUE,
+						//"height-set", TRUE,
+						"pixbuf", des,
+						NULL);
+
+				gtk_widget_decorated_with_pixbuf(widget, des);
+				g_object_unref(des);
+
+				old_x = x;
+				old_y = y;
+
+				ry = 0;
+				g_signal_emit(widget, widget_signals[CHANGE_SIZE], 0, rx, ry);
+			}
 		}
-
 		break;
 	case GDK_BUTTON_RELEASE:
 		is_pressing = FALSE;
@@ -423,6 +511,8 @@ skin_window_construct(SkinWindow* skin_window,
 
 	priv->width = gdk_pixbuf_get_width(pixbuf);
 	priv->height = gdk_pixbuf_get_height(pixbuf);
+	priv->min_width = priv->width;
+	priv->min_height = priv->height;
 
 	g_signal_connect(G_OBJECT(priv->item), 
 					"event",
@@ -513,5 +603,16 @@ skin_window_set_resizeable(SkinWindow *window, gboolean resizeable)
 	g_return_if_fail(SKIN_IS_WINDOW(window));
 
 	window->priv->resizeable = resizeable;
+}
+
+void 
+skin_window_set_resize_rect(SkinWindow *window, gint x1, gint y1, gint x2, gint y2)
+{
+	g_return_if_fail(SKIN_IS_WINDOW(window));
+
+	window->priv->resize_x1 = x1;
+	window->priv->resize_y1 = y1;
+	window->priv->resize_x2 = x2;
+	window->priv->resize_y2 = y2;
 }
 
