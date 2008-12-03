@@ -43,6 +43,8 @@ struct _SkinDynamicTextPrivate
 	gchar *album;
 	gchar *format;
 	gchar *color;
+	gchar *font;
+	gint font_size;
 	gint align;
 	GnomeCanvasGroup *root;
 
@@ -108,6 +110,9 @@ skin_dynamic_text_init (SkinDynamicText *self)
 
 	priv = g_new0(SkinDynamicTextPrivate, 1);
 	self->priv = priv;
+
+	priv->font = NULL;
+	priv->font_size = 10;
 }
 
 static void
@@ -425,3 +430,7 @@ skin_dynamic_text_set_text(SkinDynamicText *dtext, const gchar *text)
 {
 }
 
+void 
+skin_dynamic_text_set_font(SkinDynamicText *dtext, const gchar *font, gint font_size)
+{
+}
