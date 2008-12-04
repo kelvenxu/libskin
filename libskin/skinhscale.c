@@ -489,16 +489,24 @@ skin_hscale_value_update(SkinHScale *hscale)
 	gint height;
 	gdouble range;
 	gdouble position;
+	gdouble thumb_width;
 
 	priv = hscale->priv;
 
 	if(!priv->need_value_update)
 		return;
 
+	if(priv->has_thumb)
+	{
+		thumb_width = gdk_pixbuf_get_width(priv->thumb_pixbuf);
+	}
+	else
+		thumb_width = 0.0;
+
 	range = priv->max - priv->min;
 	if(range > 0)
 	{
-		position = priv->value / range * (priv->x2 - priv->x1);
+		position = priv->value / range * (priv->x2 - priv->x1 - thumb_width / 4.0);
 	}
 	else
 	{
@@ -525,7 +533,7 @@ skin_hscale_value_update(SkinHScale *hscale)
 	if(priv->has_thumb)
 	{
 		gnome_canvas_item_set(priv->thumb_item,
-				"x", priv->x1 + position - 0.5, //FIXME: 是想让thumb不要走得太快，和fill接在一起
+				"x", priv->x1 + position,
 				NULL);
 	}
 
