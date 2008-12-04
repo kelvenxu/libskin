@@ -506,7 +506,7 @@ skin_hscale_value_update(SkinHScale *hscale)
 	range = priv->max - priv->min;
 	if(range > 0)
 	{
-		position = priv->value / range * (priv->x2 - priv->x1 - thumb_width / 4.0);
+		position = (range - (priv->max - priv->value)) / range * (priv->x2 - priv->x1 - thumb_width / 4.0);
 	}
 	else
 	{

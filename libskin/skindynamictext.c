@@ -370,18 +370,24 @@ static gboolean
 animation_text(SkinDynamicText *dtext)
 {
 	SkinDynamicTextPrivate *priv;
-	gchar *p;
-	gdouble width;
+	gchar *p = NULL;
+	gdouble width = 0.0;
 
-	g_return_val_if_fail(SKIN_IS_DYNAMIC_TEXT(dtext), TRUE);
+	g_return_val_if_fail(SKIN_IS_DYNAMIC_TEXT(dtext), FALSE);
+
 	priv = dtext->priv;
 
 	g_object_get(G_OBJECT(dtext), "text", &p, NULL);
-	p = g_utf8_next_char(p);
-	gnome_canvas_item_set(GNOME_CANVAS_ITEM(dtext), "text", p, NULL);
+
+	if(p != NULL && *p != '\0' && g_utf8_validate(p, -1, NULL))
+	{
+		p = g_utf8_next_char(p);
+		gnome_canvas_item_set(GNOME_CANVAS_ITEM(dtext), "text", p, NULL);
+	}
 
 	g_object_get(G_OBJECT(dtext), "text-width", &width, NULL);
-	if(width < priv->x2 - priv->x1)
+
+	if(width <= priv->x2 - priv->x1)
 	{
 		return FALSE;
 	}
@@ -395,7 +401,8 @@ update_text(SkinDynamicText *dtext)
 	SkinDynamicTextPrivate *priv;
 	gdouble width;
 
-	g_return_val_if_fail(SKIN_IS_DYNAMIC_TEXT(dtext), TRUE);
+	g_return_val_if_fail(SKIN_IS_DYNAMIC_TEXT(dtext), FALSE);
+
 	priv = dtext->priv;
 
 	if(priv->counter >= 4) priv->counter = 0;
