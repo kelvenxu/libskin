@@ -377,11 +377,8 @@ static gint
 cb_thumb_event(GnomeCanvasItem *item, GdkEvent *event, SkinVScale* hscale)
 {
 	static gboolean is_pressing = FALSE;
-	static gdouble y; //FIXME: static变量在声明了多个控件后可能出现混乱
-
 	SkinVScalePrivate *priv;
 	gdouble item_y;
-	gdouble new_y;
 
 	priv = hscale->priv;
 	item_y = event->button.y;
@@ -393,16 +390,12 @@ cb_thumb_event(GnomeCanvasItem *item, GdkEvent *event, SkinVScale* hscale)
 		{
 			gnome_canvas_item_set(item, "pixbuf", priv->thumb_subpixbuf[2], NULL);
 			is_pressing = TRUE;
-			y = item_y;
 		}
 		break;
 	case GDK_MOTION_NOTIFY:
 		if(is_pressing && (item_y > priv->y2 && item_y < priv->y1))
 		{
-			new_y = item_y;
-		
-			y = new_y;
-			priv->value = (y - priv->y1) / (priv->y1 - priv->y2) * (priv->max - priv->min);
+			priv->value = (priv->y1 - event->button.y) / (priv->y1 - priv->y2) * (priv->max - priv->min);
 			priv->need_value_update = TRUE;
 			skin_vscale_value_update(hscale);
 
@@ -486,6 +479,7 @@ skin_vscale_value_update(SkinVScale *hscale)
 	gint width;
 	gdouble range;
 	gdouble position;
+	gdouble thumb_height = 0.0;
 
 	priv = hscale->priv;
 
@@ -493,16 +487,24 @@ skin_vscale_value_update(SkinVScale *hscale)
 		return;
 
 	range = priv->max - priv->min;
+
+	if(priv->has_thumb)
+	{
+		thumb_height = gdk_pixbuf_get_height(priv->thumb_pixbuf);
+	}
+
 	if(range > 0)
 	{
-		// y1 > y2
-		position = priv->value / range * (priv->y1 - priv->y2);
+		// NOTE: y1 > y2
+		// NOTE: priv->value - priv->max + range 从而确保其值为正
+		position = (range - (priv->max - priv->value)) / range * (priv->y1 - priv->y2 - thumb_height);
 	}
 	else
 	{
 		position = 0.0;
 	}
 
+	// 注意：x1，y1是在左下角，x2，y2是在右上角
 	if(priv->has_fill)
 	{
 		if(position > 1.0)
@@ -524,7 +526,7 @@ skin_vscale_value_update(SkinVScale *hscale)
 	if(priv->has_thumb)
 	{
 		gnome_canvas_item_set(priv->thumb_item,
-				"y", priv->y1 - position, 
+				"y", priv->y1 - position - thumb_height, 
 				"pixbuf", priv->thumb_subpixbuf[0],
 				NULL);
 	}
