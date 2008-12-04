@@ -179,6 +179,7 @@ skin_archive_load(SkinArchive *ar, const char* filename)
 	load_playlist_attr(xml, &(ar->playlist->attr));
 	g_free(xml);
 
+	delete_temp_dir(ar->priv->path);
 	return TRUE;
 }
 
