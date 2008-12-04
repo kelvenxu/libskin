@@ -186,6 +186,72 @@ cb_thumb_event(GnomeCanvasItem *item, GdkEvent *event, SkinScrollBar* bar)
 	return FALSE;
 }
 
+static gint 
+cb_top_event(GnomeCanvasItem *item, GdkEvent *event, SkinScrollBar* bar)
+{
+	SkinScrollBarPrivate *priv = bar->priv;
+
+	switch (event->type) 
+	{
+	case GDK_BUTTON_PRESS:
+		if(event->button.button == 1) 
+		{
+			gnome_canvas_item_set(item, "pixbuf", priv->top_subpb[1], NULL);
+			if(priv->adj->value > priv->adj->lower + 16)
+				priv->adj->value -= 16;
+			else
+				priv->adj->value = priv->adj->lower;
+
+			gtk_adjustment_value_changed(priv->adj);
+		}
+		break;
+	case GDK_MOTION_NOTIFY:
+			gnome_canvas_item_set(item, "pixbuf", priv->top_subpb[1], NULL);
+		break;
+	case GDK_BUTTON_RELEASE:
+		gnome_canvas_item_set(item, "pixbuf", priv->top_subpb[1], NULL);
+		break;
+	default:
+		gnome_canvas_item_set(item, "pixbuf", priv->top_subpb[0], NULL);
+		break;
+	}
+
+	return FALSE;
+}
+
+static gint 
+cb_bottom_event(GnomeCanvasItem *item, GdkEvent *event, SkinScrollBar* bar)
+{
+	SkinScrollBarPrivate *priv = bar->priv;
+
+	switch (event->type) 
+	{
+	case GDK_BUTTON_PRESS:
+		if(event->button.button == 1) 
+		{
+			gnome_canvas_item_set(item, "pixbuf", priv->bottom_subpb[1], NULL);
+			if(priv->adj->value < priv->adj->upper - priv->adj->page_size - 16)
+				priv->adj->value += 16;
+			else
+				priv->adj->value = priv->adj->upper - priv->adj->page_size;
+
+			gtk_adjustment_value_changed(priv->adj);
+		}
+		break;
+	case GDK_MOTION_NOTIFY:
+			gnome_canvas_item_set(item, "pixbuf", priv->bottom_subpb[1], NULL);
+		break;
+	case GDK_BUTTON_RELEASE:
+		gnome_canvas_item_set(item, "pixbuf", priv->bottom_subpb[1], NULL);
+		break;
+	default:
+		gnome_canvas_item_set(item, "pixbuf", priv->bottom_subpb[0], NULL);
+		break;
+	}
+
+	return FALSE;
+}
+
 static void 
 skin_scroll_bar_construct(SkinScrollBar *bar)
 {
@@ -267,6 +333,8 @@ skin_scroll_bar_construct(SkinScrollBar *bar)
 			"pixbuf", priv->thumb_subpb[0],
 			NULL);
 
+	g_signal_connect(G_OBJECT(priv->top_item), "event", G_CALLBACK(cb_top_event), bar);
+	g_signal_connect(G_OBJECT(priv->bottom_item), "event", G_CALLBACK(cb_bottom_event), bar);
 	g_signal_connect(G_OBJECT(priv->thumb_item), "event", G_CALLBACK(cb_thumb_event), bar);
 }
 
