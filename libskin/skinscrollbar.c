@@ -71,6 +71,7 @@ struct _SkinScrollBarPrivate
 	gdouble thumb_height;
 
 	GtkAdjustment *adj;
+	gboolean self_value_changed;
 };
 
 
@@ -116,6 +117,7 @@ skin_scroll_bar_update_adjustment(SkinScrollBar *bar, gdouble value)
 	priv = bar->priv;
 
 	val = value * (priv->adj->upper - priv->adj->page_size - priv->adj->lower);
+	priv->self_value_changed = TRUE;
 	gtk_adjustment_set_value(priv->adj, val);
 	gtk_adjustment_value_changed(priv->adj);
 }
@@ -124,10 +126,9 @@ static gint
 cb_thumb_event(GnomeCanvasItem *item, GdkEvent *event, SkinScrollBar* bar)
 {
 	static gboolean is_pressing = FALSE;
-	static gdouble y;
+	static gdouble old_y;
+	static gint count;
 	gdouble item_y;
-	gdouble x1, y1, x2, y2;
-	gdouble yy;
 
 	SkinScrollBarPrivate *priv = bar->priv;
 
@@ -139,31 +140,37 @@ cb_thumb_event(GnomeCanvasItem *item, GdkEvent *event, SkinScrollBar* bar)
 		{
 			gnome_canvas_item_set(item, "pixbuf", priv->thumb_subpb[1], NULL);
 			is_pressing = TRUE;
-			y = item_y;
+			old_y = item_y;
 		}
 		break;
 	case GDK_MOTION_NOTIFY:
-		if(is_pressing)
+		if(is_pressing && ++count % 8 == 0)
 		{
+			gdouble x1, y1, x2, y2;
+
 			gnome_canvas_item_get_bounds(item, &x1, &y1, &x2, &y2);
-			if((y1 > priv->thumb_begin && y2 < priv->thumb_end)
-					|| (y1 == priv->thumb_begin && item_y - y > 0)
-					|| (y2 == priv->thumb_end && item_y - y < 0))
+			if(y1 >= priv->thumb_begin && y2 <= priv->thumb_end)
 			{
-				yy = item_y - y;
-				if(yy > 1)
+				gdouble yy = item_y - old_y;
+
+				gdouble dy1 = y1 + yy;
+				gdouble dy2 = y2 + yy;
+				
+					
+				if(dy1 < priv->thumb_begin)
 				{
-					y++;
-					yy = 1;
+					yy = yy + (priv->thumb_begin - dy1);
 				}
-				else if(yy < -1)
+
+				if(dy2 > priv->thumb_end)
 				{
-					y--;
-					yy = -1;
+					yy = yy - (dy2 - priv->thumb_end);
 				}
+
 				gnome_canvas_item_move(item, 0.0, yy);
 				gdouble value = (y1 - priv->thumb_begin) / (priv->thumb_range - priv->thumb_height);
 				skin_scroll_bar_update_adjustment(bar, value);
+				old_y = item_y;
 			}
 		}
 		break;
@@ -263,7 +270,7 @@ skin_scroll_bar_construct(SkinScrollBar *bar)
 	g_signal_connect(G_OBJECT(priv->thumb_item), "event", G_CALLBACK(cb_thumb_event), bar);
 }
 
-// 对于x1, y1, x2, y2, 我们期望使用playlist位置数据
+// 对于x1, y1, x2, y2, 我期望使用的是playlist位置数据
 SkinScrollBar *
 skin_scroll_bar_new(GnomeCanvasGroup *root, 
 		GdkPixbuf *button_pixbuf, 
@@ -306,6 +313,30 @@ skin_scroll_bar_new(GnomeCanvasGroup *root,
 	return bar;
 }
 
+static void
+adj_value_changed_cb(GtkAdjustment *adj, SkinScrollBar *bar)
+{
+	SkinScrollBarPrivate *priv;
+	gdouble y;
+	gdouble x1, y1, x2, y2;
+
+	priv = bar->priv;
+	if(priv->self_value_changed)
+	{
+		// NOTE: 当SkinScrollBar自己改变了值时，这里不作处理
+		priv->self_value_changed = FALSE;
+		return;
+	}
+
+	gnome_canvas_item_get_bounds(priv->thumb_item, &x1, &y1, &x2, &y2);
+
+	y = adj->value / (adj->upper - adj->lower - adj->page_size) 
+		* (priv->thumb_range - priv->thumb_height)
+		+ priv->thumb_begin;
+
+	gnome_canvas_item_move(priv->thumb_item, 0.0, y - y1);
+}
+
 void
 skin_scroll_bar_set_adjustment(SkinScrollBar *bar, GtkAdjustment *adj)
 {
@@ -313,6 +344,7 @@ skin_scroll_bar_set_adjustment(SkinScrollBar *bar, GtkAdjustment *adj)
 	g_return_if_fail(GTK_IS_ADJUSTMENT(adj));
 
 	bar->priv->adj = adj;
+	g_signal_connect(G_OBJECT(adj), "value-changed", G_CALLBACK(adj_value_changed_cb), bar);
 }
 
 gdouble
