@@ -365,9 +365,35 @@ skin_dynamic_text_update(SkinDynamicText *dtext)
 	}
 }
 
-static gboolean update_text(SkinDynamicText *dtext)
+
+static gboolean 
+animation_text(SkinDynamicText *dtext)
 {
 	SkinDynamicTextPrivate *priv;
+	gchar *p;
+	gdouble width;
+
+	g_return_val_if_fail(SKIN_IS_DYNAMIC_TEXT(dtext), TRUE);
+	priv = dtext->priv;
+
+	g_object_get(G_OBJECT(dtext), "text", &p, NULL);
+	p = g_utf8_next_char(p);
+	gnome_canvas_item_set(GNOME_CANVAS_ITEM(dtext), "text", p, NULL);
+
+	g_object_get(G_OBJECT(dtext), "text-width", &width, NULL);
+	if(width < priv->x2 - priv->x1)
+	{
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static gboolean 
+update_text(SkinDynamicText *dtext)
+{
+	SkinDynamicTextPrivate *priv;
+	gdouble width;
 
 	g_return_val_if_fail(SKIN_IS_DYNAMIC_TEXT(dtext), TRUE);
 	priv = dtext->priv;
@@ -376,6 +402,11 @@ static gboolean update_text(SkinDynamicText *dtext)
 	gnome_canvas_item_set(GNOME_CANVAS_ITEM(dtext),
 			"text", dtext->priv->text[priv->counter], NULL);
 
+	g_object_get(G_OBJECT(dtext), "text-width", &width, NULL);
+	if(width > priv->x2 - priv->x1)
+	{
+		g_timeout_add(150, (GSourceFunc)animation_text, dtext);
+	}
 	++priv->counter;
 	return TRUE;
 }
@@ -394,7 +425,7 @@ skin_dynamic_text_construct(SkinDynamicText *dtext,
 
 	skin_dynamic_text_update(dtext);
 
-	g_timeout_add(2000, (GSourceFunc)update_text, dtext);
+	g_timeout_add(4000, (GSourceFunc)update_text, dtext);
 }
 
 SkinDynamicText *
@@ -425,12 +456,3 @@ skin_dynamic_text_new(GnomeCanvasGroup *root, const gchar *first_arg_name, ...)
 	return dtext;
 }
 
-void 
-skin_dynamic_text_set_text(SkinDynamicText *dtext, const gchar *text)
-{
-}
-
-void 
-skin_dynamic_text_set_font(SkinDynamicText *dtext, const gchar *font, gint font_size)
-{
-}

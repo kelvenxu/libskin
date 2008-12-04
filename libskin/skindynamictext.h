@@ -59,8 +59,6 @@ GType skin_dynamic_text_get_type() G_GNUC_CONST;
 
 SkinDynamicText *skin_dynamic_text_new(GnomeCanvasGroup *root, const gchar *first_arg_name, ...);
 
-void skin_dynamic_text_set_text(SkinDynamicText *dtext, const gchar *text);
-
 G_END_DECLS
 
 #endif /*__SKINDYNAMICTEXT_H__ */

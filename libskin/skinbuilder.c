@@ -172,10 +172,13 @@ create_player_window(SkinBuilder *builder)
 			"x2", (gdouble)(player->info.x2),
 			"y2", (gdouble)(player->info.y2),
 			"color", player->info.color,
-			"title", "title --",
-			"artist", "artist --",
-			"album", "album ==",
-			"format", "format --",
+			"font", player->info.font,
+			"size-points", (gdouble)player->info.font_size,
+			"size-set", TRUE,
+			"title", "Linux Music Player - Little Pudding",
+			"artist", "Kelven Xu",
+			"album", "kelvenxu@gmail.com",
+			"format", "www.lmplayer.org",
 			NULL);
 	add_object(builder, G_OBJECT(info), "player-info");
 
