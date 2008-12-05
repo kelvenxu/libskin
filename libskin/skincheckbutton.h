@@ -66,6 +66,9 @@ gboolean skin_check_button_get_active(SkinCheckButton *button);
 void skin_check_button_show(SkinCheckButton *button);
 void skin_check_button_hide(SkinCheckButton *button);
 
+void skin_check_button_set_pixbuf(SkinCheckButton *button, GdkPixbuf *pixbuf);
+void skin_check_button_set_position(SkinCheckButton *button, gdouble x, gdouble y);
+
 G_END_DECLS
 
 #endif /*__SKINCHECKBUTTON_H__ */

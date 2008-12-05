@@ -41,6 +41,7 @@ static int signals[LAST_SIGNAL];
 
 struct _SkinButtonPrivate
 {
+	GdkPixbuf *pixbuf;
 	GdkPixbuf *subpixbuf[SUBPIXBUF];
 	gboolean sensitive;
 };
@@ -195,6 +196,7 @@ SkinButton*
 skin_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdouble y)
 {
 	SkinButton *button;
+	SkinButtonPrivate *priv;
 	GnomeCanvasItem *item;
 	gdouble pw;
 	gdouble ph;
@@ -212,20 +214,23 @@ skin_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdouble y)
 			NULL);
 
 	button = SKIN_BUTTON(item);
+	priv = button->priv;
 
-	pw = gdk_pixbuf_get_width(pixbuf);
-	ph = gdk_pixbuf_get_height(pixbuf);
+	priv->pixbuf = gdk_pixbuf_copy(pixbuf);
+
+	pw = gdk_pixbuf_get_width(priv->pixbuf);
+	ph = gdk_pixbuf_get_height(priv->pixbuf);
 	  
 	w = pw / SUBPIXBUF;
 	h = ph;
 	
 	for(i = 0; i < SUBPIXBUF; ++i)
 	{
-		button->priv->subpixbuf[i] = gdk_pixbuf_new_subpixbuf(pixbuf, w * i, 0, w, h);
+		priv->subpixbuf[i] = gdk_pixbuf_new_subpixbuf(priv->pixbuf, w * i, 0, w, h);
 	}
 
 	gnome_canvas_item_set(item, 
-			"pixbuf", button->priv->subpixbuf[0], 
+			"pixbuf", priv->subpixbuf[0], 
 			"x", x, 
 			"y", y, 
 			NULL);
@@ -274,5 +279,48 @@ skin_button_get_sensitive(SkinButton *button)
 	g_return_val_if_fail(SKIN_IS_BUTTON(button), FALSE);
 
 	return button->priv->sensitive;
+}
+
+void
+skin_button_set_pixbuf(SkinButton *button, GdkPixbuf *pixbuf)
+{
+	SkinButtonPrivate *priv;
+	gdouble pw;
+	gdouble ph;
+	gdouble w;
+	gdouble h;
+	gint i;
+
+	g_return_if_fail(SKIN_IS_BUTTON(button));
+	g_return_if_fail(GDK_IS_PIXBUF(pixbuf));
+	priv = button->priv;
+
+	if(priv->pixbuf)
+		g_object_unref(priv->pixbuf);
+
+	priv->pixbuf = gdk_pixbuf_copy(pixbuf);
+	pw = gdk_pixbuf_get_width(priv->pixbuf);
+	ph = gdk_pixbuf_get_height(priv->pixbuf);
+	  
+	w = pw / SUBPIXBUF;
+	h = ph;
+	
+	for(i = 0; i < SUBPIXBUF; ++i)
+	{
+		priv->subpixbuf[i] = gdk_pixbuf_new_subpixbuf(priv->pixbuf, w * i, 0, w, h);
+	}
+
+	gnome_canvas_item_set(GNOME_CANVAS_ITEM(button), "pixbuf", priv->subpixbuf[0], NULL);
+}
+
+void
+skin_button_set_position(SkinButton *button, gdouble x, gdouble y)
+{
+	g_return_if_fail(SKIN_IS_BUTTON(button));
+
+	gnome_canvas_item_set(GNOME_CANVAS_ITEM(button), 
+			"x", x, 
+			"y", y,
+			NULL);
 }
 

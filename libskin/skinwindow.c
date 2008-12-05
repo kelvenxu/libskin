@@ -141,7 +141,6 @@ skin_window_class_init(SkinWindowClass *class)
 
     g_type_class_add_private (class, sizeof (SkinWindowPrivate));
 
-	g_print("new singal: right-button-signal\n");
 	widget_signals[RIGHT_BUTTON_PRESS] = 
 			g_signal_new("right-button-press",
 						G_TYPE_FROM_CLASS(gobject_class),
@@ -587,6 +586,11 @@ void skin_window_set_image(SkinWindow* window,
 	gnome_canvas_item_set(window->priv->item,
 			"pixbuf", pixbuf,
 			NULL);
+}
+
+void skin_window_set_pixbuf(SkinWindow* window, GdkPixbuf* pixbuf)
+{
+	skin_window_set_image(window, pixbuf);
 }
 
 GnomeCanvasGroup *

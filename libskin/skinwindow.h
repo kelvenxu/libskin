@@ -79,6 +79,7 @@ void skin_window_show(SkinWindow* skin_window);
 void skin_window_hide(SkinWindow* skin_window);
 void skin_window_move(SkinWindow* skin_window, gint x, gint y);
 void skin_window_set_image(SkinWindow* skin_window, GdkPixbuf* pixbuf);
+void skin_window_set_pixbuf(SkinWindow* window, GdkPixbuf* pixbuf);
 GnomeCanvasGroup * skin_window_get_canvas_root(SkinWindow *window);
 void skin_window_set_resizeable(SkinWindow *window, gboolean resizeable);
 

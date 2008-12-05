@@ -42,6 +42,7 @@ enum {
 
 struct _SkinArchivePrivate
 {
+	gchar *skinfile;
 	gchar *path;
 };
 

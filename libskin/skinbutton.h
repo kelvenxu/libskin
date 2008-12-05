@@ -66,6 +66,9 @@ void skin_button_hide(SkinButton *button);
 void skin_button_set_sensitive(SkinButton *button, gboolean sensitive);
 gboolean skin_button_get_sensitive(SkinButton *button);
 
+void skin_button_set_pixbuf(SkinButton *button, GdkPixbuf *pixbuf);
+void skin_button_set_position(SkinButton *button, gdouble x, gdouble y);
+
 G_END_DECLS
 
 #endif /*__SKIN_BUTTON_H__ */

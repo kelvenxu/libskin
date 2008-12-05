@@ -42,6 +42,7 @@ static int signals[LAST_SIGNAL];
 
 struct _SkinCheckButtonPrivate
 {
+	GdkPixbuf *pixbuf;
 	GdkPixbuf *subpixbuf[SUBPIXBUF];
 	gdouble x0;
 	gdouble y0;
@@ -146,9 +147,10 @@ skin_check_button_class_init (SkinCheckButtonClass *class)
 }
 
 static void
-skin_check_button_init (SkinCheckButton *skin_check_button)
+skin_check_button_init (SkinCheckButton *button)
 {
-    skin_check_button->priv = SKIN_CHECK_BUTTON_GET_PRIVATE (skin_check_button);
+    button->priv = SKIN_CHECK_BUTTON_GET_PRIVATE (button);
+	button->priv->pixbuf = NULL;
 }
 
 GType
@@ -222,6 +224,8 @@ skin_check_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdou
 {
 	SkinCheckButton *button;
 	GnomeCanvasItem *item;
+	SkinCheckButtonPrivate *priv;
+
 	gdouble pw;
 	gdouble ph;
 	gdouble w;
@@ -233,20 +237,22 @@ skin_check_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixbuf, gdouble x, gdou
 			NULL);
 
 	button = SKIN_CHECK_BUTTON(item);
+	priv = button->priv;
 
-	pw = gdk_pixbuf_get_width(pixbuf);
-	ph = gdk_pixbuf_get_height(pixbuf);
+	priv->pixbuf = gdk_pixbuf_copy(pixbuf);
+	pw = gdk_pixbuf_get_width(priv->pixbuf);
+	ph = gdk_pixbuf_get_height(priv->pixbuf);
 	  
 	w = pw / SUBPIXBUF;
 	h = ph;
 	
 	for(i = 0; i < SUBPIXBUF; ++i)
 	{
-		button->priv->subpixbuf[i] = gdk_pixbuf_new_subpixbuf(pixbuf, w * i, 0, w, h);
+		priv->subpixbuf[i] = gdk_pixbuf_new_subpixbuf(priv->pixbuf, w * i, 0, w, h);
 	}
 
 	gnome_canvas_item_set(item, 
-			"pixbuf", button->priv->subpixbuf[0], 
+			"pixbuf", priv->subpixbuf[0], 
 			"x", x, 
 			"y", y, 
 			NULL);
@@ -294,3 +300,48 @@ void skin_check_button_hide(SkinCheckButton *button)
 {
 	gnome_canvas_item_hide(GNOME_CANVAS_ITEM(button));
 }
+
+void
+skin_check_button_set_pixbuf(SkinCheckButton *button, GdkPixbuf *pixbuf)
+{
+	SkinCheckButtonPrivate *priv;
+	gdouble pw;
+	gdouble ph;
+	gdouble w;
+	gdouble h;
+	gint i;
+	
+	g_return_if_fail(SKIN_IS_CHECK_BUTTON(button));
+	priv = button->priv;
+
+	if(priv->pixbuf)
+		g_object_unref(priv->pixbuf);
+
+	priv->pixbuf = gdk_pixbuf_copy(pixbuf);
+	pw = gdk_pixbuf_get_width(priv->pixbuf);
+	ph = gdk_pixbuf_get_height(priv->pixbuf);
+	  
+	w = pw / SUBPIXBUF;
+	h = ph;
+	
+	for(i = 0; i < SUBPIXBUF; ++i)
+	{
+		priv->subpixbuf[i] = gdk_pixbuf_new_subpixbuf(priv->pixbuf, w * i, 0, w, h);
+	}
+
+	gnome_canvas_item_set(GNOME_CANVAS_ITEM(button), 
+			"pixbuf", priv->subpixbuf[0], 
+			NULL);
+}
+
+void 
+skin_check_button_set_position(SkinCheckButton *button, gdouble x, gdouble y)
+{
+	g_return_if_fail(SKIN_IS_CHECK_BUTTON(button));
+
+	gnome_canvas_item_set(GNOME_CANVAS_ITEM(button), 
+			"x", x,
+			"y", y,
+			NULL);
+}
+

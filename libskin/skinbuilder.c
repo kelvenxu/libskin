@@ -54,11 +54,12 @@ G_DEFINE_TYPE (SkinBuilder, skin_builder, G_TYPE_OBJECT);
 
 struct _SkinBuilderPrivate 
 {
-	int i;
+	//int i;
 	SkinArchive *ar;
 	GHashTable *objects;
-};
 
+	gchar *skinfile;
+};
 
 static void
 skin_builder_dispose (SkinBuilder *self)
@@ -75,7 +76,6 @@ skin_builder_finalize (SkinBuilder *self)
 static void
 skin_builder_init (SkinBuilder *self)
 {
-	g_print("object init\n");
 	SkinBuilderPrivate *priv;
 	priv = g_new0(SkinBuilderPrivate, 1);
 
@@ -83,19 +83,16 @@ skin_builder_init (SkinBuilder *self)
 
 	priv->ar = NULL;
 	priv->objects = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
-	g_print("object init done\n");
 }
 
 static void
 skin_builder_class_init (SkinBuilderClass *self_class)
 {
-	g_print("class init\n");
 	GObjectClass *object_class = G_OBJECT_CLASS (self_class);
 
 	g_type_class_add_private (self_class, sizeof (SkinBuilderPrivate));
 	object_class->dispose = (void (*) (GObject *object)) skin_builder_dispose;
 	object_class->finalize = (void (*) (GObject *object)) skin_builder_finalize;
-	g_print("class initdone\n");
 }
 
 static void
@@ -110,7 +107,6 @@ create_player_window(SkinBuilder *builder)
 	PlayerArchive *player;
 	GnomeCanvasGroup *root;
 
-	g_print("create player window\n");
 	g_return_if_fail(SKIN_IS_BUILDER(builder));
 
 	player = builder->priv->ar->player;
@@ -756,35 +752,179 @@ create_mini_window(SkinBuilder *builder)
 	add_object(builder, G_OBJECT(info), "mini-info");
 }
 
-SkinBuilder *skin_builder_new()
+static void
+set_player_window_prop(SkinBuilder *builder)
+{
+	PlayerArchive *player;
+
+	g_return_if_fail(SKIN_IS_BUILDER(builder));
+
+	player = builder->priv->ar->player;
+
+	SkinWindow *window = (SkinWindow*)skin_builder_get_object(builder, "player-window");
+	skin_window_set_pixbuf(window, player->window.img);
+	skin_window_move(window, player->window.x1, player->window.y1);
+
+	SkinButton *button;
+	button = (SkinButton*)skin_builder_get_object(builder, "player-pause");
+	skin_button_set_pixbuf(button, player->pause.img);
+	skin_button_set_position(button, player->pause.x1, player->pause.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "player-play");
+	skin_button_set_pixbuf(button, player->play.img);
+	skin_button_set_position(button, player->play.x1, player->play.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "player-stop");
+	skin_button_set_pixbuf(button, player->stop.img);
+	skin_button_set_position(button, player->stop.x1, player->stop.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "player-prev");
+	skin_button_set_pixbuf(button, player->prev.img);
+	skin_button_set_position(button, player->prev.x1, player->prev.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "player-next");
+	skin_button_set_pixbuf(button, player->next.img);
+	skin_button_set_position(button, player->next.x1, player->next.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "player-exit");
+	skin_button_set_pixbuf(button, player->exit.img);
+	skin_button_set_position(button, player->exit.x1, player->exit.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "player-minimize");
+	skin_button_set_pixbuf(button, player->minimize.img);
+	skin_button_set_position(button, player->minimize.x1, player->minimize.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "player-minimode");
+	skin_button_set_pixbuf(button, player->minimode.img);
+	skin_button_set_position(button, player->minimode.x1, player->minimode.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "player-open");
+	skin_button_set_pixbuf(button, player->open.img);
+	skin_button_set_position(button, player->open.x1, player->open.y1);
+
+	SkinDynamicText *info = (SkinDynamicText*)skin_builder_get_object(builder, "player-info");
+	g_object_set(G_OBJECT(info),
+			"x1", (gdouble)(player->info.x1),
+			"y1", (gdouble)(player->info.y1),
+			"x2", (gdouble)(player->info.x2),
+			"y2", (gdouble)(player->info.y2),
+			"color", player->info.color,
+			"font", player->info.font,
+			"size-points", (gdouble)player->info.font_size,
+			"size-set", TRUE,
+			NULL);
+
+	SkinStatusBar *statusbar = (SkinStatusBar*)skin_builder_get_object(builder, "player-statusbar");
+	g_object_set(G_OBJECT(statusbar),
+			"x1", (gdouble)(player->status.x1),
+			"y1", (gdouble)(player->status.y1),
+			"x2", (gdouble)(player->status.x2),
+			"y2", (gdouble)(player->status.y2),
+			"color", player->status.color,
+			"align", player->status.align,
+			NULL);
+
+	SkinHScale *progressbar = (SkinHScale*)skin_builder_get_object(builder, "player-progressbar");
+	g_object_set(G_OBJECT(progressbar),
+			"x1", (gdouble)(player->progress.x1),
+			"y1", (gdouble)(player->progress.y1),
+			"x2", (gdouble)(player->progress.x2),
+			"y2", (gdouble)(player->progress.y2),
+			"fill-pixbuf", player->progress.fill_img,
+			"thumb-pixbuf", player->progress.thumb_img,
+			NULL);
+
+	SkinHScale *volume = (SkinHScale*)skin_builder_get_object(builder, "player-volume");
+	g_object_set(G_OBJECT(volume),
+			"x1", (gdouble)(player->volume.x1),
+			"y1", (gdouble)(player->volume.y1),
+			"x2", (gdouble)(player->volume.x2),
+			"y2", (gdouble)(player->volume.y2),
+			"fill-pixbuf", player->volume.fill_img,
+			"thumb-pixbuf", player->volume.thumb_img,
+			NULL);
+
+	GnomeCanvasItem *visualbox = (GnomeCanvasItem*)skin_builder_get_object(builder, "player-visualbox");
+	gnome_canvas_item_set(visualbox,
+			"x", (gdouble)player->visual.x1,
+			"y", (gdouble)player->visual.y1,
+			"width", (gdouble)(player->visual.x2 - player->visual.x1),
+			"height", (gdouble)(player->visual.y2 - player->visual.y1),
+			NULL);
+
+			
+}
+
+static void
+set_equalizer_window_prop(SkinBuilder *builder)
+{
+}
+
+static void
+set_lyric_window_prop(SkinBuilder *builder)
+{
+}
+
+static void
+set_playlist_window_prop(SkinBuilder *builder)
+{
+}
+
+static void
+set_mini_window_prop(SkinBuilder *builder)
+{
+}
+
+SkinBuilder *
+skin_builder_new()
 {
 	SkinBuilder *builder;
-	g_print("new builder\n");
 	builder = SKIN_BUILDER(g_object_new(SKIN_TYPE_BUILDER, NULL));
-	g_print("new builder done\n");
 	return builder; 
 }
 
-gint skin_builder_add_from_archive(SkinBuilder *builder, SkinArchive *ar)
+gint 
+skin_builder_add_from_archive(SkinBuilder *builder, SkinArchive *ar)
 {
-	g_print("add archive\n");
 	g_return_val_if_fail(SKIN_IS_BUILDER(builder), -1);
 	g_return_val_if_fail(SKIN_IS_ARCHIVE(ar), -1);
 
-	g_print("add archive\n");
-	builder->priv->ar = ar;
-	create_player_window(builder);
-	create_equalizer_window(builder);
-	create_lyric_window(builder);
-	create_playlist_window(builder);
-	create_mini_window(builder);
-	return 0;
+	if(builder->priv->ar == NULL)
+	{
+		builder->priv->ar = ar;
+		g_object_ref(builder->priv->ar);
+
+		create_player_window(builder);
+		create_equalizer_window(builder);
+		create_lyric_window(builder);
+		create_playlist_window(builder);
+		create_mini_window(builder);
+
+		return 0;
+	}
+	else
+	{
+		// TODO: builder->priv->ar == ar?
+		g_object_unref(builder->priv->ar);
+		builder->priv->ar = ar;
+		g_object_ref(builder->priv->ar);
+		
+		set_player_window_prop(builder);
+		set_equalizer_window_prop(builder);
+		set_lyric_window_prop(builder);
+		set_playlist_window_prop(builder);
+		set_mini_window_prop(builder);
+
+		return 0;
+	}
 }
 
-GObject *skin_builder_get_object(SkinBuilder *builder, const gchar *name)
+GObject *
+skin_builder_get_object(SkinBuilder *builder, const gchar *name)
 {
 	g_return_val_if_fail(SKIN_BUILDER(builder), NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
 	return g_hash_table_lookup(builder->priv->objects, name);
 }
+

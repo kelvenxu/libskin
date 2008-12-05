@@ -39,9 +39,14 @@ static gboolean quit(SkinWindow *window, gpointer user_data)
 	gtk_main_quit();
 	return FALSE;
 }
-static gboolean play_action(SkinButton *button, gpointer user_data)
+static gboolean play_action(SkinButton *button, SkinBuilder *builder)
 {
 	g_print("play...\n");
+
+	SkinArchive *ar = skin_archive_new();
+	gboolean re = skin_archive_load(ar, "/home/kelvenxu/.lmplayer/skins/CoolBlack.zip");
+
+	skin_builder_add_from_archive(builder, ar);
 	return FALSE;
 }
 
@@ -81,7 +86,7 @@ int main(int argc, char *argv[])
 	g_return_val_if_fail(SKIN_IS_WINDOW(player_window), -1);
 
 	g_signal_connect(G_OBJECT(player_window), "delete-event", G_CALLBACK(quit), NULL);
-	g_signal_connect(G_OBJECT(play), "clicked", G_CALLBACK(play_action), NULL);
+	g_signal_connect(G_OBJECT(play), "clicked", G_CALLBACK(play_action), builder);
 
 	equalizer_window = SKIN_WINDOW(skin_builder_get_object(builder, "equalizer-window"));
 	skin_window_set_resizeable(equalizer_window, FALSE);
