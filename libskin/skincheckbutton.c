@@ -326,6 +326,9 @@ skin_check_button_set_pixbuf(SkinCheckButton *button, GdkPixbuf *pixbuf)
 	
 	for(i = 0; i < SUBPIXBUF; ++i)
 	{
+		if(priv->subpixbuf[i])
+			g_object_unref(priv->subpixbuf[i]);
+
 		priv->subpixbuf[i] = gdk_pixbuf_new_subpixbuf(priv->pixbuf, w * i, 0, w, h);
 	}
 

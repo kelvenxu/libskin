@@ -66,6 +66,8 @@ void skin_digital_time_show(SkinDigitalTime *digital_time);
 void skin_digital_time_hide(SkinDigitalTime *digital_time);
 
 void skin_digital_time_set_value(SkinDigitalTime *digital_time, int value);
+void skin_digital_time_set_position(SkinDigitalTime *dt, gdouble x, gdouble y);
+void skin_digital_time_set_pixbuf(SkinDigitalTime *dt, GdkPixbuf *pixbuf);
 
 G_END_DECLS
 

@@ -592,6 +592,16 @@ cb_playlist_change_size(SkinWindow *window, gint rx, gint ry, SkinBuilder *build
 	}
 }
 
+static gchar *tb_items[TOOLBAR_ITEMS] = {
+	"toolbar-add",
+	"toolbar-remove",
+	"toolbar-list",
+	"toolbar-sort",
+	"toolbar-search",
+	"toolbar-edit",
+	"toolbar-mode"
+};
+
 static void
 create_playlist_window(SkinBuilder *builder)
 {
@@ -601,15 +611,6 @@ create_playlist_window(SkinBuilder *builder)
 	gdouble width, height;
 	gdouble x;
 	gint i;
-	gchar *tb_items[TOOLBAR_ITEMS] = {
-		"toolbar-add",
-		"toolbar-remove",
-		"toolbar-list",
-		"toolbar-sort",
-		"toolbar-search",
-		"toolbar-edit",
-		"toolbar-mode"
-	};
 
 	g_return_if_fail(SKIN_IS_BUILDER(builder));
 
@@ -718,10 +719,20 @@ create_mini_window(SkinBuilder *builder)
 			mini->lyric.x1, mini->lyric.y1);
 	add_object(builder, G_OBJECT(lyric), "mini-lyric");
 
-	SkinButton *icon = skin_button_new(root,
-			mini->icon.img, 
-			mini->icon.x1, mini->icon.y1);
-	add_object(builder, G_OBJECT(icon), "mini-icon");
+	// FIXME:
+	//SkinButton *icon = skin_button_new(root,
+	//		mini->icon.img, 
+	//		mini->icon.x1, mini->icon.y1);
+	if(mini->icon.img)
+	{
+		GnomeCanvasItem *icon = gnome_canvas_item_new(root,
+				gnome_canvas_pixbuf_get_type(),
+				"pixbuf", mini->icon.img,
+				"x", mini->icon.x1,
+				"y", mini->icon.y1,
+				NULL);
+		add_object(builder, G_OBJECT(icon), "mini-icon");
+	}
 
 	SkinButton *minimize = skin_button_new(root,
 			mini->minimize.img, 
@@ -834,6 +845,28 @@ set_player_window_prop(SkinBuilder *builder)
 			"thumb-pixbuf", player->progress.thumb_img,
 			NULL);
 
+	SkinDigitalTime *led;
+	led = (SkinDigitalTime*)skin_builder_get_object(builder, "player-led");
+	skin_digital_time_set_pixbuf(led, player->led.img);
+	skin_digital_time_set_position(led, (gdouble)(player->led.x1), (gdouble)(player->led.y1));
+
+	SkinCheckButton *cbutton;
+	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "player-playlist");
+	skin_check_button_set_pixbuf(cbutton, player->playlist.img);
+	skin_check_button_set_position(cbutton, player->playlist.x1, player->playlist.y1);
+
+	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "player-lyric");
+	skin_check_button_set_pixbuf(cbutton, player->lyric.img);
+	skin_check_button_set_position(cbutton, player->lyric.x1, player->lyric.y1);
+
+	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "player-equalizer");
+	skin_check_button_set_pixbuf(cbutton, player->equalizer.img);
+	skin_check_button_set_position(cbutton, player->equalizer.x1, player->equalizer.y1);
+
+	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "player-mute");
+	skin_check_button_set_pixbuf(cbutton, player->mute.img);
+	skin_check_button_set_position(cbutton, player->mute.x1, player->mute.y1);
+
 	SkinHScale *volume = (SkinHScale*)skin_builder_get_object(builder, "player-volume");
 	g_object_set(G_OBJECT(volume),
 			"x1", (gdouble)(player->volume.x1),
@@ -851,28 +884,235 @@ set_player_window_prop(SkinBuilder *builder)
 			"width", (gdouble)(player->visual.x2 - player->visual.x1),
 			"height", (gdouble)(player->visual.y2 - player->visual.y1),
 			NULL);
-
-			
 }
 
 static void
 set_equalizer_window_prop(SkinBuilder *builder)
 {
+	EqualizerArchive *eq;
+
+	g_return_if_fail(SKIN_IS_BUILDER(builder));
+
+	eq = builder->priv->ar->equalizer;
+
+	SkinWindow *window = (SkinWindow*)skin_builder_get_object(builder, "equalizer-window");
+	skin_window_set_pixbuf(window, eq->window.img);
+	skin_window_move(window, eq->window.x1, eq->window.y1);
+
+	SkinButton *button;
+	button = (SkinButton*)skin_builder_get_object(builder, "equalizer-close");
+	skin_button_set_pixbuf(button, eq->close.img);
+	skin_button_set_position(button, eq->close.x1, eq->close.y1);
+
+	SkinCheckButton *cbutton;
+	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "equalizer-enabled");
+	skin_check_button_set_pixbuf(cbutton, eq->enabled.img);
+	skin_check_button_set_position(cbutton, eq->enabled.x1, eq->enabled.y1);
+
+	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "equalizer-profile");
+	skin_check_button_set_pixbuf(cbutton, eq->profile.img);
+	skin_check_button_set_position(cbutton, eq->profile.x1, eq->profile.y1);
+
+	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "equalizer-reset");
+	skin_check_button_set_pixbuf(cbutton, eq->reset.img);
+	skin_check_button_set_position(cbutton, eq->reset.x1, eq->reset.y1);
+
+	SkinHScale *hscale = (SkinHScale*)skin_builder_get_object(builder, "equalizer-balance");
+	g_object_set(G_OBJECT(hscale),
+			"x1", (gdouble)(eq->balance.x1),
+			"y1", (gdouble)(eq->balance.y1),
+			"x2", (gdouble)(eq->balance.x2),
+			"y2", (gdouble)(eq->balance.y2),
+			"fill-pixbuf", eq->balance.fill_img,
+			"thumb-pixbuf", eq->balance.thumb_img,
+			NULL);
+
+	hscale = (SkinHScale*)skin_builder_get_object(builder, "equalizer-surround");
+	g_object_set(G_OBJECT(hscale),
+			"x1", (gdouble)(eq->surround.x1),
+			"y1", (gdouble)(eq->surround.y1),
+			"x2", (gdouble)(eq->surround.x2),
+			"y2", (gdouble)(eq->surround.y2),
+			"fill-pixbuf", eq->surround.fill_img,
+			"thumb-pixbuf", eq->surround.thumb_img,
+			NULL);
+
+	SkinVScale *vscale = (SkinVScale*)skin_builder_get_object(builder, "equalizer-preamp");
+	g_object_set(G_OBJECT(vscale),
+			"x1", (gdouble)(eq->preamp.x1),
+			"y1", (gdouble)(eq->preamp.y2),
+			"x2", (gdouble)(eq->preamp.x2),
+			"y2", (gdouble)(eq->preamp.y1),
+			"fill-pixbuf", eq->preamp.fill_img,
+			"thumb-pixbuf", eq->preamp.thumb_img,
+			NULL);
+
+	gchar name[32];
+	gint i;
+	for(i = 0; i < 10; ++i)
+	{
+		sprintf(name, "equalizer-eqfactor%d", i);
+		vscale = (SkinVScale*)skin_builder_get_object(builder, name);
+		g_object_set(G_OBJECT(vscale),
+			"x1", (gdouble)(eq->eqfactor.x1) + eq->window.eq_interval * i,
+			"y1", (gdouble)(eq->eqfactor.y2),
+			"x2", (gdouble)(eq->eqfactor.x2) + eq->window.eq_interval * i,
+			"y2", (gdouble)(eq->eqfactor.y1),
+			"fill-pixbuf", eq->eqfactor.fill_img,
+			"thumb-pixbuf", eq->eqfactor.thumb_img,
+			NULL);
+
+	}
 }
 
 static void
 set_lyric_window_prop(SkinBuilder *builder)
 {
+	LyricArchive *lyric;
+
+	g_return_if_fail(SKIN_IS_BUILDER(builder));
+
+	lyric = builder->priv->ar->lyric;
+
+	SkinWindow *window = (SkinWindow*)skin_builder_get_object(builder, "lyric-window");
+	skin_window_set_pixbuf(window, lyric->window.img);
+	skin_window_move(window, lyric->window.x1, lyric->window.y1);
+
+	SkinButton *button;
+	button = (SkinButton*)skin_builder_get_object(builder, "lyric-close");
+	skin_button_set_pixbuf(button, lyric->close.img);
+	skin_button_set_position(button, lyric->close.x1, lyric->close.y1);
+
+	SkinCheckButton *cbutton;
+	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "lyric-ontop");
+	skin_check_button_set_pixbuf(cbutton, lyric->ontop.img);
+	skin_check_button_set_position(cbutton, lyric->ontop.x1, lyric->ontop.y1);
+
+	GnomeCanvasItem *lyricbox = (GnomeCanvasItem*)skin_builder_get_object(builder, "lyric-lyricbox");
+	gnome_canvas_item_set(lyricbox,
+			"x", (gdouble)lyric->lyric.x1,
+			"y", (gdouble)lyric->lyric.y1,
+			"width", (gdouble)(lyric->lyric.x2 - lyric->lyric.x1),
+			"height", (gdouble)(lyric->lyric.y2 - lyric->lyric.y1),
+			NULL);
+
+	SkinLyric *lyricview = (SkinLyric*)skin_builder_get_object(builder, "lyric-lyricview");
+	skin_lyric_set_size(lyricview, 
+			lyric->lyric.x2 - lyric->lyric.x1,
+			lyric->lyric.y2 - lyric->lyric.y1);
+	skin_lyric_set_bg_color(lyricview, &lyric->attr.color_bg);
+	skin_lyric_set_text_color(lyricview, &lyric->attr.color_text);
+	skin_lyric_set_highlight_color(lyricview, &lyric->attr.color_hilight);
 }
 
 static void
 set_playlist_window_prop(SkinBuilder *builder)
 {
+	PlaylistArchive *pl;
+	gint i;
+
+	g_return_if_fail(SKIN_IS_BUILDER(builder));
+
+	pl = builder->priv->ar->playlist;
+
+	SkinWindow *window = (SkinWindow*)skin_builder_get_object(builder, "playlist-window");
+	skin_window_set_pixbuf(window, pl->window.img);
+	skin_window_move(window, pl->window.x1, pl->window.y1);
+
+	SkinButton *button;
+	button = (SkinButton*)skin_builder_get_object(builder, "playlist-close");
+	skin_button_set_pixbuf(button, pl->close.img);
+	skin_button_set_position(button, pl->close.x1, pl->close.y1);
+
+	gdouble width = (gdouble)gdk_pixbuf_get_width(pl->toolbar.img);
+	gdouble height = (gdouble)gdk_pixbuf_get_height(pl->toolbar.img);
+	width = width / TOOLBAR_ITEMS;
+	gdouble x = pl->toolbar.x1;
+
+	for(i = 0; i < TOOLBAR_ITEMS; ++i)
+	{
+		GdkPixbuf *pixbuf = gdk_pixbuf_new_subpixbuf(pl->toolbar.img,
+				i * width, 0, width, height);
+
+		x = pl->toolbar.x1 + i * width;
+		SkinToggleButton *tb = (SkinToggleButton*)skin_builder_get_object(builder, tb_items[i]);
+		skin_toggle_button_set_pixbuf(tb, pixbuf);
+		skin_toggle_button_set_position(tb, x, pl->toolbar.y1);
+	}
 }
 
 static void
 set_mini_window_prop(SkinBuilder *builder)
 {
+	MiniArchive *mini;
+
+	g_return_if_fail(SKIN_IS_BUILDER(builder));
+
+	mini = builder->priv->ar->mini;
+
+	SkinWindow *window = (SkinWindow*)skin_builder_get_object(builder, "mini-window");
+	skin_window_set_pixbuf(window, mini->window.img);
+	skin_window_move(window, mini->window.x1, mini->window.y1);
+
+	SkinButton *button;
+	button = (SkinButton*)skin_builder_get_object(builder, "mini-pause");
+	skin_button_set_pixbuf(button, mini->pause.img);
+	skin_button_set_position(button, mini->pause.x1, mini->pause.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "mini-play");
+	skin_button_set_pixbuf(button, mini->play.img);
+	skin_button_set_position(button, mini->play.x1, mini->play.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "mini-stop");
+	skin_button_set_pixbuf(button, mini->stop.img);
+	skin_button_set_position(button, mini->stop.x1, mini->stop.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "mini-prev");
+	skin_button_set_pixbuf(button, mini->prev.img);
+	skin_button_set_position(button, mini->prev.x1, mini->prev.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "mini-next");
+	skin_button_set_pixbuf(button, mini->next.img);
+	skin_button_set_position(button, mini->next.x1, mini->next.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "mini-exit");
+	skin_button_set_pixbuf(button, mini->exit.img);
+	skin_button_set_position(button, mini->exit.x1, mini->exit.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "mini-minimize");
+	skin_button_set_pixbuf(button, mini->minimize.img);
+	skin_button_set_position(button, mini->minimize.x1, mini->minimize.y1);
+
+	button = (SkinButton*)skin_builder_get_object(builder, "mini-minimode");
+	skin_button_set_pixbuf(button, mini->minimode.img);
+	skin_button_set_position(button, mini->minimode.x1, mini->minimode.y1);
+
+	GnomeCanvasItem *icon = (GnomeCanvasItem*)skin_builder_get_object(builder, "mini-icon");
+	if(icon)
+	{
+		gnome_canvas_item_set(icon,
+				"pixbuf", mini->icon.img,
+				"x", mini->icon.x1,
+				"y", mini->icon.y1,
+				NULL);
+	}
+
+	SkinDynamicText *info = (SkinDynamicText*)skin_builder_get_object(builder, "mini-info");
+	g_object_set(G_OBJECT(info),
+			"x1", (gdouble)(mini->info.x1),
+			"y1", (gdouble)(mini->info.y1),
+			"x2", (gdouble)(mini->info.x2),
+			"y2", (gdouble)(mini->info.y2),
+			"color", mini->info.color,
+			"font", mini->info.font,
+			"size-points", (gdouble)mini->info.font_size,
+			"size-set", TRUE,
+			NULL);
+
+	SkinCheckButton *cbutton;
+	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "mini-lyric");
+	skin_check_button_set_pixbuf(cbutton, mini->lyric.img);
+	skin_check_button_set_position(cbutton, mini->lyric.x1, mini->lyric.y1);
 }
 
 SkinBuilder *

@@ -44,7 +44,7 @@ static gboolean play_action(SkinButton *button, SkinBuilder *builder)
 	g_print("play...\n");
 
 	SkinArchive *ar = skin_archive_new();
-	gboolean re = skin_archive_load(ar, "/home/kelvenxu/.lmplayer/skins/CoolBlack.zip");
+	gboolean re = skin_archive_load(ar, "/home/kelvenxu/.lmplayer/skins/Travel_MarsII.zip");
 
 	skin_builder_add_from_archive(builder, ar);
 	return FALSE;

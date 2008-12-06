@@ -64,6 +64,8 @@ SkinToggleButton* skin_toggle_button_new(GnomeCanvasGroup *root, GdkPixbuf *pixb
 void skin_toggle_button_show(SkinToggleButton *button);
 void skin_toggle_button_hide(SkinToggleButton *button);
 
+void skin_toggle_button_set_position(SkinToggleButton *button, gdouble x, gdouble y);
+void skin_toggle_button_set_pixbuf(SkinToggleButton *button, GdkPixbuf *pixbuf);
 G_END_DECLS
 
 #endif /*__SKINTOGGLEBUTTON_H__ */

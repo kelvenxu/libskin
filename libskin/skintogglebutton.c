@@ -223,10 +223,40 @@ skin_toggle_button_get_property (GObject      *object,
 
 void skin_toggle_button_show(SkinToggleButton *button)
 {
+	g_return_if_fail(SKIN_IS_TOGGLE_BUTTON(button));
 	gnome_canvas_item_show(GNOME_CANVAS_ITEM(button));
 }
 
 void skin_toggle_button_hide(SkinToggleButton *button)
 {
+	g_return_if_fail(SKIN_IS_TOGGLE_BUTTON(button));
 	gnome_canvas_item_hide(GNOME_CANVAS_ITEM(button));
 }
+
+void
+skin_toggle_button_set_pixbuf(SkinToggleButton *button, GdkPixbuf *pixbuf)
+{
+	g_return_if_fail(SKIN_IS_TOGGLE_BUTTON(button));
+	g_return_if_fail(GDK_IS_PIXBUF(pixbuf));
+
+	gnome_canvas_item_set(GNOME_CANVAS_ITEM(button),
+			"pixbuf", pixbuf,
+			NULL);
+
+	button->priv->pixbuf = pixbuf;
+}
+
+void
+skin_toggle_button_set_position(SkinToggleButton *button, gdouble x, gdouble y)
+{
+	g_return_if_fail(SKIN_IS_TOGGLE_BUTTON(button));
+
+	gnome_canvas_item_set(GNOME_CANVAS_ITEM(button),
+			"x", x,
+			"y", y,
+			NULL);
+
+	button->priv->x0 = x;
+	button->priv->y0 = y;
+}
+

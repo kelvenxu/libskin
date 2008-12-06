@@ -52,6 +52,8 @@ struct _SkinDigitalTimePrivate
 
 	GnomeCanvasGroup *root;
 	GnomeCanvasItem *items[5];
+
+	gint value;
 };
 
 static void skin_digital_time_set_property  (GObject          *object,
@@ -78,6 +80,7 @@ static void
 skin_digital_time_init (SkinDigitalTime *dt)
 {
     dt->priv = SKIN_DIGITAL_TIME_GET_PRIVATE(dt);
+	dt->priv->value = 0;
 }
 
 GType
@@ -251,7 +254,8 @@ void skin_digital_time_hide(SkinDigitalTime *dt)
 	gnome_canvas_item_hide(GNOME_CANVAS_ITEM(dt));
 }
 
-void skin_digital_time_set_value(SkinDigitalTime *dt, int value)
+void 
+skin_digital_time_set_value(SkinDigitalTime *dt, int value)
 {
 	int m1, m2;
 	int s1, s2; //MM:SS >> m1m2:s1s2
@@ -259,6 +263,7 @@ void skin_digital_time_set_value(SkinDigitalTime *dt, int value)
 	g_return_if_fail(SKIN_IS_DIGITAL_TIME(dt));
 	g_return_if_fail(value >= 0);
 
+	dt->priv->value = value;
 
 	if(value > 3600) value = 3600;
 
@@ -282,6 +287,74 @@ void skin_digital_time_set_value(SkinDigitalTime *dt, int value)
 			NULL);
 	gnome_canvas_item_set(dt->priv->items[4],
 			"pixbuf", dt->priv->subpixbuf[s2],
+			NULL);
+}
+
+void
+skin_digital_time_set_pixbuf(SkinDigitalTime *dt, GdkPixbuf *pixbuf)
+{
+	SkinDigitalTimePrivate *priv;
+	gdouble w;
+	gint i;
+
+	g_return_if_fail(SKIN_IS_DIGITAL_TIME(dt));
+	
+	priv = dt->priv;
+	if(priv->pixbuf)
+		g_object_unref(priv->pixbuf);
+
+	priv->pixbuf = pixbuf;
+	w = (gdouble)gdk_pixbuf_get_width(priv->pixbuf);
+	priv->w = w / (gdouble)SUBPIXBUF;
+	priv->h = (gdouble)gdk_pixbuf_get_height(priv->pixbuf);
+	priv->w = floor(priv->w + 0.5);
+
+	for(i = 0; i < SUBPIXBUF - 1; ++i)
+	{
+		if(priv->subpixbuf[i])
+			g_object_unref(priv->subpixbuf[i]);
+
+		priv->subpixbuf[i] = 
+			gdk_pixbuf_new_subpixbuf(priv->pixbuf, (gint)(priv->w * i), 0, (gint)priv->w, (gint)priv->h);
+	}
+
+	if(priv->subpixbuf[SUBPIXBUF - 1])
+		g_object_unref(priv->subpixbuf[SUBPIXBUF - 1]);
+	priv->subpixbuf[SUBPIXBUF - 1] = 
+		gdk_pixbuf_new_subpixbuf(priv->pixbuf, (gint)(w - priv->w), 0, (gint)priv->w, (gint)priv->h);
+
+	gnome_canvas_item_set(priv->items[0],
+			"x", 0.0,
+			"y", 0.0,
+			NULL);
+	gnome_canvas_item_set(priv->items[1],
+			"x", priv->w + 1.0,
+			"y", 0.0,
+			NULL);
+	gnome_canvas_item_set(priv->items[2],
+			"x", priv->w * 2.0 + 1.0,
+			"y", 0.0,
+			NULL);
+	gnome_canvas_item_set(priv->items[3],
+			"x", priv->w * 3.0 + 1.0,
+			"y", 0.0,
+			NULL);
+	gnome_canvas_item_set(priv->items[4],
+			"x", priv->w * 4.0 + 1.0,
+			"y", 0.0,
+			NULL);
+
+	skin_digital_time_set_value(dt, priv->value);
+}
+
+void
+skin_digital_time_set_position(SkinDigitalTime *dt, gdouble x, gdouble y)
+{
+	g_return_if_fail(SKIN_IS_DIGITAL_TIME(dt));
+
+	gnome_canvas_item_set(GNOME_CANVAS_ITEM(dt),
+			"x", x,
+			"y", y,
 			NULL);
 }
 
