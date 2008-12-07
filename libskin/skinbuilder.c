@@ -1039,6 +1039,15 @@ set_playlist_window_prop(SkinBuilder *builder)
 		skin_toggle_button_set_pixbuf(tb, pixbuf);
 		skin_toggle_button_set_position(tb, x, pl->toolbar.y1);
 	}
+
+	GnomeCanvasItem *playlistbox = (GnomeCanvasItem*)skin_builder_get_object(builder, "playlist-playlistbox");
+	gnome_canvas_item_set(playlistbox,
+			"x", (gdouble)pl->playlist.x1,
+			"y", (gdouble)pl->playlist.y1,
+			"width", (gdouble)(pl->playlist.x2 - pl->playlist.x1),
+			"height", (gdouble)(pl->playlist.y2 - pl->playlist.y1),
+			NULL);
+
 }
 
 static void
