@@ -444,7 +444,7 @@ skin_vscale_pixbuf_update(SkinVScale *hscale)
 	if(!priv->need_pixbuf_update)
 		return;
 
-	if(priv->has_fill &&  !priv->has_fill_item)
+	if(priv->has_fill && !priv->has_fill_item)
 	{
 		priv->fill_item = gnome_canvas_item_new(hscale->priv->root, 
 				gnome_canvas_pixbuf_get_type(), 
@@ -660,17 +660,24 @@ skin_vscale_new(GnomeCanvasGroup *root, const char *first_arg_name, ...)
 }
 
 void
-skin_vscale_set_value(SkinVScale *hscale, gdouble value)
+skin_vscale_set_value(SkinVScale *vscale, gdouble value)
 {
-	g_return_if_fail(SKIN_IS_VSCALE(hscale));
+	g_return_if_fail(SKIN_IS_VSCALE(vscale));
 	g_return_if_fail(value >= 0.0);
 
-	if(hscale->priv->value == value)
-		return;
+	//if(hscale->priv->value == value)
+	//	return;
 
-	hscale->priv->value = value;
-	hscale->priv->need_value_update = TRUE;
+	vscale->priv->value = value;
+	vscale->priv->need_value_update = TRUE;
 
-	skin_vscale_value_update(hscale);
+	skin_vscale_value_update(vscale);
 }
 
+gdouble
+skin_vscale_get_value(SkinVScale *vscale)
+{
+	g_return_val_if_fail(SKIN_IS_VSCALE(vscale), -1.0);
+
+	return vscale->priv->value;
+}

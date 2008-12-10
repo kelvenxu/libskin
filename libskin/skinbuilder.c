@@ -877,6 +877,9 @@ set_player_window_prop(SkinBuilder *builder)
 			"thumb-pixbuf", player->volume.thumb_img,
 			NULL);
 
+	gdouble value = skin_hscale_get_value(volume);
+	skin_hscale_set_value(volume, value);
+
 	GnomeCanvasItem *visualbox = (GnomeCanvasItem*)skin_builder_get_object(builder, "player-visualbox");
 	gnome_canvas_item_set(visualbox,
 			"x", (gdouble)player->visual.x1,
@@ -927,6 +930,9 @@ set_equalizer_window_prop(SkinBuilder *builder)
 			"thumb-pixbuf", eq->balance.thumb_img,
 			NULL);
 
+	gdouble value = skin_hscale_get_value(hscale);
+	skin_hscale_set_value(hscale, value);
+
 	hscale = (SkinHScale*)skin_builder_get_object(builder, "equalizer-surround");
 	g_object_set(G_OBJECT(hscale),
 			"x1", (gdouble)(eq->surround.x1),
@@ -936,6 +942,8 @@ set_equalizer_window_prop(SkinBuilder *builder)
 			"fill-pixbuf", eq->surround.fill_img,
 			"thumb-pixbuf", eq->surround.thumb_img,
 			NULL);
+	value = skin_hscale_get_value(hscale);
+	skin_hscale_set_value(hscale, value);
 
 	SkinVScale *vscale = (SkinVScale*)skin_builder_get_object(builder, "equalizer-preamp");
 	g_object_set(G_OBJECT(vscale),
@@ -946,6 +954,9 @@ set_equalizer_window_prop(SkinBuilder *builder)
 			"fill-pixbuf", eq->preamp.fill_img,
 			"thumb-pixbuf", eq->preamp.thumb_img,
 			NULL);
+
+	value = skin_vscale_get_value(vscale);
+	skin_vscale_set_value(vscale, value);
 
 	gchar name[32];
 	gint i;
@@ -962,6 +973,8 @@ set_equalizer_window_prop(SkinBuilder *builder)
 			"thumb-pixbuf", eq->eqfactor.thumb_img,
 			NULL);
 
+		value = skin_vscale_get_value(vscale);
+		skin_vscale_set_value(vscale, value);
 	}
 }
 

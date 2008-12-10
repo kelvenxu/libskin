@@ -46,6 +46,8 @@ struct _SkinHScalePrivate
 	
 	gboolean has_fill;
 	gboolean has_thumb;
+	gboolean has_fill_item;
+	gboolean has_thumb_item;
 	gboolean need_pixbuf_update;
 	gboolean need_value_update;
 
@@ -115,6 +117,8 @@ skin_hscale_init (SkinHScale *self)
 	priv->thumb_item = NULL;
 	priv->has_fill = FALSE;
 	priv->has_thumb = FALSE;
+	priv->has_fill_item = FALSE;
+	priv->has_thumb_item = FALSE;
 
 	priv->x1 = 0.0;
 	priv->y1 = 0.0;
@@ -192,9 +196,16 @@ skin_hscale_set_property (GObject      *object,
     {
 		case PROP_FILL_PIXBUF:
 			if(g_value_get_object(value))
+			{
 				pixbuf = GDK_PIXBUF(g_value_get_object(value));
+				priv->has_fill = TRUE;
+			}
 			else
+			{
 				pixbuf = NULL;
+				priv->has_fill = FALSE;
+			}
+
 			if(pixbuf != priv->fill_pixbuf)
 			{
 				if(pixbuf)
@@ -211,9 +222,16 @@ skin_hscale_set_property (GObject      *object,
 			break;
 		case PROP_THUMB_PIXBUF:
 			if(g_value_get_object(value))
+			{
 				pixbuf = GDK_PIXBUF(g_value_get_object(value));
+				priv->has_thumb = TRUE;
+			}
 			else
+			{
 				pixbuf = NULL;
+				priv->has_thumb = FALSE;
+			}
+
 			if(pixbuf != priv->thumb_pixbuf)
 			{
 				if(pixbuf)
@@ -434,7 +452,7 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 	if(!priv->need_pixbuf_update)
 		return;
 
-	if(priv->fill_pixbuf && GDK_IS_PIXBUF(priv->fill_pixbuf) && !priv->fill_item)
+	if(priv->has_fill && !priv->has_fill_item)
 	{
 		priv->fill_item = gnome_canvas_item_new(hscale->priv->root, 
 				gnome_canvas_pixbuf_get_type(), 
@@ -444,11 +462,25 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 				"y-in-pixels", TRUE,
 				NULL);
 
-		priv->has_fill = TRUE;
+		priv->has_fill_item = TRUE;
 		g_signal_connect(G_OBJECT(priv->fill_item), "event", G_CALLBACK(cb_fill_event), hscale);
 	}
+	else if(priv->has_fill && priv->has_fill_item)
+	{
+		gnome_canvas_item_set(priv->fill_item,
+				"x-in-pixels", TRUE,
+				"y-in-pixels", TRUE,
+				"x", priv->x1,
+				"y", priv->y1,
+				//"pixbuf", priv->fill_pixbuf,
+				NULL);
+	}
+	else if(!priv->has_fill && priv->fill_item)
+	{
+		gnome_canvas_item_hide(priv->fill_item);
+	}
 
-	if(priv->thumb_pixbuf && GDK_IS_PIXBUF(priv->thumb_pixbuf) && !priv->thumb_item)
+	if(priv->has_thumb && !priv->has_thumb_item)
 	{
 
 		pw = gdk_pixbuf_get_width(priv->thumb_pixbuf);
@@ -462,8 +494,8 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 					(gint)(i * pw), 0, (gint)pw, (gint)ph);
 		}
 
-		
-		ph = ph - gdk_pixbuf_get_height(priv->fill_pixbuf);
+		if(priv->has_fill)
+			ph = ph - gdk_pixbuf_get_height(priv->fill_pixbuf);
 
 		priv->thumb_item = gnome_canvas_item_new(hscale->priv->root, 
 				gnome_canvas_pixbuf_get_type(),
@@ -474,8 +506,42 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 				"pixbuf", priv->thumb_subpixbuf[0],
 				NULL);
 
-		priv->has_thumb = TRUE;
+		priv->has_thumb_item = TRUE;
 		g_signal_connect(G_OBJECT(priv->thumb_item), "event", G_CALLBACK(cb_thumb_event), hscale);
+	}
+	else if(priv->has_thumb && priv->has_thumb_item)
+	{
+		pw = gdk_pixbuf_get_width(priv->thumb_pixbuf);
+		ph = gdk_pixbuf_get_height(priv->thumb_pixbuf);
+
+		pw = pw / SUBPIXBUF;
+
+		for(i = 0; i < SUBPIXBUF; ++i)
+		{
+			if(priv->thumb_subpixbuf[i])
+				g_object_unref(priv->thumb_subpixbuf[i]);
+
+			priv->thumb_subpixbuf[i] = gdk_pixbuf_new_subpixbuf(priv->thumb_pixbuf,
+					(gint)(i * pw), 0, (gint)pw, (gint)ph);
+		}
+
+		if(priv->has_fill)
+			pw = pw - gdk_pixbuf_get_width(priv->fill_pixbuf);
+
+		gnome_canvas_item_set(priv->thumb_item,
+				"x-in-pixels", TRUE,
+				"y-in-pixels", TRUE,
+				"x", priv->x1 - pw / 2.0,
+				"y", priv->y1,
+				"pixbuf", priv->thumb_subpixbuf[0],
+				NULL);
+
+		//FIXME: 应不应在此调用？ 
+		//skin_hscale_value_update(hscale);
+	}
+	else if(!priv->has_thumb && priv->has_thumb_item)
+	{
+		gnome_canvas_item_hide(priv->thumb_item);
 	}
 	
 	priv->need_pixbuf_update = FALSE;
@@ -618,8 +684,8 @@ skin_hscale_set_value(SkinHScale *hscale, gdouble value)
 	g_return_if_fail(SKIN_IS_HSCALE(hscale));
 	g_return_if_fail(value >= 0.0);
 
-	if(hscale->priv->value == value)
-		return;
+	//if(hscale->priv->value == value)
+	//	return;
 
 	hscale->priv->value = value;
 	hscale->priv->need_value_update = TRUE;
@@ -642,5 +708,7 @@ skin_hscale_set_range_and_value(SkinHScale *hscale, gdouble min, gdouble max, gd
 gdouble 
 skin_hscale_get_value(SkinHScale *hscale)
 {
+	g_return_val_if_fail(SKIN_IS_HSCALE(hscale), -1.0);
 	return hscale->priv->value;
 }
+

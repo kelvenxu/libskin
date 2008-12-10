@@ -2,7 +2,7 @@
 /*
  * skinhscale.h
  *
- * This file is part of ________.
+ * This file is part of libskin.
  *
  * Copyright (C) 2008 - kelvenxu <kelvenxu@gmail.com>.
  *
@@ -57,6 +57,7 @@ GType skin_vscale_get_type();
 
 SkinVScale * skin_vscale_new(GnomeCanvasGroup *root, const char *first_arg_name, ...);
 void skin_vscale_set_value(SkinVScale *hscale, gdouble value);
+gdouble skin_vscale_get_value(SkinVScale *vscale);
 
 G_END_DECLS
 
