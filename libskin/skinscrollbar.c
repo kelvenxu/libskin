@@ -466,3 +466,139 @@ skin_scroll_bar_set_height(SkinScrollBar *bar, gdouble height)
 			NULL);
 }
 
+static void 
+skin_scroll_bar_reconstruct(SkinScrollBar *bar)
+{
+	SkinScrollBarPrivate *priv;
+	GnomeCanvasGroup *group;
+	gdouble w, h;
+	gint i;
+
+	g_return_if_fail(SKIN_IS_SCROLL_BAR(bar));
+
+	priv = bar->priv;
+	group = GNOME_CANVAS_GROUP(bar);
+
+	w = (gdouble)gdk_pixbuf_get_width(priv->bar_pixbuf);
+	priv->x1 = priv->x2 - w;
+
+	gnome_canvas_item_set(GNOME_CANVAS_ITEM(group), 
+			"x", priv->x1, 
+			"y", priv->y1, 
+			NULL);
+
+	// 以下是在group中的位置
+	w = (gdouble)gdk_pixbuf_get_width(priv->button_pixbuf) / 3.0;
+	h = (gdouble)gdk_pixbuf_get_height(priv->button_pixbuf) / 2.0;
+
+	priv->thumb_begin = h;
+	priv->thumb_end = (priv->y2 - priv->y1) - h;
+	priv->thumb_range = priv->thumb_end - priv->thumb_begin;
+
+	for(i = 0; i < SUBPIXBUF; ++i)
+	{
+		if(priv->top_subpb[i])
+			g_object_unref(priv->top_subpb[i]);
+		if(priv->bottom_subpb[i])
+			g_object_unref(priv->bottom_subpb[i]);
+
+		priv->top_subpb[i] = gdk_pixbuf_new_subpixbuf(priv->button_pixbuf, 
+				(int)(i * w), 0, (int)w, (int)h);
+		priv->bottom_subpb[i] = gdk_pixbuf_new_subpixbuf(priv->button_pixbuf, 
+				(int)(i * w), (int)h, (int)w, (int)h);
+	}
+
+	w = (gdouble)gdk_pixbuf_get_width(priv->thumb_pixbuf) / 3.0;
+	h = (gdouble)gdk_pixbuf_get_height(priv->thumb_pixbuf);
+	priv->thumb_height = h;
+	for(i = 0; i < SUBPIXBUF; ++i)
+	{
+		if(priv->thumb_subpb[i])
+			g_object_unref(priv->thumb_subpb[i]);
+
+		priv->thumb_subpb[i] = gdk_pixbuf_new_subpixbuf(priv->thumb_pixbuf, 
+				(int)(i * w), 0, (int)w, (int)h);
+	}
+
+	gnome_canvas_item_set(priv->top_item,
+			"x", 0.0,
+			"y", 0.0,
+			"pixbuf", priv->top_subpb[0],
+			"width", w,
+			"width-set", TRUE,
+			NULL);
+
+	gnome_canvas_item_set(priv->bottom_item,
+			"x", 0.0,
+			"y", priv->thumb_end,
+			"pixbuf", priv->bottom_subpb[0],
+			"width", priv->x2 - priv->x1,
+			"width-set", TRUE,
+			NULL);
+
+	GdkPixbuf *pixbuf = gdk_pixbuf_scale_simple(priv->bar_pixbuf, 
+			priv->x2 - priv->x1, priv->thumb_range, 
+			GDK_INTERP_BILINEAR);
+
+	gnome_canvas_item_set(priv->bar_item,
+			"x", 0,0,
+			"y", priv->thumb_begin,
+			"pixbuf", pixbuf,
+			NULL);
+
+	gnome_canvas_item_set(priv->thumb_item,
+			"x", 0.0,
+			"y", priv->thumb_begin,
+			"pixbuf", priv->thumb_subpb[0],
+			NULL);
+
+}
+
+void 
+skin_scroll_bar_rebuild(SkinScrollBar *bar, 
+		GdkPixbuf *button_pixbuf, 
+		GdkPixbuf *bar_pixbuf, 
+		GdkPixbuf *thumb_pixbuf,
+		gdouble x1, //not used 
+		gdouble y1,
+		gdouble x2,
+		gdouble y2)
+{
+	SkinScrollBarPrivate *priv;
+
+	g_return_if_fail(SKIN_IS_SCROLL_BAR(bar));
+	g_return_if_fail(GDK_IS_PIXBUF(button_pixbuf));
+	g_return_if_fail(GDK_IS_PIXBUF(bar_pixbuf));
+	g_return_if_fail(GDK_IS_PIXBUF(thumb_pixbuf));
+	g_return_if_fail((x1 >= 0.0 || y1 >= 0.0));
+	g_return_if_fail((x2 >= 0.0 || y2 >= 0.0));
+	g_return_if_fail((x2 > x1 || y2 > y1));
+
+	priv = bar->priv;
+
+	if(priv->button_pixbuf)
+	{
+		g_object_unref(priv->button_pixbuf);
+	}
+
+	if(priv->bar_pixbuf)
+	{
+		g_object_unref(priv->bar_pixbuf);
+	}
+
+	if(priv->thumb_pixbuf)
+	{
+		g_object_unref(priv->thumb_pixbuf);
+	}
+
+	priv->button_pixbuf = gdk_pixbuf_copy(button_pixbuf);
+	priv->bar_pixbuf = gdk_pixbuf_copy(bar_pixbuf);
+	priv->thumb_pixbuf = gdk_pixbuf_copy(thumb_pixbuf);
+
+	priv->y1 = y1;
+	priv->x2 = x2;
+	priv->y2 = y2;
+
+	skin_scroll_bar_reconstruct(bar);
+}
+

@@ -1040,13 +1040,30 @@ set_playlist_window_prop(SkinBuilder *builder)
 		skin_toggle_button_set_position(tb, x, pl->toolbar.y1);
 	}
 
-	GnomeCanvasItem *playlistbox = (GnomeCanvasItem*)skin_builder_get_object(builder, "playlist-playlistbox");
+	GnomeCanvasItem *playlistbox = 
+		(GnomeCanvasItem*)skin_builder_get_object(builder, "playlist-playlistbox");
 	gnome_canvas_item_set(playlistbox,
 			"x", (gdouble)pl->playlist.x1,
 			"y", (gdouble)pl->playlist.y1,
 			"width", (gdouble)(pl->playlist.x2 - pl->playlist.x1),
 			"height", (gdouble)(pl->playlist.y2 - pl->playlist.y1),
 			NULL);
+
+	SkinScrollBar *bar = (SkinScrollBar*)skin_builder_get_object(builder, "playlist-scrollbar");
+	skin_scroll_bar_rebuild(bar,
+			pl->scrollbar.buttons_img,
+			pl->scrollbar.bar_img,
+			pl->scrollbar.thumb_img,
+			(gdouble)pl->playlist.x1,
+			(gdouble)pl->playlist.y1,
+			(gdouble)pl->playlist.x2,
+			(gdouble)pl->playlist.y2);
+
+	gdouble w = skin_scroll_bar_get_width(bar);
+	gnome_canvas_item_set(playlistbox, 
+			"width", (gdouble)(pl->playlist.x2 - pl->playlist.x1) - w,
+			NULL);
+
 
 }
 

@@ -63,6 +63,15 @@ SkinScrollBar *skin_scroll_bar_new(GnomeCanvasGroup *root,
 									gdouble x2,
 									gdouble y2);
 
+void skin_scroll_bar_rebuild(SkinScrollBar *bar, 
+								GdkPixbuf *button_pixbuf, 
+								GdkPixbuf *bar_pixbuf, 
+								GdkPixbuf *thumb_pixbuf,
+								gdouble x1, //not used 
+								gdouble y1,
+								gdouble x2,
+								gdouble y2);
+
 void skin_scroll_bar_set_adjustment(SkinScrollBar *bar, GtkAdjustment *adj);
 gdouble skin_scroll_bar_get_width(SkinScrollBar *bar);
 gdouble skin_scroll_bar_get_height(SkinScrollBar *bar);
