@@ -650,3 +650,37 @@ skin_lyric_set_highlight_color(SkinLyric *lyric, const GdkColor *color)
 		gdk_window_invalidate_rect(lyric->priv->da->window, NULL, FALSE);
 }
 
+void
+skin_lyric_set_color(SkinLyric *lyric, const GdkColor *bg,
+									   const GdkColor *text,
+									   const GdkColor *hilight)
+{
+	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+
+	if(bg)
+	{
+		lyric->priv->bg.red = bg->red;
+		lyric->priv->bg.green = bg->green;
+		lyric->priv->bg.blue = bg->blue;
+		lyric->priv->bg.pixel = bg->pixel;
+	}
+
+	if(text)
+	{
+		lyric->priv->fg.red = text->red;
+		lyric->priv->fg.green = text->green;
+		lyric->priv->fg.blue = text->blue;
+		lyric->priv->fg.pixel = text->pixel;
+	}
+
+	if(hilight)
+	{
+		lyric->priv->current.red = hilight->red;
+		lyric->priv->current.green = hilight->green;
+		lyric->priv->current.blue = hilight->blue;
+		lyric->priv->current.pixel = hilight->pixel;
+	}
+
+	update_pixmap(lyric);
+}
+

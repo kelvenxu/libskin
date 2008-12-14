@@ -334,6 +334,7 @@ skin_digital_time_set_pixbuf(SkinDigitalTime *dt, GdkPixbuf *pixbuf)
 	gnome_canvas_item_set(priv->items[2],
 			"x", priv->w * 2.0 + 1.0,
 			"y", 0.0,
+			"pixbuf", priv->subpixbuf[TIME_SP],
 			NULL);
 	gnome_canvas_item_set(priv->items[3],
 			"x", priv->w * 3.0 + 1.0,

@@ -474,6 +474,8 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 				"y", priv->y1,
 				//"pixbuf", priv->fill_pixbuf,
 				NULL);
+
+		printf("yeah! has_fill pixbuf\n");
 	}
 	else if(!priv->has_fill && priv->fill_item)
 	{
@@ -495,7 +497,10 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 		}
 
 		if(priv->has_fill)
+		{
+			printf("has_fill pixbuf\n");
 			ph = ph - gdk_pixbuf_get_height(priv->fill_pixbuf);
+		}
 
 		priv->thumb_item = gnome_canvas_item_new(hscale->priv->root, 
 				gnome_canvas_pixbuf_get_type(),
@@ -526,7 +531,10 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 		}
 
 		if(priv->has_fill)
+		{
+			printf("has_fill pixbuf\n");
 			pw = pw - gdk_pixbuf_get_width(priv->fill_pixbuf);
+		}
 
 		gnome_canvas_item_set(priv->thumb_item,
 				"x-in-pixels", TRUE,

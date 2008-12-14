@@ -61,5 +61,10 @@ void skin_lyric_set_current_second(SkinLyric *lyric, gint sec);
 void skin_lyric_set_bg_color(SkinLyric *lyric, const GdkColor *color);
 void skin_lyric_set_text_color(SkinLyric *lyric, const GdkColor *color);
 void skin_lyric_set_highlight_color(SkinLyric *lyric, const GdkColor *color);
+
+void skin_lyric_set_color(SkinLyric *lyric, const GdkColor *bg,
+										   const GdkColor *text,
+										   const GdkColor *hilight);
+
 G_END_DECLS
 #endif /*__SKINLYRIC_H__ */

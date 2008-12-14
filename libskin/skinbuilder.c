@@ -184,8 +184,11 @@ create_player_window(SkinBuilder *builder)
 			"x2", (gdouble)(player->status.x2),
 			"y2", (gdouble)(player->status.y2),
 			"color", player->status.color,
+			"font", player->status.font,
+			"size-points", (gdouble)player->status.font_size,
+			"size-set", TRUE,
 			"align", player->status.align,
-			"text", _("Stop"),
+			"text", _("Status: Stop"),
 			NULL);
 	add_object(builder, G_OBJECT(statusbar), "player-statusbar");
 
@@ -489,7 +492,6 @@ cb_lyric_change_size(SkinWindow *window, gint rx, gint ry, SkinBuilder *builder)
 				"width", &width,
 				"height", &height,
 				NULL);
-		printf("width: %f height: %f rx: %d ry: %d\n", width, height, rx, ry);
 		gnome_canvas_item_set(item, 
 				"width", width + (gdouble)rx,
 				"height", height + (gdouble)ry,
@@ -541,9 +543,9 @@ create_lyric_window(SkinBuilder *builder)
 	skin_lyric_set_size(lyricview, 
 			lyric->lyric.x2 - lyric->lyric.x1,
 			lyric->lyric.y2 - lyric->lyric.y1);
-	skin_lyric_set_bg_color(lyricview, &lyric->attr.color_bg);
-	skin_lyric_set_text_color(lyricview, &lyric->attr.color_text);
-	skin_lyric_set_highlight_color(lyricview, &lyric->attr.color_hilight);
+	skin_lyric_set_color(lyricview, &lyric->attr.color_bg, 
+									&lyric->attr.color_text,
+									&lyric->attr.color_hilight);
 
 	gnome_canvas_item_set(lyricbox,
 			"widget", GTK_WIDGET(lyricview),
@@ -714,6 +716,16 @@ create_mini_window(SkinBuilder *builder)
 			mini->stop.x1, mini->stop.y1);
 	add_object(builder, G_OBJECT(stop), "mini-stop");
 
+	SkinButton *open = skin_button_new(root,
+			mini->stop.img, 
+			mini->stop.x1, mini->stop.y1);
+	add_object(builder, G_OBJECT(open), "mini-open");
+
+	SkinDigitalTime *led = skin_digital_time_new(root, mini->led.img,
+			(gdouble)(mini->led.x1),
+			(gdouble)(mini->led.y1));
+	add_object(builder, G_OBJECT(led), "mini-led");
+
 	SkinCheckButton *lyric = skin_check_button_new(root,
 			mini->lyric.img, 
 			mini->lyric.x1, mini->lyric.y1);
@@ -755,10 +767,13 @@ create_mini_window(SkinBuilder *builder)
 			"x2", (gdouble)(mini->info.x2),
 			"y2", (gdouble)(mini->info.y2),
 			"color", mini->info.color,
-			"title", "title --",
-			"artist", "artist --",
-			"album", "album ==",
-			"format", "format --",
+			"font", mini->info.font,
+			"size-points", (gdouble)mini->info.font_size,
+			"size-set", TRUE,
+			"title", "Linux Music Player - Little Pudding",
+			"artist", "Kelven Xu",
+			"album", "kelvenxu@gmail.com",
+			"format", "www.lmplayer.org",
 			NULL);
 	add_object(builder, G_OBJECT(info), "mini-info");
 }
@@ -832,6 +847,9 @@ set_player_window_prop(SkinBuilder *builder)
 			"x2", (gdouble)(player->status.x2),
 			"y2", (gdouble)(player->status.y2),
 			"color", player->status.color,
+			"font", player->status.font,
+			"size-points", (gdouble)player->status.font_size,
+			"size-set", TRUE,
 			"align", player->status.align,
 			NULL);
 
@@ -854,18 +872,26 @@ set_player_window_prop(SkinBuilder *builder)
 	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "player-playlist");
 	skin_check_button_set_pixbuf(cbutton, player->playlist.img);
 	skin_check_button_set_position(cbutton, player->playlist.x1, player->playlist.y1);
+	gboolean active = skin_check_button_get_active(cbutton);
+	skin_check_button_set_active(cbutton, active);
 
 	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "player-lyric");
 	skin_check_button_set_pixbuf(cbutton, player->lyric.img);
 	skin_check_button_set_position(cbutton, player->lyric.x1, player->lyric.y1);
+	active = skin_check_button_get_active(cbutton);
+	skin_check_button_set_active(cbutton, active);
 
 	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "player-equalizer");
 	skin_check_button_set_pixbuf(cbutton, player->equalizer.img);
 	skin_check_button_set_position(cbutton, player->equalizer.x1, player->equalizer.y1);
+	active = skin_check_button_get_active(cbutton);
+	skin_check_button_set_active(cbutton, active);
 
 	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "player-mute");
 	skin_check_button_set_pixbuf(cbutton, player->mute.img);
 	skin_check_button_set_position(cbutton, player->mute.x1, player->mute.y1);
+	active = skin_check_button_get_active(cbutton);
+	skin_check_button_set_active(cbutton, active);
 
 	SkinHScale *volume = (SkinHScale*)skin_builder_get_object(builder, "player-volume");
 	g_object_set(G_OBJECT(volume),
@@ -1013,9 +1039,9 @@ set_lyric_window_prop(SkinBuilder *builder)
 	skin_lyric_set_size(lyricview, 
 			lyric->lyric.x2 - lyric->lyric.x1,
 			lyric->lyric.y2 - lyric->lyric.y1);
-	skin_lyric_set_bg_color(lyricview, &lyric->attr.color_bg);
-	skin_lyric_set_text_color(lyricview, &lyric->attr.color_text);
-	skin_lyric_set_highlight_color(lyricview, &lyric->attr.color_hilight);
+	skin_lyric_set_color(lyricview, &lyric->attr.color_bg, 
+									&lyric->attr.color_text,
+									&lyric->attr.color_hilight);
 }
 
 static void
@@ -1114,6 +1140,15 @@ set_mini_window_prop(SkinBuilder *builder)
 	skin_button_set_pixbuf(button, mini->next.img);
 	skin_button_set_position(button, mini->next.x1, mini->next.y1);
 
+	button = (SkinButton*)skin_builder_get_object(builder, "mini-open");
+	skin_button_set_pixbuf(button, mini->open.img);
+	skin_button_set_position(button, mini->open.x1, mini->open.y1);
+
+	SkinDigitalTime *led;
+	led = (SkinDigitalTime*)skin_builder_get_object(builder, "mini-led");
+	skin_digital_time_set_pixbuf(led, mini->led.img);
+	skin_digital_time_set_position(led, (gdouble)(mini->led.x1), (gdouble)(mini->led.y1));
+
 	button = (SkinButton*)skin_builder_get_object(builder, "mini-exit");
 	skin_button_set_pixbuf(button, mini->exit.img);
 	skin_button_set_position(button, mini->exit.x1, mini->exit.y1);
@@ -1152,6 +1187,8 @@ set_mini_window_prop(SkinBuilder *builder)
 	cbutton = (SkinCheckButton*)skin_builder_get_object(builder, "mini-lyric");
 	skin_check_button_set_pixbuf(cbutton, mini->lyric.img);
 	skin_check_button_set_position(cbutton, mini->lyric.x1, mini->lyric.y1);
+	gboolean active = skin_check_button_get_active(cbutton);
+	skin_check_button_set_active(cbutton, active);
 }
 
 SkinBuilder *

@@ -552,6 +552,8 @@ load_mini_archive(xmlDocPtr doc, MiniArchive* ma, const gchar* path)
 	read_item_with_xpath(doc, XP_MINI_WINDOW_PREV, &(ma->prev), path);
 	read_item_with_xpath(doc, XP_MINI_WINDOW_NEXT, &(ma->next), path);
 	read_item_with_xpath(doc, XP_MINI_WINDOW_STOP, &(ma->stop), path);
+	read_item_with_xpath(doc, XP_MINI_WINDOW_OPEN, &(ma->open), path);
+	read_item_with_xpath(doc, XP_MINI_WINDOW_LED, &(ma->led), path);
 	read_item_with_xpath(doc, XP_MINI_WINDOW_LYRIC, &(ma->lyric), path);
 	read_item_with_xpath(doc, XP_MINI_WINDOW_ICON, &(ma->icon), path);
 	read_item_with_xpath(doc, XP_MINI_WINDOW_MINIMIZE, &(ma->minimize), path);

@@ -2,7 +2,7 @@
 /*
  * skinstatusbar.c
  *
- * This file is part of ________.
+ * This file is part of libskin.
  *
  * Copyright (C) 2008 - kelvenxu <kelvenxu@gmail.com>.
  *
@@ -39,6 +39,8 @@ struct _SkinStatusBarPrivate
 
 	gchar *text;
 	gchar *color;
+	gchar *font;
+	gint font_size;
 	gint align;
 	GnomeCanvasGroup *root;
 };

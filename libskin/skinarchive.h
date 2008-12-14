@@ -88,6 +88,8 @@ G_BEGIN_DECLS
 #define XP_MINI_WINDOW_PREV 			XP_MINI_WINDOW"/prev"
 #define XP_MINI_WINDOW_NEXT 			XP_MINI_WINDOW"/next"
 #define XP_MINI_WINDOW_STOP 			XP_MINI_WINDOW"/stop"
+#define XP_MINI_WINDOW_OPEN 			XP_MINI_WINDOW"/open"
+#define XP_MINI_WINDOW_LED 			XP_MINI_WINDOW"/led"
 #define XP_MINI_WINDOW_LYRIC 			XP_MINI_WINDOW"/lyric"
 #define XP_MINI_WINDOW_ICON 			XP_MINI_WINDOW"/icon"
 #define XP_MINI_WINDOW_MINIMIZE 		XP_MINI_WINDOW"/minimize"
@@ -242,6 +244,8 @@ typedef struct _MiniArchive
 	SkinItem prev;
 	SkinItem next;
 	SkinItem stop;
+	SkinItem open;
+	SkinItem led;
 	SkinItem lyric;
 	SkinItem icon;
 	SkinItem minimize;
