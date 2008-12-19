@@ -770,8 +770,8 @@ create_mini_window(SkinBuilder *builder)
 			"font", mini->info.font,
 			"size-points", (gdouble)mini->info.font_size,
 			"size-set", TRUE,
-			"title", "Linux Music Player - Little Pudding",
-			"artist", "Kelven Xu",
+			"title", _("Linux Music Player - Little Pudding"),
+			"artist", _("Kelven Xu"),
 			"album", "kelvenxu@gmail.com",
 			"format", "www.lmplayer.org",
 			NULL);

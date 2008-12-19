@@ -119,6 +119,8 @@ skin_hscale_init (SkinHScale *self)
 	priv->has_thumb = FALSE;
 	priv->has_fill_item = FALSE;
 	priv->has_thumb_item = FALSE;
+	priv->need_pixbuf_update = FALSE;
+	priv->need_value_update = FALSE;
 
 	priv->x1 = 0.0;
 	priv->y1 = 0.0;
@@ -472,10 +474,7 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 				"y-in-pixels", TRUE,
 				"x", priv->x1,
 				"y", priv->y1,
-				//"pixbuf", priv->fill_pixbuf,
 				NULL);
-
-		printf("yeah! has_fill pixbuf\n");
 	}
 	else if(!priv->has_fill && priv->fill_item)
 	{
@@ -498,7 +497,6 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 
 		if(priv->has_fill)
 		{
-			printf("has_fill pixbuf\n");
 			ph = ph - gdk_pixbuf_get_height(priv->fill_pixbuf);
 		}
 
@@ -532,7 +530,6 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 
 		if(priv->has_fill)
 		{
-			printf("has_fill pixbuf\n");
 			pw = pw - gdk_pixbuf_get_width(priv->fill_pixbuf);
 		}
 
