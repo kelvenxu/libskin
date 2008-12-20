@@ -530,14 +530,16 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 
 		if(priv->has_fill)
 		{
-			pw = pw - gdk_pixbuf_get_width(priv->fill_pixbuf);
+			//pw = pw - gdk_pixbuf_get_width(priv->fill_pixbuf);
+			ph = ph - gdk_pixbuf_get_height(priv->fill_pixbuf);
 		}
 
 		gnome_canvas_item_set(priv->thumb_item,
 				"x-in-pixels", TRUE,
 				"y-in-pixels", TRUE,
-				"x", priv->x1 - pw / 2.0,
-				"y", priv->y1,
+				//"x", priv->x1 - pw / 2.0,
+				"x", priv->x1,
+				"y", priv->y1 - ph / 2.0,
 				"pixbuf", priv->thumb_subpixbuf[0],
 				NULL);
 
