@@ -475,6 +475,7 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 				"x", priv->x1,
 				"y", priv->y1,
 				NULL);
+		gnome_canvas_item_show(priv->fill_item);
 	}
 	else if(!priv->has_fill && priv->fill_item)
 	{
@@ -530,21 +531,18 @@ skin_hscale_pixbuf_update(SkinHScale *hscale)
 
 		if(priv->has_fill)
 		{
-			//pw = pw - gdk_pixbuf_get_width(priv->fill_pixbuf);
 			ph = ph - gdk_pixbuf_get_height(priv->fill_pixbuf);
 		}
 
 		gnome_canvas_item_set(priv->thumb_item,
 				"x-in-pixels", TRUE,
 				"y-in-pixels", TRUE,
-				//"x", priv->x1 - pw / 2.0,
 				"x", priv->x1,
 				"y", priv->y1 - ph / 2.0,
 				"pixbuf", priv->thumb_subpixbuf[0],
 				NULL);
 
-		//FIXME: 应不应在此调用？ 
-		//skin_hscale_value_update(hscale);
+		gnome_canvas_item_show(priv->thumb_item);
 	}
 	else if(!priv->has_thumb && priv->has_thumb_item)
 	{
