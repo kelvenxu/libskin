@@ -350,47 +350,37 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 				priv->width = priv->min_width;
 			}
 
-			//GdkPixbuf *p = gdk_pixbuf_scale_simple(priv->pixbuf, 
-			//		priv->width, 
-			//		priv->height,
-			//		GDK_INTERP_BILINEAR);
-
 			static GdkPixbuf *des = NULL;
 
+			priv->resize_x1 = 159;
+			priv->resize_y1 = 81;
+			priv->resize_x2 = 160;
+			priv->resize_y2 = 92;
+
+			// 所有操作都是在原始图上做的，即priv->pixbuf
 			if(rx != 0)
 			{
-				priv->resize_x1 = 159;
-				priv->resize_y1 = 81;
-				priv->resize_x2 = 160;
-				priv->resize_y2 = 92;
-				// 所有操作都是在原始图上做的，即priv->pixbuf
-				printf("left_p\n");
 				GdkPixbuf *left_p = gdk_pixbuf_new_subpixbuf(priv->pixbuf, 
 						0, 0, 
 						priv->resize_x1, 
 						priv->min_height);
-				printf("mid_p\n");
 				GdkPixbuf *mid_p = gdk_pixbuf_new_subpixbuf(priv->pixbuf,
 						priv->resize_x1, 0,
 						priv->resize_x2 - priv->resize_x1,
 						priv->min_height);
-				printf("right_p\n");
 				GdkPixbuf *right_p = gdk_pixbuf_new_subpixbuf(priv->pixbuf, 
 						priv->resize_x2, 0, 
 						priv->min_width - priv->resize_x2, 
 						priv->min_height);
 				
-				printf("scaled mid_p\n");
 				GdkPixbuf *scaled_mid_p = gdk_pixbuf_scale_simple(mid_p, 
 						priv->width - (priv->resize_x1 + priv->min_width - priv->resize_x2),
 						priv->min_height,
 						GDK_INTERP_BILINEAR);
 
-				printf("new des\n");
 				des = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 
 						priv->width, priv->min_height);
 
-				printf("composite left_p\n");
 				gdk_pixbuf_composite(left_p, des, 0, 0, 
 						priv->resize_x1,
 						priv->min_height,
@@ -398,44 +388,46 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 						1.0, 1.0,
 						GDK_INTERP_BILINEAR,
 						255);
-				printf("composite mid_p\n");
 				gdk_pixbuf_composite(scaled_mid_p, des, priv->resize_x1, 0, 
 						priv->width - (priv->resize_x1 + priv->min_width - priv->resize_x2),
 						priv->min_height,
-						0.0, 0.0,
+						priv->resize_x1, 0.0,
 						1.0, 1.0,
 						GDK_INTERP_BILINEAR,
 						255);
-				printf("composite right_p\n");
-				gdk_pixbuf_composite(right_p, des, priv->width - (priv->min_width - priv->resize_x2) - 20, 0, 
+				gdk_pixbuf_composite(right_p, des, 
+						priv->width - (priv->min_width - priv->resize_x2), 0, 
 						priv->min_width - priv->resize_x2, 
 						priv->min_height,
-						0.0, 0.0,
+						priv->width - (priv->min_width - priv->resize_x2), 0.0, 
 						1.0, 1.0,
 						GDK_INTERP_BILINEAR,
 						255);
-				printf("composite right_p\n");
-			//}
+
+				priv->width = gdk_pixbuf_get_width(des);
+			}
+			if(ry != 0)
+			{
+			}
 
 
-			//if(des != NULL)
-			//{
+			if(des != NULL)
+			{
 				gnome_canvas_item_set(priv->item,
 						"pixbuf", des,
-						//"width", (gdouble)priv->width,
-						//"height", (gdouble)priv->height,
-						//"width-set", TRUE,
-						//"height-set", TRUE,
 						NULL);
 
 				gtk_widget_decorated_with_pixbuf(widget, des);
 				g_object_unref(des);
+				des = NULL;
 
 				old_x = x;
 				old_y = y;
 
 				ry = 0;
 				g_signal_emit(widget, widget_signals[CHANGE_SIZE], 0, rx, ry);
+				rx = 0;
+				ry = 0;
 			}
 		}
 		break;
