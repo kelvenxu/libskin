@@ -350,7 +350,7 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 				priv->width = priv->min_width;
 			}
 
-			static GdkPixbuf *des = NULL;
+			static GdkPixbuf *des_p = NULL;
 
 			priv->resize_x1 = 159;
 			priv->resize_y1 = 81;
@@ -378,24 +378,24 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 						priv->min_height,
 						GDK_INTERP_BILINEAR);
 
-				des = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 
+				des_p = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 
 						priv->width, priv->min_height);
 
-				gdk_pixbuf_composite(left_p, des, 0, 0, 
+				gdk_pixbuf_composite(left_p, des_p, 0, 0, 
 						priv->resize_x1,
 						priv->min_height,
 						0.0, 0.0,
 						1.0, 1.0,
 						GDK_INTERP_BILINEAR,
 						255);
-				gdk_pixbuf_composite(scaled_mid_p, des, priv->resize_x1, 0, 
+				gdk_pixbuf_composite(scaled_mid_p, des_p, priv->resize_x1, 0, 
 						priv->width - (priv->resize_x1 + priv->min_width - priv->resize_x2),
 						priv->min_height,
 						priv->resize_x1, 0.0,
 						1.0, 1.0,
 						GDK_INTERP_BILINEAR,
 						255);
-				gdk_pixbuf_composite(right_p, des, 
+				gdk_pixbuf_composite(right_p, des_p, 
 						priv->width - (priv->min_width - priv->resize_x2), 0, 
 						priv->min_width - priv->resize_x2, 
 						priv->min_height,
@@ -404,22 +404,79 @@ skin_window_canvas_item_event(GnomeCanvasItem *item,
 						GDK_INTERP_BILINEAR,
 						255);
 
-				priv->width = gdk_pixbuf_get_width(des);
+				priv->width = gdk_pixbuf_get_width(des_p);
 			}
 			if(ry != 0)
 			{
+				GdkPixbuf *des_p2 = NULL;
+				GdkPixbuf *src_p = priv->pixbuf;
+		
+				if(des_p != NULL)
+					src_p = des_p;
+
+				GdkPixbuf *top_p = gdk_pixbuf_new_subpixbuf(src_p, 
+						0, 0, 
+						priv->width,
+						priv->resize_y1);
+				GdkPixbuf *mid_p = gdk_pixbuf_new_subpixbuf(src_p,
+						0, priv->resize_y1,
+						priv->width,
+						priv->resize_y2 - priv->resize_y1);
+				GdkPixbuf *bottom_p = gdk_pixbuf_new_subpixbuf(src_p, 
+						0, priv->resize_y2,
+						priv->width, 
+						priv->min_height - priv->resize_y2);
+
+				GdkPixbuf *scaled_mid_p = gdk_pixbuf_scale_simple(mid_p,
+						priv->width,
+						priv->height - (priv->resize_y1 + priv->min_height - priv->resize_x2),
+						GDK_INTERP_BILINEAR);
+				
+				des_p2 = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 
+						priv->width, priv->height);
+
+				gdk_pixbuf_composite(top_p, des_p2, 0, 0, 
+						priv->width,
+						priv->resize_y1,
+						0.0, 0.0,
+						1.0, 1.0,
+						GDK_INTERP_BILINEAR,
+						255);
+				gdk_pixbuf_composite(scaled_mid_p, des_p2, 0, priv->resize_y1, 
+						priv->width,
+						priv->height - (priv->resize_y1 + priv->min_height - priv->resize_y2),
+						0.0, priv->resize_y1,
+						1.0, 1.0,
+						GDK_INTERP_BILINEAR,
+						255);
+				gdk_pixbuf_composite(bottom_p, des_p2, 
+						0, 
+						priv->height - (priv->min_height - priv->resize_y2), 
+						priv->width, 
+						priv->min_height - priv->resize_y2,
+						0.0, priv->height - (priv->min_height - priv->resize_y2), 
+						1.0, 1.0,
+						GDK_INTERP_BILINEAR,
+						255);
+
+				if(des_p != NULL)
+				{
+					g_object_unref(des_p);
+					des_p = NULL;
+				}
+				des_p = des_p2;
 			}
 
 
-			if(des != NULL)
+			if(des_p != NULL)
 			{
 				gnome_canvas_item_set(priv->item,
-						"pixbuf", des,
+						"pixbuf", des_p,
 						NULL);
 
-				gtk_widget_decorated_with_pixbuf(widget, des);
-				g_object_unref(des);
-				des = NULL;
+				gtk_widget_decorated_with_pixbuf(widget, des_p);
+				g_object_unref(des_p);
+				des_p = NULL;
 
 				old_x = x;
 				old_y = y;
